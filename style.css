@@ -1,0 +1,335 @@
+::selection {
+    background: #CCC;
+    color: #555;
+    background-color: none;
+}
+
+html {
+    font-family: 'Barlow', 'Noto Sans TC';
+    font-size: 1.1em;
+    color: #fff;
+    background-color: #242424;
+    margin: 10px;
+    scroll-behavior: smooth;
+
+}
+
+.dfooter {
+    color: #ccc;
+    background-color: #111;
+    width: 100%;
+    border-radius: 0;
+    bottom: 0px;
+    opacity: 0;
+    position: fixed !important;
+    z-index: 16000161 !important;
+    font-size: 12px;
+    padding: 5px 0px 1px 20px;
+    margin: 0 0 0 -20px;
+    font-weight: bold;
+    line-height: .9;
+    transition: .8s;
+}
+
+.back {
+    color: #1f1f1f;
+    background-color: #4e2ec4;
+    max-width: 300px;
+    border-radius: 50px;
+    min-width: 180px;
+    bottom: 80px;
+    right: -125px;
+    opacity: .7;
+    box-sizing: border-box;
+    direction: ltr;
+    text-align: left;
+    position: fixed !important;
+    z-index: 16000160 !important;
+    font-size: 1.5em;
+    padding: 0px 0px 0px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 0px;
+    transition: .5s;
+}
+
+.back:hover {
+    right: -40px;
+    opacity: 1;
+    padding: 0px 0px 0px 25px;
+    color: #ffc58f;
+}
+
+.logo {
+    margin-top: 40px;
+    height: auto;
+    width: auto\9;
+    width: 15em;
+}
+
+.pic {
+    margin: 10px;
+    height: auto;
+    width: auto\9;
+    width: 90%;
+}
+
+.tip {
+    background-color: #4f2ec446;
+    margin: 50px auto;
+    padding: 1px 20px 1px 20px;
+    border: 1px solid #4e2ec4;
+    border-radius: 10px;
+    text-align: justify;
+    width: 88%;
+}
+
+.notice {
+    background-color: #f4a78046;
+    margin: 50px auto;
+    padding: 1px 20px 1px 20px;
+    border: 1px solid #f4a780;
+    border-radius: 10px;
+    text-align: justify;
+    width: 88%;
+}
+
+.eg {
+    background-color: #57f7da46;
+    margin: 50px auto;
+    padding: 1px 20px 1px 20px;
+    border: 1px solid #57f7d9;
+    border-radius: 10px;
+    text-align: justify;
+    width: 88%;
+}
+
+.qa {
+    background-color: #4f2ec446;
+    margin: 40px 10px;
+    padding: 1px 20px 1px 20px;
+    border: 1px solid #4e2ec4;
+    border-radius: 10px;
+    text-align: justify;
+
+}
+
+.qanum,
+.stepnum {
+    margin: 10px 10px 5px 0px;
+    padding: 0px;
+    border-radius: 10px;
+    text-align: justify;
+    font-size: 3em;
+    color: #f4a780;
+    display: inline-block;
+}
+
+.qanum::before {
+    content: "Q";
+}
+
+.stepnum::before {
+    content: "Step";
+}
+
+.qanum::after,
+.stepnum::after {
+    content: ".";
+}
+
+.qaq {
+    margin: 0px 0px 0px 0px;
+    padding: 10px 0px;
+    text-align: justify;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 1.2em;
+}
+
+.qahr {
+    margin: 10px 0px;
+    border-color: #ffffff99;
+}
+
+.contact {
+    background-color: #57f7da46;
+    background: linear-gradient(to top, #1f1f1f, #57f7da46);
+    margin: 40px 10px;
+    padding: 1px 20px 1px 20px;
+    border: 1px solid #57f7d9;
+    border-radius: 10px;
+    text-align: justify;
+    display: inline-table;
+    align-items: center;
+    color: #57f7d9;
+    width: calc((100vw - 310px) / 4);
+}
+
+.contact.sw {
+    background-color: #ec6c2a46;
+    background: linear-gradient(to top, #1f1f1f, #ec6c2a46);
+    border: 1px solid #ec6c2a;
+    color: #ffac6d;
+}
+
+.contact.oth {
+    background-color: #ffffff46;
+    background: linear-gradient(to top, #1f1f1f, #ffffff46);
+    border: 1px solid #fff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.contactcg {
+    margin: 20px 0px 0px 0px;
+    padding: 0px 0px;
+    text-align: justify;
+    font-weight: bold;
+    font-size: 1em;
+    color: #fff;
+}
+
+.contacthr {
+    margin: 20px 0px;
+    border-color: #ffffff99;
+}
+
+.contactext {
+    margin: 15px 10px 5px 0px;
+    padding: 0px;
+    border-radius: 10px;
+    text-align: justify;
+    font-size: 3em;
+    color: #57f7d9;
+}
+
+.contactext.sw {
+    color: #ffac6d;
+}
+
+.contactext.oth {
+    color: #fff;
+}
+
+.contactext::before {
+    content: "#";
+}
+
+@media (max-width: 1000px) {
+    .contact {
+        width: calc((100vw - 40px));
+        margin: 20px 0px;
+    }
+}
+
+.flexdiv {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+hr {
+    margin-top: 50px;
+    border-color: #ffffff22;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 1.3em;
+    text-align: center;
+    padding: 30px 0px 0px 0px;
+}
+
+.detail {
+    text-align: center;
+    padding-bottom: 10px;
+    color: #ffffffbb;
+}
+
+.tel {
+    font-size: 1.5em;
+    text-align: center;
+    font-weight: bold;
+    color: #ffffff;
+    text-decoration-line: none;
+}
+
+input.button {
+    transition: .5s;
+    font-family: 'Barlow', 'Noto Sans TC';
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 20px 35px;
+    border-radius: 10px;
+    filter: drop-shadow(0px 0px 10px #ffffff25);
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #2f2f2f;
+}
+
+input.button.next {
+    font-size: 1em;
+    font-weight: normal;
+    color: #fff;
+    background-color: #242424;
+    filter: none;
+    border: none;
+    margin: 50px 0px 0px 0px;
+    padding: 5px 0px;
+}
+
+input.button.yellow {
+    color: #ffc58f;
+    border: 2px solid #ffc58f;
+}
+
+input.button.blue {
+    color: #57f7d9;
+    border: 2px solid #57f7d9;
+}
+
+input.button.red {
+    color: #fe8997;
+    border: 2px solid #fe8997;
+}
+
+input.button.gray {
+    color: #ffffffcc;
+    border: 2px solid #ffffffcc;
+}
+
+input.button.siwan {
+    color: #f4a780;
+    border: 2px solid #f4a780;
+}
+
+input.button:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(6px 6px 0px #7139ff);
+    color: #fff;
+    background-color: #4e2ec4;
+    border: 5px dotted #fff;
+    margin: 20px 30px;
+}
+
+input.button.siwan:hover {
+    filter: drop-shadow(6px 6px 0px #ff902d);
+    background-color: #ec6c2a;
+}
+
+input.button.next:hover {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    background-color: #242424;
+    filter: none;
+    border: none;
+    margin: 50px 15px 0px 0px;
+    padding: 5px 0px;
+}
+
+.footer {
+    color: #ffffff99;
+    text-align: center;
+}
