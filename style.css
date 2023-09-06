@@ -306,9 +306,9 @@ input.button.siwan {
 
 input.button:hover {
     transform: scale(1.05);
-    filter: drop-shadow(6px 6px 0px #7139ff);
+    filter: drop-shadow(6px 6px 0px #3d4773);
     color: #fff;
-    background-color: #4e2ec4;
+    background-color: #4182d3;
     border: 5px dotted #fff;
     margin: 20px 30px;
 }
