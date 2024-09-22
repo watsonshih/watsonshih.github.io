@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (carousel && leftArrow && rightArrow && carouselItems.length > 0) {
             const itemWidth = carouselItems[0].offsetWidth;
             let touchStartX = 0;
+            let touchStartY = 0;
 
             const updateArrows = () => {
                 if (carousel.scrollLeft === 0) {
@@ -94,17 +95,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // Touch events for mobile
             carousel.addEventListener('touchstart', (e) => {
                 touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
             });
 
             carousel.addEventListener('touchend', (e) => {
+                e.preventDefault();
                 const touchEndX = e.changedTouches[0].clientX;
-                const touchDiff = touchStartX - touchEndX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const touchDiffX = touchStartX - touchEndX;
+                const touchDiffY = touchStartY - touchEndY;
 
-                if (Math.abs(touchDiff) > 1) {
-                    if (touchDiff > 0) {
-                        customScrollBy(carousel, carousel.scrollLeft + itemWidth + 30 - touchDiff, 750);
+                if (Math.abs(touchDiffX) > Math.abs(touchDiffY) && Math.abs(touchDiffX) > 10) {
+                    if (touchDiffX > 0) {
+                        customScrollBy(carousel, carousel.scrollLeft + itemWidth + 20, 750);
                     } else {
-                        customScrollBy(carousel, carousel.scrollLeft - itemWidth - 30 - touchDiff, 750);
+                        customScrollBy(carousel, carousel.scrollLeft - itemWidth - 20, 750);
                     }
                 }
             });
