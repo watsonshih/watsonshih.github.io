@@ -92,7 +92,7 @@ h6 {
     background-color: #1a1c1e;
     padding: .5em 1em;
     margin: 0 1.3em 1em 0;
-    border: 2px solid #1a1c1e;
+    border: 2px solid var(--watson_gray);
     line-height: 1.5;
     display: inline-block;
     transition: .3s all linear;
@@ -193,7 +193,7 @@ h6 {
     text-shadow: 0px 2px 10px rgba(0, 0, 0, .5);
 }
 
-.introhero_type span {
+.introhero_type .type1 {
     text-underline-offset: 0px;
     font-weight: Bold;
 }
@@ -443,9 +443,14 @@ h6 {
     }
 
     .watsoncard {
-        width: 90vw;
+        width: 80vw;
         margin: auto;
         padding: 0px;
+    }
+
+    .watsoncard_img {
+        width: 120px;
+        height: 120px;
     }
 
     .area {

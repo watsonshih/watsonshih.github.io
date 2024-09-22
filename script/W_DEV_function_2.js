@@ -45,7 +45,6 @@ const emToPx = (em) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Select all carousel containers
     const carouselContainers = document.querySelectorAll('.carousel-container');
 
     carouselContainers.forEach(container => {
@@ -56,6 +55,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (carousel && leftArrow && rightArrow && carouselItems.length > 0) {
             const itemWidth = carouselItems[0].offsetWidth;
+            let touchStartX = 0;
+
             const updateArrows = () => {
                 if (carousel.scrollLeft === 0) {
                     leftArrow.classList.add('hidden');
@@ -83,14 +84,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             rightArrow.addEventListener('click', () => {
-                customScrollBy(carousel, carousel.scrollLeft + itemWidth + 20, 500);
+                customScrollBy(carousel, carousel.scrollLeft + itemWidth + 20, 750);
             });
 
             leftArrow.addEventListener('click', () => {
-                customScrollBy(carousel, carousel.scrollLeft - itemWidth - 20, 500);
+                customScrollBy(carousel, carousel.scrollLeft - itemWidth - 20, 750);
+            });
+
+            // Touch events for mobile
+            carousel.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+            });
+
+            carousel.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchDiff = touchStartX - touchEndX;
+
+                if (Math.abs(touchDiff) > 1) {
+                    if (touchDiff > 0) {
+                        customScrollBy(carousel, carousel.scrollLeft + itemWidth + 30 - touchDiff, 750);
+                    } else {
+                        customScrollBy(carousel, carousel.scrollLeft - itemWidth - 30 - touchDiff, 750);
+                    }
+                }
             });
         } else {
-            console.error('Some elements are missing in the DOM!');
+            console.error('ERROR: Carousel container is missing one of the required elements.');
         }
     });
 });
