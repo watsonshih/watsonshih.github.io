@@ -141,7 +141,8 @@ h6 {
     outline: 0px solid #a4adbc;
 }
 
-.introhero video {
+.introhero video,
+.introhero img {
     position: absolute;
     width: 100vw;
     height: 100vh;
@@ -272,6 +273,10 @@ h6 {
 
 .margin_section {
     margin: 30px 0;
+}
+
+.margin_top {
+    margin-top: 25px;
 }
 
 
