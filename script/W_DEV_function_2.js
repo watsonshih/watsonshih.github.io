@@ -1,3 +1,5 @@
+let isScrolling = false;
+
 function isElementInViewport(el) {
     const rect = el.getBoundingClientRect();
     const offset = 150;
@@ -15,8 +17,9 @@ function addClassToVisibleElements() {
 document.addEventListener("scroll", addClassToVisibleElements);
 document.addEventListener("DOMContentLoaded", addClassToVisibleElements);
 
-
 function customScrollBy(element, targetPosition, duration) {
+    if (isScrolling) return;
+    isScrolling = true;
     const start = element.scrollLeft;
     const distance = targetPosition - start;
     let startTime = null;
@@ -26,7 +29,11 @@ function customScrollBy(element, targetPosition, duration) {
         const timeElapsed = currentTime - startTime;
         const run = easeInOutQuad(timeElapsed, start, distance, duration);
         element.scrollLeft = run;
-        if (timeElapsed < duration) requestAnimationFrame(animation);
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        } else {
+            isScrolling = false;
+        }
     }
 
     function easeInOutQuad(t, b, c, d) {
@@ -85,11 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             rightArrow.addEventListener('click', () => {
-                customScrollBy(carousel, carousel.scrollLeft + itemWidth + 20, 750);
+                if (!isScrolling) {
+                    customScrollBy(carousel, carousel.scrollLeft + itemWidth + 20, 750);
+                }
             });
 
             leftArrow.addEventListener('click', () => {
-                customScrollBy(carousel, carousel.scrollLeft - itemWidth - 20, 750);
+                if (!isScrolling) {
+                    customScrollBy(carousel, carousel.scrollLeft - itemWidth - 20, 750);
+                }
             });
 
             // Touch events for mobile
@@ -99,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             carousel.addEventListener('touchend', (e) => {
+                if (isScrolling) return;
+
                 e.preventDefault();
                 const touchEndX = e.changedTouches[0].clientX;
                 const touchEndY = e.changedTouches[0].clientY;
