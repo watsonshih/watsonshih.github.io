@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const itemWidth = carouselItems[0].offsetWidth;
             let touchStartX = 0;
             let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+            const touchThreshold = 10; // touch threshold in pixels
 
             const updateArrows = () => {
                 if (carousel.scrollLeft === 0) {
@@ -107,18 +110,23 @@ document.addEventListener('DOMContentLoaded', () => {
             carousel.addEventListener('touchstart', (e) => {
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
-            });
+            }, { passive: true });
 
             carousel.addEventListener('touchend', (e) => {
                 if (isScrolling) return;
 
-                e.preventDefault();
-                const touchEndX = e.changedTouches[0].clientX;
-                const touchEndY = e.changedTouches[0].clientY;
+                touchEndX = e.changedTouches[0].clientX;
+                touchEndY = e.changedTouches[0].clientY;
+
                 const touchDiffX = touchStartX - touchEndX;
                 const touchDiffY = touchStartY - touchEndY;
 
-                if (Math.abs(touchDiffX) > Math.abs(touchDiffY) && Math.abs(touchDiffX) > 10) {
+                if (Math.abs(touchDiffX) < touchThreshold && Math.abs(touchDiffY) < touchThreshold) {
+                    return;
+                }
+
+                if (Math.abs(touchDiffX) > Math.abs(touchDiffY) && Math.abs(touchDiffX) > touchThreshold) {
+                    e.preventDefault();
                     if (touchDiffX > 0) {
                         customScrollBy(carousel, carousel.scrollLeft + itemWidth + 20, 750);
                     } else {
@@ -126,6 +134,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+
+            carousel.addEventListener('touchmove', (e) => {
+                const touchDiffX = touchStartX - e.touches[0].clientX;
+                if (Math.abs(touchDiffX) > touchThreshold) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         } else {
             console.error('ERROR: Carousel container is missing one of the required elements.');
         }
