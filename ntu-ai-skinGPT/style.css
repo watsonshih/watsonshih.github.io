@@ -34,10 +34,15 @@ h6 {
     color: #999;
 }
 
+.copy {
+    text-align: center;
+    color: #999;
+    font-size: 0.5em;
+}
+
 .chatSection {
     justify-content: center;
 }
-
 
 .fade {
     opacity: 0;
