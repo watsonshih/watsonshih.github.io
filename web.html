@@ -24,8 +24,6 @@
         gtag('js', new Date());
         gtag('config', 'G-VJZ2K72PMZ');
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4845754463805395"
-        crossorigin="anonymous"></script>
     <script src="script/jquery-3.7.0.js"></script>
     <script src="script/jquery.min.js"></script>
     <script src="script/jquery.counterup.min.js"></script>
@@ -74,6 +72,10 @@
             </div>
         </div>
     </div>
+
+    <button class="toTop" title="gotoTop" style="display: inline-block;">
+    	<span>Top</span>
+	</button>
 </body>
 
 <script>
@@ -82,5 +84,26 @@
         time: 2500
     });
 </script>
-
+<script>
+	$(document).ready(function(){
+	    gotop();
+	}); 
+	$(window).scroll(function(){
+	    gotop();
+	});
+	$('.toTop').click(function(){
+	    $('html, body, .wrap').animate({scrollTop: '0px'}, 200);
+		 $(".focusable").focus();
+	});
+	function gotop(){
+	    var  winH = $(window).height();
+	    var  scroll = $(window).scrollTop();
+	    if(scroll > 100){
+	        $('.toTop').show();
+	    }
+	    else {
+	        $('.toTop').hide();
+	    }
+	}
+</script>
 </html>
