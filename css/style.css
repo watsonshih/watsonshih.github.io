@@ -791,17 +791,6 @@ span[info]:hover::after {
     transform: translateY(-.3em);
 }
 
-.timeline .timeline-item:after {
-    z-index: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, #999, #555);
-    display: block;
-    top: 2.6rem;
-    bottom: 0;
-    left: 1.1em;
-    position: absolute;
-}
-
 .timeline .timeline-item:last-child::after {
     display: none;
 }
@@ -827,4 +816,43 @@ span[info]:hover::after {
         grid-column: span 12;
         justify-items: center;
     }
+}
+
+.toTop {
+    display: block;
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    outline: 1px solid var(--watson_gray);
+    background: rgba(0, 0, 0, .0);
+    border-radius: 100%;
+    cursor: pointer;
+    z-index: 999;
+    bottom: 1.5em;
+    right: 1.5em;
+    transition: all .5s ease;
+}
+
+.toTop:before {
+    position: absolute;
+    content: "";
+    top: 17px;
+    left: 15px;
+    width: 9px;
+    height: 9px;
+    border-style: solid;
+    border-width: 2px 2px 0px 0px;
+    transform: rotate(-45deg);
+    border-color: var(--watson_gray_white) var(--watson_gray_white) transparent transparent;
+}
+
+.toTop:hover {
+    scale: 1.2;
+    background: var(--watson_blue);
+    outline: none;
+}
+
+.toTop span {
+    color: rgba(0, 0, 0, 0);
 }
