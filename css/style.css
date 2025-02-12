@@ -179,7 +179,7 @@ h6 {
     border-radius: 100rem;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 70%;
     max-width: 1800px;
     margin-left: auto;
     margin-right: auto;
@@ -198,6 +198,7 @@ h6 {
 .nav-wrapper.shows {
     opacity: 1;
     transform: scale(1);
+    width: 100%;
 }
 
 .nav-logo {
@@ -225,6 +226,11 @@ h6 {
     flex: 0 auto;
     align-items: center;
     display: flex;
+    color: var(--watson_white);
+}
+
+.nav-content a {
+    color: var(--watson_white);
 }
 
 .nav-button.lb {
@@ -443,8 +449,8 @@ h6 {
     transform: translateY(-0%);
     background-color: #1A1C1EAA;
     border: 1px solid #FFFFFF50;
-    color: white;
-    padding: 20px;
+    color: #FFFFFFCC;
+    padding: 25px;
     cursor: pointer;
     z-index: 10;
     scale: 1;
