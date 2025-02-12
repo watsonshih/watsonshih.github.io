@@ -160,7 +160,7 @@ h6 {
 }
 
 .navigation {
-    z-index: 100;
+    z-index: 999;
     background-color: #ddd0;
     padding-top: 20px;
     padding-left: 24px;
@@ -601,6 +601,10 @@ h6 {
         font-size: 1.1em;
     }
 
+    .mob_none {
+        display: none;
+    }
+
     .margin_section {
         margin: 45px 0;
     }
@@ -829,10 +833,6 @@ span[info]:hover::after {
         display: inline;
     }
 
-    .mob_none {
-        display: none;
-    }
-
 }
 
 .timeline {
@@ -943,4 +943,110 @@ span[info]:hover::after {
 
 .toTop span {
     color: rgba(0, 0, 0, 0);
+}
+
+.mob_show {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .desk_show {
+        display: none;
+    }
+
+    .mob_show {
+        display: block;
+    }
+
+    .menu-toggle {
+        background: none;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        margin: 0 6px;
+    }
+
+    .menu-icon {
+        display: block;
+        position: relative;
+        width: 24px;
+        height: 2px;
+        background: var(--watson_gray_white);
+        transition: all 0.3s ease;
+    }
+
+    .menu-icon::before,
+    .menu-icon::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 2px;
+        background: var(--watson_gray_white);
+        transition: all 0.3s ease;
+    }
+
+    .menu-icon::before {
+        transform: translateY(-8px);
+        margin: 0 -12px;
+    }
+
+    .menu-icon::after {
+        transform: translateY(8px);
+        margin: 0 -12px;
+    }
+
+    .menu-toggle.active .menu-icon {
+        background: transparent;
+    }
+
+    .menu-toggle.active .menu-icon::before {
+        transform: rotate(45deg);
+    }
+
+    .menu-toggle.active .menu-icon::after {
+        transform: rotate(-45deg);
+    }
+
+    .mobile-menu {
+        position: fixed;
+        padding: 80px 0 0 0;
+        width: 100%;
+        height: calc(100vh);
+        background: linear-gradient(to left, #000000AA, #00000000);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.7s ease-out;
+        z-index: 998;
+        -webkit-backdrop-filter: blur(25px);
+        backdrop-filter: blur(25px);
+    }
+
+    .mobile-menu.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .mobile-menu-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 2rem;
+        gap: 1.5em;
+    }
+
+    .mobile-menu-content .nav-link {
+        color: #fff;
+        font-size: 1.7em;
+        text-decoration: none;
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.3s ease-out;
+    }
+
+    .mobile-menu.active .nav-link {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
