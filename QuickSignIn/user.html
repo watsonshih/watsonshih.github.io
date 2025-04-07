@@ -92,7 +92,7 @@
 
                 <button type="button" id="generateQRBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium 
                            py-3 px-4 rounded-lg transition duration-150 ease-in-out">
-                    生成簽到 QR Code
+                    生成 QR Code
                 </button>
             </form>
         </div>
@@ -200,7 +200,8 @@
 
             const name = nameInput.value.trim();
             const id = idInput.value.trim();
-            const qrData = `name:${name},id:${id}`;
+            // 使用 encodeURIComponent 對中文進行 UTF-8 編碼
+            const qrData = `name:${encodeURIComponent(name)},id:${encodeURIComponent(id)}`;
 
             // 清空 QR Code 容器
             qrCodeContainer.innerHTML = '';
