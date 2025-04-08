@@ -198,7 +198,17 @@
                 <!-- 參與者預覽 -->
                 <div id="participantsPreview" class="hidden mt-6">
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                        <h3 class="text-lg font-medium text-gray-100 mb-4">參與者名單預覽</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-100">參與者名單預覽</h3>
+                            <button id="toggleEncoding"
+                                class="text-sm text-blue-500 hover:text-blue-400 flex items-center group relative">
+                                出現亂碼？
+                                <div
+                                    class="hidden group-hover:block absolute right-0 top-6 p-2 bg-dark-200 text-gray-300 text-xs rounded-lg shadow-lg z-10">
+                                    切換編碼
+                                </div>
+                            </button>
+                        </div>
                         <div id="previewParticipantsList" class="divide-y divide-dark-300 max-h-96 overflow-y-auto">
                         </div>
                     </div>
@@ -435,6 +445,8 @@
         let checkOutVideoStream;
         let isScanningEnabled = true;
         let expectedParticipantsCount = 0;
+        let currentEncoding = 'big5';  // 新增變數追蹤當前編碼
+        let currentFileContent = null; // 新增變數保存當前檔案內容
 
         // DOM 元素參考
         const mainPage = document.getElementById('mainPage');
@@ -526,25 +538,14 @@
                 return;
             }
 
+            // 取得檔名（不含副檔名）並設定到活動名稱欄位
+            const fileName = file.name.replace('.csv', '');
+            document.getElementById('eventName').value = fileName;
+
             const reader = new FileReader();
             reader.onload = function (e) {
-                // 先嘗試用 Big5 解碼
-                try {
-                    const decoder = new TextDecoder('big5');
-                    const content = decoder.decode(new Uint8Array(e.target.result));
-                    parseCSVContent(content);
-                } catch (error) {
-                    console.warn('Big5 解碼失敗，嘗試 UTF-8:', error);
-                    // 如果 Big5 解碼失敗，嘗試 UTF-8
-                    try {
-                        const decoder = new TextDecoder('utf-8');
-                        const content = decoder.decode(new Uint8Array(e.target.result));
-                        parseCSVContent(content);
-                    } catch (error) {
-                        console.error('CSV 解碼失敗:', error);
-                        alert('無法正確讀取 CSV 檔案，請確認檔案編碼格式。');
-                    }
-                }
+                currentFileContent = new Uint8Array(e.target.result); // 保存檔案內容
+                parseWithCurrentEncoding(); // 使用當前編碼解析
             };
             reader.onerror = function (error) {
                 console.error('檔案讀取錯誤:', error);
@@ -552,6 +553,25 @@
             };
             reader.readAsArrayBuffer(file);
         }
+
+        function parseWithCurrentEncoding() {
+            if (!currentFileContent) return;
+
+            try {
+                const decoder = new TextDecoder(currentEncoding);
+                const content = decoder.decode(currentFileContent);
+                parseCSVContent(content);
+            } catch (error) {
+                console.error(`${currentEncoding} 解碼失敗:`, error);
+                alert(`無法使用 ${currentEncoding} 解析檔案`);
+            }
+        }
+
+        document.getElementById('toggleEncoding').addEventListener('click', function () {
+            currentEncoding = currentEncoding === 'big5' ? 'utf-8' : 'big5';
+            this.textContent = `切換至 ${currentEncoding === 'big5' ? 'UTF-8' : 'Big5'}`;
+            parseWithCurrentEncoding();
+        });
 
         function parseCSVContent(content) {
             Papa.parse(content, {
