@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson">
     <meta name="description" content="透過掃描 QR Code，讓您的活動簽到簽退更快速！">
-    <link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
-    <link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
-    <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/pic/watson-banner.jpg">
-    <meta itemprop="image" content="https://watsonshih.github.io/pic/watson-banner.jpg">
-    <meta property="og:image" content="https://watsonshih.github.io/pic/watson-banner.jpg">
-    <title>QuickSignIn - 快速活動簽到退</title>
+    <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
+    <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <meta itemprop="image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <meta property="og:image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <title>QuickRecord - 快速活動簽到退</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -102,7 +102,7 @@
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <h1 class="text-xl font-semibold text-gray-100">QuickSignIn</h1>
+                    <h1 class="text-xl font-semibold text-gray-100">QuickRecord</h1>
                 </div>
                 <div class="flex items-center">
                     <span id="currentTime" class="text-sm text-gray-400"></span>
@@ -478,10 +478,10 @@
             }, 300);
         }
 
-        // 下載 CSV 模板 (URL: https://watsonshih.github.io/QuickSignIn/template.csv)
+        // 下載 CSV 模板 (URL: https://watsonshih.github.io/QuickRecord/template.csv)
         document.getElementById('downloadTemplate').addEventListener('click', () => {
             const link = document.createElement('a');
-            link.href = 'https://watsonshih.github.io/QuickSignIn/template.csv';
+            link.href = 'https://watsonshih.github.io/QuickRecord/template.csv';
             link.download = 'template.csv';
             document.body.appendChild(link);
             link.click();
@@ -526,7 +526,35 @@
                 return;
             }
 
-            Papa.parse(file, {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // 先嘗試用 Big5 解碼
+                try {
+                    const decoder = new TextDecoder('big5');
+                    const content = decoder.decode(new Uint8Array(e.target.result));
+                    parseCSVContent(content);
+                } catch (error) {
+                    console.warn('Big5 解碼失敗，嘗試 UTF-8:', error);
+                    // 如果 Big5 解碼失敗，嘗試 UTF-8
+                    try {
+                        const decoder = new TextDecoder('utf-8');
+                        const content = decoder.decode(new Uint8Array(e.target.result));
+                        parseCSVContent(content);
+                    } catch (error) {
+                        console.error('CSV 解碼失敗:', error);
+                        alert('無法正確讀取 CSV 檔案，請確認檔案編碼格式。');
+                    }
+                }
+            };
+            reader.onerror = function (error) {
+                console.error('檔案讀取錯誤:', error);
+                alert('檔案讀取錯誤');
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseCSVContent(content) {
+            Papa.parse(content, {
                 header: true,
                 skipEmptyLines: true,
                 complete: function (results) {
@@ -539,8 +567,8 @@
                     participants = results.data.map(row => ({
                         name: row.Name?.startsWith('name:') ? row.Name.substring(5).trim() : row.Name,
                         id: row.ID?.startsWith('id:') ? row.ID.substring(3).trim() : row.ID,
-                        note: row.Note || '',  // 確保保存 Note
-                        inCSV: true,          // 標記為來自 CSV
+                        note: row.Note || '',
+                        inCSV: true,
                         checkInTime: '',
                         checkOutTime: ''
                     }));
@@ -550,6 +578,7 @@
                     showPage(infoPage);
                 },
                 error: function (error) {
+                    console.error('CSV 解析錯誤:', error);
                     alert('解析 CSV 時發生錯誤：' + error);
                 }
             });
@@ -964,19 +993,15 @@
         }
 
         function downloadCSV() {
-            // 整合簽到與簽退資料
-            const records = participants.map(p => {
-                return {
-                    Name: p.name,
-                    ID: p.id,
-                    Note: p.note || '',      // 確保 Note 欄位存在
-                    InCSV: p.inCSV ? 'Yes' : 'No',  // 明確標記來源
-                    CheckInTime: p.checkInTime || '',
-                    CheckOutTime: p.checkOutTime || ''
-                };
-            });
+            const records = participants.map(p => ({
+                Name: p.name,
+                ID: p.id,
+                Note: p.note || '',
+                InCSV: p.inCSV ? 'Yes' : 'No',
+                CheckInTime: p.checkInTime || '',
+                CheckOutTime: p.checkOutTime || ''
+            }));
 
-            // 處理沒有在原始名單但有簽到的人員
             checkInRecords.forEach(record => {
                 if (!participants.some(p => p.id === record.id)) {
                     records.push({
@@ -990,18 +1015,18 @@
                 }
             });
 
-            // 產生 CSV 內容，使用 UTF-8 編碼
+            // 使用 Big5 編碼產生 CSV
             const csv = Papa.unparse(records, {
                 header: true,
                 newline: '\n'
             });
 
-            // 添加 BOM 以確保 Excel 正確識別中文
-            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], {
-                type: 'text/csv;charset=utf-8;'
+            // 使用 Big5 編碼確保 Excel 可以正確讀取
+            const encoder = new TextEncoder();
+            const blob = new Blob([encoder.encode(csv)], {
+                type: 'text/csv;charset=big5'
             });
 
-            // 生成下載
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             const eventName = document.getElementById('checkOutEventName').textContent;
