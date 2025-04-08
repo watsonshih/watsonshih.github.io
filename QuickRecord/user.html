@@ -11,7 +11,7 @@
     <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
     <meta itemprop="image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
     <meta property="og:image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
-    <title>QuickRecord - 快速活動簽到退 (User 客戶端)</title>
+    <title>QuickRecord - 快速活動簽到退 (User 參與者端)</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -103,7 +103,7 @@
                 <h2 class="text-xl font-semibold mb-6">您的簽到退 QR Code</h2>
 
                 <p class="text-slate-600 mb-6">
-                    請將此 QR Code 出示給工作人員掃描
+                    請出示 QR Code 給工作人員掃描
                 </p>
 
                 <div class="bg-white p-4 rounded-lg qr-shadow inline-block mb-6">
@@ -152,6 +152,25 @@
         const userNameDisplay = document.getElementById('userNameDisplay');
         const userIDDisplay = document.getElementById('userIDDisplay');
 
+        // 解析 URL 參數函數
+        function getUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                name: urlParams.get('name'),
+                id: urlParams.get('id')
+            };
+        }
+
+        // 自動填入並生成 QR Code
+        function autoFillAndGenerate() {
+            const params = getUrlParams();
+            if (params.name && params.id) {
+                nameInput.value = decodeURIComponent(params.name);
+                idInput.value = decodeURIComponent(params.id);
+                generateQRCode();
+            }
+        }
+
         // 頁面切換函數
         function showPage(page, hide) {
             hide.classList.add('hidden');
@@ -183,7 +202,7 @@
 
             // 驗證 ID
             if (!id) {
-                idError.textContent = '請輸入您的ID';
+                idError.textContent = '請輸入您的 ID';
                 idInput.classList.add('border-red-500');
                 isValid = false;
             } else {
@@ -209,8 +228,8 @@
             try {
                 new QRCode(qrCodeContainer, {
                     text: qrData,
-                    width: 240,
-                    height: 240,
+                    width: 250,
+                    height: 250,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H,
@@ -225,7 +244,7 @@
                 showPage(qrPage, inputPage);
             } catch (error) {
                 console.error("QR Code 生成錯誤:", error);
-                alert("生成 QR Code 時發生錯誤，請重試");
+                alert("發生錯誤，請重試");
             }
         }
 
@@ -256,12 +275,14 @@
             }
         });
 
-        // 檢查 QRCode 庫是否載入
+        // 檢查 QRCode 庫是否載入並處理 URL 參數
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof QRCode !== 'function') {
                 console.error('QRCode library not loaded properly!');
-                alert('QR Code 生成庫未正確載入，請檢查網路連接並重新整理頁面');
+                alert('網頁載入失敗，請檢查網路連接並重新整理頁面');
+                return;
             }
+            autoFillAndGenerate();
         });
     </script>
 </body>
