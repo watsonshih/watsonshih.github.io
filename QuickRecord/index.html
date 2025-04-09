@@ -19,7 +19,7 @@
         gtag('js', new Date());
         gtag('config', 'G-VJZ2K72PMZ');
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwindcss.3.4.16.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -75,7 +75,6 @@
             }
         }
 
-        /* 自定義滾動條 */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -128,13 +127,12 @@
                     <div id="dropArea"
                         class="border-2 border-dashed border-dark-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors cursor-pointer">
                         <div class="text-gray-400">
-                            <!-- 文件上傳圖標 -->
                             <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             <p class="mt-4">拖曳上傳 CSV，預先匯入參與名單</p>
-                            <p class="text-sm text-gray-500 mt-2">（CSV 需包含：Name、ID、Note 欄位）</p>
+                            <p class="text-sm text-gray-500 mt-2">（CSV 需包含 Name、ID、Note 欄位）</p>
                         </div>
                         <input type="file" id="fileInput" class="hidden" accept=".csv">
                     </div>
@@ -241,19 +239,6 @@
                             <span id="checkInCount" class="text-gray-200 mr-1">0</span>
                             <span id="checkInTotal" class="text-gray-400"></span>
                         </p>
-                        <!-- <dl class="divide-y divide-dark-300">
-                            <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">活動名稱</dt>
-                                <dd id="checkInEventName" class="font-medium text-gray-200"></dd>
-                            </div>
-                            <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">簽到人數</dt>
-                                <dd>
-                                    <span id="checkInCount" class="font-medium text-gray-200 mr-1">0</span>
-                                    <span id="checkInTotal" class="text-gray-400"></span>
-                                </dd>
-                            </div>
-                        </dl> -->
                     </div>
 
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
@@ -341,21 +326,6 @@
                             <span id="checkOutCount" class="text-gray-200 mr-1">0</span>
                             <span id="checkOutTotal" class="text-gray-400"></span>
                         </p>
-                        <!-- <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                        <h3 class="text-lg font-medium text-gray-100 mb-4">活動資訊</h3>
-                        <dl class="divide-y divide-dark-300">
-                            <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">活動名稱</dt>
-                                <dd id="checkOutEventName" class="font-medium text-gray-200"></dd>
-                            </div>
-                            <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">簽退人數</dt>
-                                <dd>
-                                    <span id="checkOutCount" class="font-medium text-gray-200 mr-1">0</span>
-                                    <span id="checkOutTotal" class="text-gray-400"></span>
-                                </dd>
-                            </div>
-                        </dl> -->
                     </div>
 
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
@@ -431,8 +401,8 @@
         </p>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="js/jsQR.min.js"></script>
+    <script src="js/papaparse.min.js"></script>
 
     <script>
         // 全域變數
@@ -445,8 +415,8 @@
         let checkOutVideoStream;
         let isScanningEnabled = true;
         let expectedParticipantsCount = 0;
-        let currentEncoding = 'big5';  // 新增變數追蹤當前編碼
-        let currentFileContent = null; // 新增變數保存當前檔案內容
+        let currentEncoding = 'big5';
+        let currentFileContent = null;
 
         // DOM 元素參考
         const mainPage = document.getElementById('mainPage');
@@ -490,7 +460,7 @@
             }, 300);
         }
 
-        // 下載 CSV 模板 (URL: https://watsonshih.github.io/QuickRecord/template.csv)
+        // 下載 CSV 模板
         document.getElementById('downloadTemplate').addEventListener('click', () => {
             const link = document.createElement('a');
             link.href = 'https://watsonshih.github.io/QuickRecord/template.csv';
@@ -735,7 +705,7 @@
                         })
                         .catch(error => {
                             console.error("Video playback error:", error);
-                            scanStatus.textContent = '視訊播放錯誤：' + error.message;
+                            scanStatus.textContent = '視訊播放失敗';
                         });
                 })
                 .catch(error => {
@@ -792,7 +762,7 @@
             const context = canvas.getContext('2d', { willReadFrequently: true });
 
             // 更新掃描狀態
-            scanStatus.textContent = '正在準備攝影機...';
+            scanStatus.textContent = '正在啟動攝影機...';
 
             function scan() {
                 if (video.readyState === video.HAVE_ENOUGH_DATA && isScanningEnabled) {
@@ -815,7 +785,6 @@
                     }
                 }
 
-                // 確保掃描持續進行
                 requestAnimationFrame(scan);
             }
 
@@ -876,17 +845,16 @@
                         processCheckOut(name, id);
                     }
 
-                    // 2秒後重新啟用掃描
+                    // 2 秒後重新啟用掃描
                     setTimeout(() => {
                         isScanningEnabled = true;
                     }, 2000);
                 } else {
-                    throw new Error('無法從 QR Code 中解析出名稱和 ID');
+                    throw new Error('無法從 QR Code 中解析出 Name 和 ID');
                 }
             } catch (error) {
                 console.error("QR Code 處理錯誤:", error);
                 const statusElement = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
-                <!-- statusElement.textContent = `掃描錯誤: ${error.message}`; -->
                 statusElement.textContent = '掃描錯誤，請重試';
             }
         }
@@ -921,7 +889,7 @@
             checkInRecords.push({
                 name: name,
                 id: id,
-                note: participant.note,  // 保存 note
+                note: participant.note,
                 time: checkInTime
             });
 
@@ -1181,14 +1149,14 @@
             }
         }
 
-        // 輔助函數：取得狀態樣式類別
+        // 取得狀態樣式類別
         function getStatusClass(participant) {
             if (!participant.checkInTime) return 'bg-gray-500/20 text-gray-400';
             if (participant.checkOutTime) return 'bg-green-500/20 text-green-400';
             return 'bg-blue-500/20 text-blue-400';
         }
 
-        // 輔助函數：取得狀態文字
+        // 取得狀態文字
         function getStatusText(participant) {
             if (!participant.checkInTime) return '未簽到';
             if (participant.checkOutTime) return '已簽退';
@@ -1209,14 +1177,12 @@
 
             updateTotalCountDisplay();
             renderParticipantsList();
-            // 加入這行，確保顯示設定在頁面初始化時被應用
             updateDisplaySettings();
         }
 
         function initializeCheckOutPage() {
             renderCheckOutList();
             updateTotalCountDisplay();
-            // 加入這行，確保顯示設定在頁面初始化時被應用
             updateDisplaySettings();
         }
 
@@ -1226,7 +1192,6 @@
             document.getElementById('checkOutTotal').textContent = ` / ${checkInRecords.length}`;
         }
 
-        // 檢查必要的 JavaScript 庫是否已加載
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof jsQR !== 'function') {
                 console.error('jsQR library not loaded properly!');
