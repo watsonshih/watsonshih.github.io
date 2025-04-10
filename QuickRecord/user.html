@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" data-lang="zh-TW">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson">
-    <meta name="description" content="透過掃描 QR Code，讓您的活動簽到簽退更快速！">
+    <meta name="keywords" data-lang-key="pageKeywords" content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson">
+    <meta name="description" data-lang-key="pageDescription" content="透過掃描 QR Code，讓您的活動簽到簽退更快速！">
     <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
     <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
     <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
     <meta itemprop="image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
     <meta property="og:image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
-    <title>QuickRecord - 快速活動簽到退 (User 參與者端)</title>
+    <title>QuickRecord - 快速簽到退 Quick Check-in/out (User)</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -21,10 +21,14 @@
     </script>
     <script src="js/tailwindcss.3.4.16.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
 
         * {
-            font-family: 'Noto Sans TC', sans-serif;
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+        }
+
+        html[data-lang="en"] * {
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
         }
 
         .page-transition {
@@ -45,6 +49,7 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
     </style>
+    <script src="i18n/langs.js"></script>
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -54,55 +59,59 @@
                 <div class="flex items-center">
                     <h1 class="text-xl font-semibold text-slate-800">QuickRecord</h1>
                 </div>
+                <div class="flex items-center">
+                    <button id="langSwitchBtn"
+                        class="text-sm text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out px-2 py-2 leading-none border border-blue-600/50 rounded">
+                        EN
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
 
     <main class="max-w-lg mx-auto px-4 py-8">
-        <!-- 資料輸入頁面 -->
         <div id="inputPage" class="page-transition bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-semibold mb-6">參與者資訊</h2>
+            <h2 class="text-xl font-semibold mb-6" data-lang-key="participantInfo">參與者資訊</h2>
 
-            <p class="text-slate-600 mb-10">
+            <p class="text-slate-600 mb-10" data-lang-key="enterInfoPrompt">
                 請輸入報名時的資料，以方便核對。
             </p>
 
             <form id="userForm" class="space-y-6">
                 <div>
                     <label for="name" class="block text-sm font-medium text-slate-700">
-                        姓名
+                        <span data-lang-key="nameLabel">姓名</span>
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="name" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-slate-100 border-slate-300 shadow-sm 
-                               focus:border-blue-500 focus:ring-blue-500 text-slate-900" placeholder="請輸入您的姓名"
-                        required>
+                    <input type="text" id="name" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-slate-100 border-slate-300 shadow-sm
+                               focus:border-blue-500 focus:ring-blue-500 text-slate-900" placeholder="請輸入您的姓名" required
+                        data-lang-placeholder-key="namePlaceholder">
                     <div id="nameError" class="mt-1 text-sm text-red-500"></div>
                 </div>
 
                 <div>
                     <label for="id" class="block text-sm font-medium text-slate-700">
-                        ID
+                        <span data-lang-key="idLabel">ID</span>
                         <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="id" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-slate-100 border-slate-300 shadow-sm 
+                    <input type="text" id="id" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-slate-100 border-slate-300 shadow-sm
                                focus:border-blue-500 focus:ring-blue-500 text-slate-900" placeholder="請按主辦單位指示輸入您的 ID"
-                        required>
+                        required data-lang-placeholder-key="idPlaceholder">
                     <div id="idError" class="mt-1 text-sm text-red-500"></div>
                 </div>
 
-                <button type="button" id="generateQRBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium 
-                           py-3 px-4 rounded-lg transition duration-150 ease-in-out">
+                <button type="button" id="generateQRBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium
+                           py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="generateQR">
                     生成 QR Code
                 </button>
             </form>
         </div>
 
-        <!-- QR Code 顯示頁面 -->
         <div id="qrPage" class="hidden page-transition">
             <div class="bg-white rounded-lg shadow-sm p-6 text-center">
-                <h2 class="text-xl font-semibold mb-6">您的簽到退 QR Code</h2>
+                <h2 class="text-xl font-semibold mb-6" data-lang-key="yourQRCode">您的簽到退 QR Code</h2>
 
-                <p class="text-slate-600 mb-6">
+                <p class="text-slate-600 mb-6" data-lang-key="showQRInstruction">
                     請出示 QR Code 給工作人員掃描
                 </p>
 
@@ -113,24 +122,26 @@
                 <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
                     <div class="text-left space-y-2">
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-600">姓名</span>
+                            <span class="text-slate-600" data-lang-key="nameLabel">姓名</span>
                             <span id="userNameDisplay" class="font-medium text-slate-900"></span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-slate-600">ID</span>
+                            <span class="text-slate-600" data-lang-key="idLabel">ID</span>
                             <span id="userIDDisplay" class="font-medium text-slate-900"></span>
                         </div>
                     </div>
                 </div>
 
-                <button id="backToInput" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 
-                           font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out">
+                <button id="backToInput" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700
+                           font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out"
+                    data-lang-key="reEnterInfo">
                     重新輸入資訊
                 </button>
             </div>
         </div>
         <p class="items-center text-slate-600 mt-6 text-center">
-            <a href="https://watsonshih.github.io/" class="hover:text-blue-600" target="_blank">
+            <a href="https://watsonshih.github.io/" class="hover:text-blue-600" target="_blank"
+                data-lang-key="copyRight">
                 © Watson
             </a>
         </p>
@@ -139,7 +150,56 @@
     <script src="js/qrcode.min.js"></script>
 
     <script>
-        // DOM 元素參考
+        let currentLang = 'zh-TW';
+        const langSwitchBtn = document.getElementById('langSwitchBtn');
+        const htmlTag = document.documentElement;
+
+        function setLanguage(lang) {
+            if (!languages[lang]) {
+                console.error(`Language ${lang} not found.`);
+                return;
+            }
+            currentLang = lang;
+            htmlTag.lang = lang;
+            htmlTag.setAttribute('data-lang', lang);
+            localStorage.setItem('quickRecordUserLang', lang);
+
+            langSwitchBtn.textContent = lang === 'zh-TW' ? 'EN' : '中';
+
+            document.title = languages[lang]['userPageTitle'] || 'QuickRecord - Check-in/out for User';
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (languages[lang] && languages[lang][key] !== undefined) {
+                    el.textContent = languages[lang][key];
+                } else {
+                    console.warn(`Missing translation key: ${key} for lang: ${lang}`);
+                }
+            });
+
+            document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-placeholder-key');
+                if (languages[lang] && languages[lang][key] !== undefined) {
+                    el.placeholder = languages[lang][key];
+                } else {
+                    console.warn(`Missing placeholder translation key: ${key} for lang: ${lang}`);
+                }
+            });
+
+            validateForm(false);
+        }
+
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('quickRecordUserLang');
+            const initialLang = savedLang && languages[savedLang] ? savedLang : 'zh-TW';
+            setLanguage(initialLang);
+        }
+
+        langSwitchBtn.addEventListener('click', () => {
+            const newLang = currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+            setLanguage(newLang);
+        });
+
         const inputPage = document.getElementById('inputPage');
         const qrPage = document.getElementById('qrPage');
         const nameInput = document.getElementById('name');
@@ -152,7 +212,6 @@
         const userNameDisplay = document.getElementById('userNameDisplay');
         const userIDDisplay = document.getElementById('userIDDisplay');
 
-        // 解析 URL 參數函數
         function getUrlParams() {
             const urlParams = new URLSearchParams(window.location.search);
             return {
@@ -161,17 +220,20 @@
             };
         }
 
-        // 自動填入並生成 QR Code
         function autoFillAndGenerate() {
             const params = getUrlParams();
             if (params.name && params.id) {
-                nameInput.value = decodeURIComponent(params.name);
-                idInput.value = decodeURIComponent(params.id);
+                try {
+                    nameInput.value = decodeURIComponent(params.name);
+                } catch (e) { nameInput.value = params.name; }
+                try {
+                    idInput.value = decodeURIComponent(params.id);
+                } catch (e) { idInput.value = params.id; }
+
                 generateQRCode();
             }
         }
 
-        // 頁面切換函數
         function showPage(page, hide) {
             hide.classList.add('hidden');
             page.classList.remove('hidden');
@@ -184,46 +246,54 @@
             }, 300);
         }
 
-        // 表單驗證函數
-        function validateForm() {
+
+        function validateForm(showErrors = true) {
             let isValid = true;
             const name = nameInput.value.trim();
             const id = idInput.value.trim();
 
-            // 驗證姓名
+            nameError.textContent = '';
+            nameInput.classList.remove('border-red-500');
+            idError.textContent = '';
+            idInput.classList.remove('border-red-500');
+
             if (!name) {
-                nameError.textContent = '請輸入您的姓名';
-                nameInput.classList.add('border-red-500');
                 isValid = false;
-            } else {
-                nameError.textContent = '';
-                nameInput.classList.remove('border-red-500');
+                if (showErrors) {
+                    nameError.textContent = languages[currentLang]['nameErrorRequired'];
+                    nameInput.classList.add('border-red-500');
+                }
             }
 
-            // 驗證 ID
             if (!id) {
-                idError.textContent = '請輸入您的 ID';
-                idInput.classList.add('border-red-500');
                 isValid = false;
-            } else {
-                idError.textContent = '';
-                idInput.classList.remove('border-red-500');
+                if (showErrors) {
+                    idError.textContent = languages[currentLang]['idErrorRequired'];
+                    idInput.classList.add('border-red-500');
+                }
             }
 
             return isValid;
         }
 
-        // 生成 QR Code 函數
+
         function generateQRCode() {
-            if (!validateForm()) return;
+            if (!validateForm(true)) return;
 
             const name = nameInput.value.trim();
             const id = idInput.value.trim();
+
             const qrData = `name:${encodeURIComponent(name)},id:${encodeURIComponent(id)}`;
 
             qrCodeContainer.innerHTML = '';
 
             try {
+                if (typeof QRCode === 'undefined') {
+                    console.error('QRCode library is not loaded!');
+                    alert(languages[currentLang]['qrLibraryError']);
+                    return;
+                }
+
                 new QRCode(qrCodeContainer, {
                     text: qrData,
                     width: 250,
@@ -238,17 +308,16 @@
                 userIDDisplay.textContent = id;
 
                 showPage(qrPage, inputPage);
+
             } catch (error) {
-                console.error("QR Code 生成錯誤:", error);
-                alert("發生錯誤，請重試");
+                console.error("QR Code generation error:", error);
+                alert(languages[currentLang]['qrError']);
             }
         }
 
-        // 事件監聽器
         generateQRBtn.addEventListener('click', generateQRCode);
         backToInputBtn.addEventListener('click', () => showPage(inputPage, qrPage));
 
-        // 輸入框事件監聽
         nameInput.addEventListener('input', () => {
             if (nameInput.value.trim()) {
                 nameError.textContent = '';
@@ -263,7 +332,6 @@
             }
         });
 
-        // Enter 鍵提交
         document.getElementById('userForm').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -271,11 +339,12 @@
             }
         });
 
-        // 檢查 QRCode 庫是否載入並處理 URL 參數
         window.addEventListener('DOMContentLoaded', () => {
+            initializeLanguage();
+
             if (typeof QRCode !== 'function') {
                 console.error('QRCode library not loaded properly!');
-                alert('網頁載入失敗，請檢查網路連接並重新整理頁面');
+                alert(languages[currentLang]['qrLibraryError']);
                 return;
             }
             autoFillAndGenerate();

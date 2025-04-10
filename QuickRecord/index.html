@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="zh-TW" class="dark" data-lang="zh-TW">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson">
-    <meta name="description" content="透過掃描 QR Code，讓您的活動簽到簽退更快速！">
+    <meta name="keywords" data-lang-key="pageKeywords" content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson">
+    <meta name="description" data-lang-key="pageDescription" content="透過掃描 QR Code，讓您的活動簽到簽退更快速！">
     <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
     <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
     <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
     <meta itemprop="image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
     <meta property="og:image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
-    <title>QuickRecord - 快速活動簽到退</title>
+    <title>QuickRecord - 快速簽到退 Quick Check-in/out</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -39,10 +39,14 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
 
         * {
-            font-family: 'Noto Sans TC', sans-serif;
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+        }
+
+        html[data-lang="en"] * {
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
         }
 
         .page-transition {
@@ -93,36 +97,40 @@
             background: #6B7280;
         }
     </style>
+    <script src="i18n/langs.js"></script>
 </head>
 
 <body class="bg-dark-100 text-gray-200">
-    <!-- 頂部導航欄 -->
     <nav class="bg-dark-50 border-b border-dark-300">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <h1 class="text-xl font-semibold text-gray-100">QuickRecord</h1>
                 </div>
-                <div class="flex items-center">
+                <div class="flex items-center space-x-4">
                     <span id="currentTime" class="text-sm text-gray-400"></span>
+                    <button id="langSwitchBtn"
+                        class="text-sm text-blue-400 hover:text-blue-300 transition duration-150 ease-in-out px-2 py-2 leading-none border border-blue-400/50 rounded">
+                        EN
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
     <main class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- 主頁面 -->
         <div id="mainPage" class="page-transition">
             <div class="max-w-lg mx-auto">
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-6">開始新的簽到</h2>
+                    <h2 class="text-xl font-semibold text-gray-100 mb-6" data-lang-key="newCheckIn">開始新的簽到</h2>
 
                     <button id="startDirectly"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out">
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out"
+                        data-lang-key="startDirectly">
                         直接開始
                     </button>
 
-                    <div class="text-center text-gray-400 my-4">OR</div>
+                    <div class="text-center text-gray-400 my-4" data-lang-key="or">OR</div>
 
                     <div id="dropArea"
                         class="border-2 border-dashed border-dark-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors cursor-pointer">
@@ -131,78 +139,82 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p class="mt-4">拖曳上傳 CSV，預先匯入參與名單</p>
-                            <p class="text-sm text-gray-500 mt-2">（CSV 需包含 Name、ID、Note 欄位）</p>
+                            <p class="mt-4" data-lang-key="dropCSV">拖曳上傳 CSV，預先匯入參與名單</p>
+                            <p class="text-sm text-gray-500 mt-2" data-lang-key="csvRequirement">（CSV 需包含 Name、ID、Note
+                                欄位）</p>
                         </div>
                         <input type="file" id="fileInput" class="hidden" accept=".csv">
                     </div>
 
                     <button id="downloadTemplate"
-                        class="w-full bg-gray-700 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out mt-4">
+                        class="w-full bg-gray-700 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out mt-4"
+                        data-lang-key="downloadTemplate">
                         下載 CSV 模板
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- 資訊設定頁面 -->
         <div id="infoPage" class="hidden page-transition">
             <div class="max-w-2xl mx-auto">
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-6">資訊設定</h2>
+                    <h2 class="text-xl font-semibold text-gray-100 mb-6" data-lang-key="infoSettings">資訊設定</h2>
 
                     <div class="space-y-4">
                         <div>
-                            <label for="eventName" class="block text-sm font-medium text-gray-300">活動名稱
-                                <span class="text-red-500">*</span></label>
-                            <input type="text" id="eventName" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-dark-200 border-dark-300 text-gray-100 
-                                focus:border-blue-500 focus:ring-blue-500" placeholder="請輸入活動名稱">
+                            <label for="eventName" class="block text-sm font-medium text-gray-300">
+                                <span data-lang-key="eventName">活動名稱</span>
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="eventName" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-dark-200 border-dark-300 text-gray-100
+                                focus:border-blue-500 focus:ring-blue-500" placeholder="請輸入活動名稱"
+                                data-lang-placeholder-key="enterEventName">
                         </div>
 
                         <div class="border-t border-dark-300 pt-4">
-                            <h3 class="text-lg font-medium text-gray-100 mb-4">顯示設定</h3>
+                            <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="displaySettings">顯示設定</h3>
                             <div class="space-y-3">
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="showCount" class="rounded bg-dark-200 border-dark-300 text-blue-600 
+                                    <input type="checkbox" id="showCount" class="rounded bg-dark-200 border-dark-300 text-blue-600
                                         focus:ring-blue-500 focus:ring-offset-dark-100" checked>
-                                    <span class="ml-2 text-gray-300">顯示報到人數</span>
+                                    <span class="ml-2 text-gray-300" data-lang-key="showCount">顯示報到人數</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="showFullName" class="rounded bg-dark-200 border-dark-300 text-blue-600 
+                                    <input type="checkbox" id="showFullName" class="rounded bg-dark-200 border-dark-300 text-blue-600
                                         focus:ring-blue-500 focus:ring-offset-dark-100" checked>
-                                    <span class="ml-2 text-gray-300">顯示完整姓名</span>
+                                    <span class="ml-2 text-gray-300" data-lang-key="showFullName">顯示完整姓名</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" id="showFullID" class="rounded bg-dark-200 border-dark-300 text-blue-600 
+                                    <input type="checkbox" id="showFullID" class="rounded bg-dark-200 border-dark-300 text-blue-600
                                         focus:ring-blue-500 focus:ring-offset-dark-100" checked>
-                                    <span class="ml-2 text-gray-300">顯示完整 ID</span>
+                                    <span class="ml-2 text-gray-300" data-lang-key="showFullID">顯示完整 ID</span>
                                 </label>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-6 flex space-x-4">
-                        <button id="backToMain" class="flex-1 bg-dark-300 hover:bg-dark-400 text-gray-200 font-medium 
-                            py-2 px-4 rounded-lg transition duration-150 ease-in-out">
+                        <button id="backToMain" class="flex-1 bg-dark-300 hover:bg-dark-400 text-gray-200 font-medium
+                            py-2 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="back">
                             返回
                         </button>
-                        <button id="startCheckIn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium 
-                            py-2 px-4 rounded-lg transition duration-150 ease-in-out">
+                        <button id="startCheckIn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium
+                            py-2 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="startCheckIn">
                             開始簽到
                         </button>
                     </div>
                 </div>
 
-                <!-- 參與者預覽 -->
                 <div id="participantsPreview" class="hidden mt-6">
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-medium text-gray-100">參與者名單預覽</h3>
+                            <h3 class="text-lg font-medium text-gray-100" data-lang-key="participantsList">參與者名單預覽</h3>
                             <button id="toggleEncoding"
-                                class="text-sm text-blue-500 hover:text-blue-400 flex items-center group relative">
+                                class="text-sm text-blue-500 hover:text-blue-400 flex items-center group relative"
+                                data-lang-key="encodingIssue">
                                 出現亂碼？
-                                <div
-                                    class="hidden group-hover:block absolute right-0 top-6 p-2 bg-dark-200 text-gray-300 text-xs rounded-lg shadow-lg z-10">
+                                <div class="hidden group-hover:block absolute right-0 top-6 p-2 bg-dark-200 text-gray-300 text-xs rounded-lg shadow-lg z-10"
+                                    data-lang-key="switchEncoding">
                                     切換編碼
                                 </div>
                             </button>
@@ -214,75 +226,73 @@
             </div>
         </div>
 
-        <!-- 簽到頁面 -->
         <div id="checkInPage" class="hidden page-transition">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 掃描區域 -->
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">QR Code 掃描</h2>
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4" data-lang-key="qrCodeScan">QR Code 掃描</h2>
                     <div class="aspect-video bg-dark-200 rounded-lg overflow-hidden">
                         <video id="checkInVideo" class="w-full h-full object-cover"></video>
                     </div>
                     <div class="mt-4 text-center">
-                        <span id="scanStatus" class="animate-pulse-slow">準備掃描 QR Code...</span>
+                        <span id="scanStatus" class="animate-pulse-slow" data-lang-key="preparingScan">準備掃描 QR
+                            Code...</span>
                     </div>
                 </div>
 
-                <!-- 資訊顯示區域 -->
                 <div class="space-y-6">
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                        <h3 id="checkInEventName" class="text-xl font-semibold text-gray-100">活動資訊</h3>
+                        <h3 id="checkInEventName" class="text-xl font-semibold text-gray-100">
+                            活動資訊</h3>
                         <p class="text-gray-400 mt-4">
                             <span id="checkInCurrentTime"></span>
                         </p>
-                        <p class="text-gray-400 mt-4">
-                            <span id="checkInCount" class="text-gray-200 mr-1">0</span>
-                            <span id="checkInTotal" class="text-gray-400"></span>
+                        <p class="text-gray-400 mt-4" id="checkInCountContainer">
+                            <span id="checkInCount" class="text-gray-200 mr-1">0</span><span id="checkInTotal"
+                                class="text-gray-400"></span>
                         </p>
                     </div>
 
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                        <h3 class="text-lg font-medium text-gray-100 mb-4">最後簽到資訊</h3>
+                        <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="lastCheckInInfo">最後簽到資訊</h3>
                         <dl class="divide-y divide-dark-300">
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">姓名</dt>
+                                <dt class="text-gray-400" data-lang-key="name">姓名</dt>
                                 <dd id="lastCheckInName" class="font-medium text-gray-200">-</dd>
                             </div>
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">ID</dt>
+                                <dt class="text-gray-400" data-lang-key="id">ID</dt>
                                 <dd id="lastCheckInID" class="font-medium text-gray-200">-</dd>
                             </div>
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">Note</dt>
+                                <dt class="text-gray-400" data-lang-key="note">Note</dt>
                                 <dd id="lastCheckInNote" class="font-medium text-gray-200">-</dd>
                             </div>
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">簽到時間</dt>
+                                <dt class="text-gray-400" data-lang-key="checkInTime">簽到時間</dt>
                                 <dd id="lastCheckInTime" class="font-medium text-gray-200">-</dd>
                             </div>
                         </dl>
                     </div>
 
-                    <button id="endCheckIn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium 
-                        py-3 px-4 rounded-lg transition duration-150 ease-in-out">
+                    <button id="endCheckIn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium
+                        py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="endCheckIn">
                         結束簽到並進入簽退
                     </button>
                 </div>
             </div>
 
-            <!-- 參與者列表 -->
             <div class="mt-6">
                 <div class="bg-dark-50 rounded-lg border border-dark-300">
                     <div class="border-b border-dark-300">
                         <nav class="flex space-x-8 px-6" aria-label="Tabs">
                             <button
                                 class="tab-button text-blue-500 py-4 px-1 border-b-2 border-blue-500 font-medium text-sm"
-                                data-tab="allParticipants">
+                                data-tab="allParticipants" data-lang-key="allParticipants">
                                 所有參與者
                             </button>
                             <button
                                 class="tab-button text-gray-400 hover:text-gray-300 py-4 px-1 border-b-2 border-transparent font-medium text-sm"
-                                data-tab="checkedInParticipants">
+                                data-tab="checkedInParticipants" data-lang-key="checkedInParticipants">
                                 已簽到參與者
                             </button>
                         </nav>
@@ -290,91 +300,89 @@
 
                     <div class="p-6">
                         <div id="allParticipants" class="tab-content">
-                            <div id="allParticipantsList" class="divide-y divide-dark-300"></div>
+                            <div id="allParticipantsList" class="divide-y divide-dark-300">
+                            </div>
                         </div>
                         <div id="checkedInParticipants" class="tab-content hidden">
-                            <div id="checkedInParticipantsList" class="divide-y divide-dark-300"></div>
+                            <div id="checkedInParticipantsList" class="divide-y divide-dark-300">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 簽退頁面 -->
         <div id="checkOutPage" class="hidden page-transition">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 掃描區域 -->
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                    <h2 class="text-xl font-semibold text-gray-100 mb-4">QR Code 掃描</h2>
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4" data-lang-key="qrCodeScan">QR Code 掃描</h2>
                     <div class="aspect-video bg-dark-200 rounded-lg overflow-hidden">
                         <video id="checkOutVideo" class="w-full h-full object-cover"></video>
                     </div>
                     <div class="mt-4 text-center">
-                        <span id="checkOutScanStatus" class="animate-pulse-slow">準備掃描 QR
+                        <span id="checkOutScanStatus" class="animate-pulse-slow" data-lang-key="preparingScan">準備掃描 QR
                             Code...</span>
                     </div>
                 </div>
 
-                <!-- 資訊顯示區域 -->
                 <div class="space-y-6">
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
                         <h3 id="checkOutEventName" class="text-xl font-semibold text-gray-100">活動資訊</h3>
                         <p class="text-gray-400 mt-4">
                             <span id="checkOutCurrentTime"></span>
                         </p>
-                        <p class="text-gray-400 mt-4">
-                            <span id="checkOutCount" class="text-gray-200 mr-1">0</span>
-                            <span id="checkOutTotal" class="text-gray-400"></span>
+                        <p class="text-gray-400 mt-4" id="checkOutCountContainer">
+                            <span id="checkOutCount" class="text-gray-200 mr-1">0</span><span id="checkOutTotal"
+                                class="text-gray-400"></span>
                         </p>
                     </div>
 
                     <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
-                        <h3 class="text-lg font-medium text-gray-100 mb-4">最後簽退資訊</h3>
+                        <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="lastCheckOutInfo">最後簽退資訊</h3>
                         <dl class="divide-y divide-dark-300">
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">姓名</dt>
+                                <dt class="text-gray-400" data-lang-key="name">姓名</dt>
                                 <dd id="lastCheckOutName" class="font-medium text-gray-200">-</dd>
                             </div>
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">ID</dt>
+                                <dt class="text-gray-400" data-lang-key="id">ID</dt>
                                 <dd id="lastCheckOutID" class="font-medium text-gray-200">-</dd>
                             </div>
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">Note</dt>
+                                <dt class="text-gray-400" data-lang-key="note">Note</dt>
                                 <dd id="lastCheckOutNote" class="font-medium text-gray-200">-</dd>
                             </div>
                             <div class="py-3 flex justify-between">
-                                <dt class="text-gray-400">簽退時間</dt>
+                                <dt class="text-gray-400" data-lang-key="checkOutTime">簽退時間</dt>
                                 <dd id="lastCheckOutTime" class="font-medium text-gray-200">-</dd>
                             </div>
                         </dl>
                     </div>
 
-                    <button id="endCheckOut" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium 
-                        py-3 px-4 rounded-lg transition duration-150 ease-in-out">
+                    <button id="endCheckOut" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium
+                        py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="endCheckOut">
                         結束簽退並下載紀錄
                     </button>
                 </div>
             </div>
 
-            <!-- 簽退參與者列表 -->
             <div class="mt-6">
                 <div class="bg-dark-50 rounded-lg border border-dark-300">
                     <div class="border-b border-dark-300">
                         <nav class="flex space-x-8 px-6" aria-label="Tabs">
                             <button
                                 class="tab-button text-blue-500 py-4 px-1 border-b-2 border-blue-500 font-medium text-sm"
-                                data-tab="allCheckOutParticipants">
+                                data-tab="allCheckOutParticipants" data-lang-key="allParticipants">
                                 所有參與者
                             </button>
                             <button
                                 class="tab-button text-gray-400 hover:text-gray-300 py-4 px-1 border-b-2 border-transparent font-medium text-sm"
-                                data-tab="needCheckOutParticipants">
+                                data-tab="needCheckOutParticipants" data-lang-key="needCheckOut">
                                 待簽退參與者
                             </button>
                             <button
                                 class="tab-button text-gray-400 hover:text-gray-300 py-4 px-1 border-b-2 border-transparent font-medium text-sm"
-                                data-tab="checkedOutParticipants">
+                                data-tab="checkedOutParticipants" data-lang-key="checkedOutParticipants">
                                 已簽退參與者
                             </button>
                         </nav>
@@ -382,20 +390,24 @@
 
                     <div class="p-6">
                         <div id="allCheckOutParticipants" class="tab-content">
-                            <div id="allCheckOutParticipantsList" class="divide-y divide-dark-300"></div>
+                            <div id="allCheckOutParticipantsList" class="divide-y divide-dark-300">
+                            </div>
                         </div>
                         <div id="needCheckOutParticipants" class="tab-content hidden">
-                            <div id="needCheckOutParticipantsList" class="divide-y divide-dark-300"></div>
+                            <div id="needCheckOutParticipantsList" class="divide-y divide-dark-300">
+                            </div>
                         </div>
                         <div id="checkedOutParticipants" class="tab-content hidden">
-                            <div id="checkedOutParticipantsList" class="divide-y divide-dark-300"></div>
+                            <div id="checkedOutParticipantsList" class="divide-y divide-dark-300">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <p class="items-center text-slate-600 mt-6 text-center">
-            <a href="https://watsonshih.github.io/" class="hover:text-blue-600" target="_blank">
+            <a href="https://watsonshih.github.io/" class="hover:text-blue-600" target="_blank"
+                data-lang-key="copyRight">
                 © Watson
             </a>
         </p>
@@ -405,6 +417,69 @@
     <script src="js/papaparse.min.js"></script>
 
     <script>
+        let currentLang = 'zh-TW';
+        const langSwitchBtn = document.getElementById('langSwitchBtn');
+        const htmlTag = document.documentElement;
+
+        function setLanguage(lang) {
+            if (!languages[lang]) {
+                console.error(`Language ${lang} not found.`);
+                return;
+            }
+            currentLang = lang;
+            htmlTag.lang = lang;
+            htmlTag.setAttribute('data-lang', lang);
+            localStorage.setItem('quickRecordLang', lang);
+
+            langSwitchBtn.textContent = lang === 'zh-TW' ? 'EN' : '中';
+
+            document.title = lang === 'zh-TW' ? 'QuickRecord - 快速簽到退 Quick Check-in/out' : 'QuickRecord - Quick Check-in/out';
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (languages[lang] && languages[lang][key] !== undefined) {
+                    el.textContent = languages[lang][key];
+                } else {
+                    console.warn(`Missing translation key: ${key} for lang: ${lang}`);
+                }
+            });
+
+            document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-placeholder-key');
+                if (languages[lang] && languages[lang][key] !== undefined) {
+                    el.placeholder = languages[lang][key];
+                } else {
+                    console.warn(`Missing placeholder translation key: ${key} for lang: ${lang}`);
+                }
+            });
+
+            if (typeof renderParticipantsList === 'function') renderParticipantsList();
+            if (typeof renderCheckOutList === 'function') renderCheckOutList();
+            if (typeof updateCheckInDisplay === 'function') updateCheckInDisplay(lastCheckedInParticipant || { name: '-', id: '-', note: '-', checkInTime: '-' });
+            if (typeof updateCheckOutDisplay === 'function') updateCheckOutDisplay(lastCheckedOutParticipant || { name: '-', id: '-', note: '-', checkOutTime: '-' });
+            if (typeof updateTotalCountDisplay === 'function') updateTotalCountDisplay();
+            if (typeof updateScanStatusText === 'function') {
+                updateScanStatusText('preparingScan', 'checkIn');
+                updateScanStatusText('preparingScan', 'checkOut');
+            }
+            if (typeof updateDisplaySettings === 'function') updateDisplaySettings();
+
+            if (!participantsPreview.classList.contains('hidden')) {
+                renderParticipantsPreview();
+            }
+        }
+
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('quickRecordLang');
+            const initialLang = savedLang && languages[savedLang] ? savedLang : 'zh-TW';
+            setLanguage(initialLang);
+        }
+
+        langSwitchBtn.addEventListener('click', () => {
+            const newLang = currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+            setLanguage(newLang);
+        });
+
         // 全域變數
         let participants = [];
         let checkInRecords = [];
@@ -417,35 +492,56 @@
         let expectedParticipantsCount = 0;
         let currentEncoding = 'big5';
         let currentFileContent = null;
+        let lastCheckedInParticipant = null;
+        let lastCheckedOutParticipant = null;
 
         // DOM 元素參考
         const mainPage = document.getElementById('mainPage');
         const infoPage = document.getElementById('infoPage');
         const checkInPage = document.getElementById('checkInPage');
         const checkOutPage = document.getElementById('checkOutPage');
-        const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const participantsPreview = document.getElementById('participantsPreview');
 
-        // 更新時間顯示
         function updateTime() {
             const now = new Date();
+            const timeString = now.toLocaleString('en-CA', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            }).replace(',', '');
+
             if (currentTimeDisplay) {
-                currentTimeDisplay.textContent = formatDate(now);
+                currentTimeDisplay.textContent = timeString;
             }
             const checkInTime = document.getElementById('checkInCurrentTime');
             if (checkInTime) {
-                checkInTime.textContent = formatDate(now);
+                checkInTime.textContent = timeString;
             }
             const checkOutTime = document.getElementById('checkOutCurrentTime');
             if (checkOutTime) {
-                checkOutTime.textContent = formatDate(now);
+                checkOutTime.textContent = timeString;
             }
         }
 
-        // 初始化定時更新時間
+        function updateScanStatusText(key, mode, extraInfo = '') {
+            const statusEl = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
+            if (statusEl) {
+                let text = languages[currentLang][key] || key;
+                if (extraInfo) {
+                    text = `${extraInfo} ${text}`;
+                }
+                statusEl.textContent = text;
+                if (key === 'checkInSuccess' || key === 'checkOutSuccess' || key === 'alreadyCheckedIn' || key === 'alreadyCheckedOut' || key === 'noCheckInCantCheckOut' || key === 'qrScanError') {
+                    statusEl.classList.remove('animate-pulse-slow');
+                } else {
+                    statusEl.classList.add('animate-pulse-slow');
+                }
+            }
+        }
+
         updateTime();
         setInterval(updateTime, 1000);
 
-        // 頁面切換函數
         function showPage(page) {
             document.querySelectorAll('.page-transition').forEach(p => {
                 p.classList.add('hidden');
@@ -460,7 +556,6 @@
             }, 300);
         }
 
-        // 下載 CSV 模板
         document.getElementById('downloadTemplate').addEventListener('click', () => {
             const link = document.createElement('a');
             link.href = 'https://watsonshih.github.io/QuickRecord/template.csv';
@@ -470,78 +565,69 @@
             document.body.removeChild(link);
         });
 
-        // CSV 檔案處理
         const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('fileInput');
-
         dropArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropArea.classList.add('border-blue-500');
         });
-
         dropArea.addEventListener('dragleave', () => {
             dropArea.classList.remove('border-blue-500');
         });
-
         dropArea.addEventListener('drop', (e) => {
             e.preventDefault();
             dropArea.classList.remove('border-blue-500');
-
             if (e.dataTransfer.files.length) {
                 handleFile(e.dataTransfer.files[0]);
             }
         });
-
         dropArea.addEventListener('click', () => {
             fileInput.click();
         });
-
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length) {
                 handleFile(e.target.files[0]);
             }
         });
 
+
         function handleFile(file) {
             if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-                alert('請上傳 CSV 檔案！');
+                alert(languages[currentLang]['uploadCsvError']);
                 return;
             }
-
-            // 取得檔名（不含副檔名）並設定到活動名稱欄位
             const fileName = file.name.replace('.csv', '');
             document.getElementById('eventName').value = fileName;
 
             const reader = new FileReader();
             reader.onload = function (e) {
-                currentFileContent = new Uint8Array(e.target.result); // 保存檔案內容
-                parseWithCurrentEncoding(); // 使用當前編碼解析
+                currentFileContent = new Uint8Array(e.target.result);
+                parseWithCurrentEncoding();
             };
             reader.onerror = function (error) {
                 console.error('檔案讀取錯誤:', error);
-                alert('檔案讀取錯誤');
+                alert(languages[currentLang]['fileReadError']);
             };
             reader.readAsArrayBuffer(file);
         }
 
         function parseWithCurrentEncoding() {
             if (!currentFileContent) return;
-
             try {
                 const decoder = new TextDecoder(currentEncoding);
                 const content = decoder.decode(currentFileContent);
                 parseCSVContent(content);
             } catch (error) {
                 console.error(`${currentEncoding} 解碼失敗:`, error);
-                alert(`無法使用 ${currentEncoding} 解析檔案`);
+                alert(`無法使用 ${currentEncoding} 解析檔案 / Cannot parse file with ${currentEncoding}`);
             }
         }
 
         document.getElementById('toggleEncoding').addEventListener('click', function () {
             currentEncoding = currentEncoding === 'big5' ? 'utf-8' : 'big5';
-            this.textContent = `切換至 ${currentEncoding === 'big5' ? 'UTF-8' : 'Big5'}`;
             parseWithCurrentEncoding();
         });
+
 
         function parseCSVContent(content) {
             Papa.parse(content, {
@@ -549,15 +635,22 @@
                 skipEmptyLines: true,
                 complete: function (results) {
                     const headers = results.meta.fields;
-                    if (!headers.includes('Name') || !headers.includes('ID')) {
-                        alert('CSV 檔案必須包含 Name 與 ID 欄位！');
+                    const hasName = headers.some(h => h.trim().toLowerCase() === 'name');
+                    const hasId = headers.some(h => h.trim().toLowerCase() === 'id');
+
+                    if (!hasName || !hasId) {
+                        alert(languages[currentLang]['csvFieldsError']);
                         return;
                     }
 
+                    const nameHeader = headers.find(h => h.trim().toLowerCase() === 'name');
+                    const idHeader = headers.find(h => h.trim().toLowerCase() === 'id');
+                    const noteHeader = headers.find(h => h.trim().toLowerCase() === 'note');
+
                     participants = results.data.map(row => ({
-                        name: row.Name?.startsWith('name:') ? row.Name.substring(5).trim() : row.Name,
-                        id: row.ID?.startsWith('id:') ? row.ID.substring(3).trim() : row.ID,
-                        note: row.Note || '',
+                        name: row[nameHeader]?.startsWith('name:') ? row[nameHeader].substring(5).trim() : row[nameHeader],
+                        id: row[idHeader]?.startsWith('id:') ? row[idHeader].substring(3).trim() : row[idHeader],
+                        note: noteHeader ? (row[noteHeader] || '') : '',
                         inCSV: true,
                         checkInTime: '',
                         checkOutTime: ''
@@ -569,15 +662,14 @@
                 },
                 error: function (error) {
                     console.error('CSV 解析錯誤:', error);
-                    alert('解析 CSV 時發生錯誤：' + error);
+                    alert(languages[currentLang]['csvParseError'] + error);
                 }
             });
         }
 
-        // 渲染參與者預覽列表
         function renderParticipantsPreview() {
             const previewList = document.getElementById('previewParticipantsList');
-            const participantsPreview = document.getElementById('participantsPreview');
+            const participantsPreviewDiv = document.getElementById('participantsPreview');
 
             previewList.innerHTML = participants.map(participant => `
                 <div class="py-3 flex justify-between items-center">
@@ -589,24 +681,19 @@
                 </div>
             `).join('');
 
-            participantsPreview.classList.remove('hidden');
+            participantsPreviewDiv.classList.remove('hidden');
         }
 
-        // 標籤切換處理
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', () => {
                 const tabName = button.getAttribute('data-tab');
                 const tabContainer = button.closest('nav').parentElement;
-
-                // 更新標籤狀態
                 tabContainer.querySelectorAll('.tab-button').forEach(tab => {
                     tab.classList.remove('text-blue-500', 'border-blue-500');
                     tab.classList.add('text-gray-400', 'border-transparent');
                 });
                 button.classList.remove('text-gray-400', 'border-transparent');
                 button.classList.add('text-blue-500', 'border-blue-500');
-
-                // 更新內容顯示
                 const contentContainer = tabContainer.nextElementSibling;
                 contentContainer.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.add('hidden');
@@ -615,22 +702,26 @@
             });
         });
 
-        // 按鈕事件處理
-        document.getElementById('startDirectly').addEventListener('click', () => showPage(infoPage));
+        document.getElementById('startDirectly').addEventListener('click', () => {
+            participants = [];
+            expectedParticipantsCount = 0;
+            document.getElementById('participantsPreview').classList.add('hidden');
+            showPage(infoPage);
+        });
         document.getElementById('backToMain').addEventListener('click', () => {
             showPage(mainPage);
             document.getElementById('participantsPreview').classList.add('hidden');
             participants = [];
             expectedParticipantsCount = 0;
+            document.getElementById('eventName').value = '';
         });
 
         document.getElementById('startCheckIn').addEventListener('click', () => {
             const eventName = document.getElementById('eventName').value;
-            if (!eventName) {
-                alert('請輸入活動名稱！');
+            if (!eventName.trim()) {
+                alert(languages[currentLang]['enterEventName']);
                 return;
             }
-
             updateDisplaySettings();
             initializeCheckInPage(eventName);
             showPage(checkInPage);
@@ -638,7 +729,7 @@
         });
 
         document.getElementById('endCheckIn').addEventListener('click', () => {
-            if (confirm('確定要結束簽到並進入簽退階段嗎？')) {
+            if (confirm(languages[currentLang]['confirmEndCheckIn'])) {
                 stopCheckInCamera();
                 initializeCheckOutPage();
                 showPage(checkOutPage);
@@ -647,7 +738,7 @@
         });
 
         document.getElementById('endCheckOut').addEventListener('click', () => {
-            if (confirm('確定要結束簽退並下載紀錄嗎？')) {
+            if (confirm(languages[currentLang]['confirmEndCheckOut'])) {
                 stopCheckOutCamera();
                 downloadCSV();
                 showPage(mainPage);
@@ -655,34 +746,30 @@
             }
         });
 
-        // 更新顯示設定
         function updateDisplaySettings() {
             const showCount = document.getElementById('showCount').checked;
+            const checkInCountContainer = document.getElementById('checkInCountContainer');
+            const checkOutCountContainer = document.getElementById('checkOutCountContainer');
 
-            // 處理簽到/簽退頁面中的報到人數顯示
-            const checkInCountElement = document.getElementById('checkInCount');
-            const checkInTotalElement = document.getElementById('checkInTotal');
-            const checkOutCountElement = document.getElementById('checkOutCount');
-            const checkOutTotalElement = document.getElementById('checkOutTotal');
-
-            if (checkInCountElement && checkInTotalElement) {
-                const parentElement = checkInCountElement.parentElement;
-                parentElement.style.display = showCount ? 'flex' : 'none';
+            if (checkInCountContainer) {
+                checkInCountContainer.style.display = showCount ? 'block' : 'none';
             }
-
-            if (checkOutCountElement && checkOutTotalElement) {
-                const parentElement = checkOutCountElement.parentElement;
-                parentElement.style.display = showCount ? 'flex' : 'none';
+            if (checkOutCountContainer) {
+                checkOutCountContainer.style.display = showCount ? 'block' : 'none';
             }
+            renderParticipantsList();
+            renderCheckOutList();
+            updateCheckInDisplay(lastCheckedInParticipant || { name: '-', id: '-', note: '-', checkInTime: '-' });
+            updateCheckOutDisplay(lastCheckedOutParticipant || { name: '-', id: '-', note: '-', checkOutTime: '-' });
         }
 
-        // 相機控制函數
+
         function startCheckInCamera() {
             const video = document.getElementById('checkInVideo');
-            const scanStatus = document.getElementById('scanStatus');
+            updateScanStatusText('cameraInitializing', 'checkIn');
 
             if (!navigator.mediaDevices?.getUserMedia) {
-                scanStatus.textContent = '您的瀏覽器不支援攝影機功能';
+                updateScanStatusText('browserNotSupported', 'checkIn');
                 return;
             }
 
@@ -694,29 +781,32 @@
                 }
             })
                 .then(stream => {
-                    console.log("Camera started successfully");
+                    console.log("Check-in camera started");
                     checkInVideoStream = stream;
                     video.srcObject = stream;
                     video.play()
                         .then(() => {
-                            console.log("Video playback started");
-                            scanStatus.textContent = '攝影機已啟動，請對準 QR Code';
+                            console.log("Check-in video playing");
+                            updateScanStatusText('cameraReady', 'checkIn');
                             startQRScanning('checkIn');
                         })
                         .catch(error => {
-                            console.error("Video playback error:", error);
-                            scanStatus.textContent = '視訊播放失敗';
+                            console.error("Check-in video playback error:", error);
+                            updateScanStatusText('videoPlaybackError', 'checkIn');
                         });
                 })
                 .catch(error => {
-                    console.error("Camera error:", error);
-                    scanStatus.textContent = '無法啟動攝影機：' + error.message;
+                    console.error("Check-in camera error:", error);
+                    updateScanStatusText('cameraError', 'checkIn', error.message);
                 });
         }
 
         function startCheckOutCamera() {
+            const video = document.getElementById('checkOutVideo');
+            updateScanStatusText('cameraInitializing', 'checkOut');
+
             if (!navigator.mediaDevices?.getUserMedia) {
-                alert('您的瀏覽器不支援攝影機功能');
+                updateScanStatusText('browserNotSupported', 'checkOut');
                 return;
             }
 
@@ -728,296 +818,308 @@
                 }
             })
                 .then(stream => {
-                    const video = document.getElementById('checkOutVideo');
+                    console.log("Check-out camera started");
                     checkOutVideoStream = stream;
                     video.srcObject = stream;
-                    video.play();
-                    startQRScanning('checkOut');
+                    video.play()
+                        .then(() => {
+                            console.log("Check-out video playing");
+                            updateScanStatusText('cameraReady', 'checkOut');
+                            startQRScanning('checkOut');
+                        })
+                        .catch(error => {
+                            console.error("Check-out video playback error:", error);
+                            updateScanStatusText('videoPlaybackError', 'checkOut');
+                        });
                 })
                 .catch(error => {
-                    console.error('Camera error:', error);
-                    alert('無法啟動攝影機：' + error.message);
+                    console.error('Check-out camera error:', error);
+                    updateScanStatusText('cameraError', 'checkOut', error.message);
                 });
         }
 
         function stopCheckInCamera() {
             if (checkInVideoStream) {
                 checkInVideoStream.getTracks().forEach(track => track.stop());
+                checkInVideoStream = null;
             }
-            clearInterval(checkInInterval);
         }
 
         function stopCheckOutCamera() {
             if (checkOutVideoStream) {
                 checkOutVideoStream.getTracks().forEach(track => track.stop());
+                checkOutVideoStream = null;
             }
-            clearInterval(checkOutInterval);
         }
 
-        // QR Code 掃描處理
         function startQRScanning(mode) {
             const video = document.getElementById(`${mode}Video`);
-            const scanStatus = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d', { willReadFrequently: true });
+            let animationFrameId = null;
 
-            // 更新掃描狀態
-            scanStatus.textContent = '正在啟動攝影機...';
+            updateScanStatusText('scanQrCode', mode);
 
             function scan() {
-                if (video.readyState === video.HAVE_ENOUGH_DATA && isScanningEnabled) {
-                    canvas.height = video.videoHeight;
-                    canvas.width = video.videoWidth;
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const currentStream = (mode === 'checkIn') ? checkInVideoStream : checkOutVideoStream;
+                if (!currentStream || !currentStream.active) {
+                    console.log(`Scan loop stopped for ${mode} as stream is inactive.`);
+                    cancelAnimationFrame(animationFrameId);
+                    return;
+                }
 
+                if (video.readyState === video.HAVE_ENOUGH_DATA && isScanningEnabled) {
+                    if (canvas.width !== video.videoWidth) canvas.width = video.videoWidth;
+                    if (canvas.height !== video.videoHeight) canvas.height = video.videoHeight;
+
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
                     try {
                         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
                         const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                            inversionAttempts: "attemptBoth"
+                            inversionAttempts: "dontInvert"
                         });
 
                         if (code) {
-                            console.log("Found QR code:", code.data);
+                            console.log(`Found QR code (${mode}):`, code.data);
                             handleQRCode(code.data, mode);
                         }
                     } catch (error) {
-                        console.error("QR scanning error:", error);
+                        console.error(`QR scanning error (${mode}):`, error);
                     }
                 }
-
-                requestAnimationFrame(scan);
+                if (currentStream && currentStream.active) {
+                    animationFrameId = requestAnimationFrame(scan);
+                }
             }
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(scan);
 
-            // 啟動掃描
-            requestAnimationFrame(scan);
-            scanStatus.textContent = '請掃描 QR Code...';
+            if (mode === 'checkIn') {
+                stopCheckInCamera = (originalStop => () => {
+                    originalStop();
+                    cancelAnimationFrame(animationFrameId);
+                })(stopCheckInCamera);
+            } else {
+                stopCheckOutCamera = (originalStop => () => {
+                    originalStop();
+                    cancelAnimationFrame(animationFrameId);
+                })(stopCheckOutCamera);
+            }
         }
 
+
         function handleQRCode(data, mode) {
-            console.log("Processing QR code data:", data);
+            console.log(`Processing QR code (${mode}):`, data);
+            if (!isScanningEnabled) return;
+
+            isScanningEnabled = false;
+            console.log("Scanning disabled.");
+
             try {
                 let name, id;
-
-                // 解碼 UTF-8 編碼的資料
                 try {
-                    // 嘗試解碼 URL 編碼的資料
                     data = decodeURIComponent(data);
                     console.log("Decoded data:", data);
                 } catch (decodeError) {
-                    console.warn("Failed to decode URL encoded data:", decodeError);
-                    // 如果解碼失敗，使用原始資料繼續
+                    console.warn("Failed to decode URL encoded data, using raw:", data);
                 }
 
-                // 新的解析邏輯，處理多種可能的格式
-                if (data.includes('name:') && data.includes('id:')) {
+                if (data.toLowerCase().includes('name:') && data.toLowerCase().includes('id:')) {
                     const parts = data.split(',');
-                    for (const part of parts) {
-                        const [key, value] = part.split(':').map(item => item.trim());
-                        if (key.toLowerCase() === 'name') name = value;
-                        if (key.toLowerCase() === 'id') id = value;
-                    }
-                } else if (data.includes('name=') && data.includes('id=')) {
-                    const params = new URLSearchParams(data);
-                    name = params.get('name');
-                    id = params.get('id');
+                    parts.forEach(part => {
+                        const separatorIndex = part.indexOf(':');
+                        if (separatorIndex > 0) {
+                            const key = part.substring(0, separatorIndex).trim().toLowerCase();
+                            const value = part.substring(separatorIndex + 1).trim();
+                            if (key === 'name') name = value;
+                            if (key === 'id') id = value;
+                        }
+                    });
                 } else {
-                    try {
-                        const jsonData = JSON.parse(data);
-                        name = jsonData.name;
-                        id = jsonData.id;
-                    } catch (e) {
-                        console.log("Not JSON format, trying direct split");
-                        const parts = data.split(',');
-                        name = parts[0];
-                        id = parts[1];
-                    }
+                    console.log("QR data not in 'name:...,id:...' format. Cannot parse reliably.");
+                    throw new Error('無法從 QR Code 中解析出 Name 和 ID / Cannot parse Name and ID from QR Code');
                 }
 
                 console.log("Parsed name:", name, "id:", id);
 
                 if (name && id) {
-                    // 暫時禁用掃描，避免重複讀取
-                    isScanningEnabled = false;
-
                     if (mode === 'checkIn') {
                         processCheckIn(name, id);
                     } else {
                         processCheckOut(name, id);
                     }
-
-                    // 2 秒後重新啟用掃描
-                    setTimeout(() => {
-                        isScanningEnabled = true;
-                    }, 2000);
                 } else {
-                    throw new Error('無法從 QR Code 中解析出 Name 和 ID');
+                    throw new Error('無法從 QR Code 中解析出 Name 和 ID / Cannot parse Name and ID from QR Code');
                 }
             } catch (error) {
-                console.error("QR Code 處理錯誤:", error);
-                const statusElement = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
-                statusElement.textContent = '掃描錯誤，請重試';
+                console.error(`QR Code processing error (${mode}):`, error);
+                updateScanStatusText('qrScanError', mode);
+            } finally {
+                setTimeout(() => {
+                    isScanningEnabled = true;
+                    console.log("Scanning re-enabled.");
+                    const statusEl = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
+                    if (statusEl && !statusEl.textContent.includes(languages[currentLang]['checkInSuccess']) && !statusEl.textContent.includes(languages[currentLang]['checkOutSuccess']) && !statusEl.textContent.includes(languages[currentLang]['qrScanError'])) {
+                        updateScanStatusText('scanQrCode', mode);
+                    }
+                }, 2000);
             }
         }
+
 
         function processCheckIn(name, id) {
             const now = new Date();
             const checkInTime = formatDate(now);
 
-            // 檢查是否已經簽到
             if (checkInRecords.some(r => r.id === id)) {
-                document.getElementById('scanStatus').textContent = `${name} 已經簽到過了`;
+                updateScanStatusText('alreadyCheckedIn', 'checkIn', name);
                 return;
             }
 
-            // 尋找或創建參與者記錄
             let participant = participants.find(p => p.id === id);
             if (!participant) {
-                participant = {
-                    name: name,
-                    id: id,
-                    note: '',           // 初始化 note 欄位
-                    inCSV: false,       // 標記為非 CSV 來源
-                    checkInTime: '',
-                    checkOutTime: ''
-                };
+                participant = { name, id, note: '', inCSV: false, checkInTime: '', checkOutTime: '' };
                 participants.push(participant);
-                expectedParticipantsCount = participants.length;
+                if (expectedParticipantsCount === 0) {
+                    expectedParticipantsCount = participants.length;
+                } else {
+                    console.log("Participant not in original list added:", name, id);
+                }
             }
 
-            // 更新簽到記錄
             participant.checkInTime = checkInTime;
-            checkInRecords.push({
-                name: name,
-                id: id,
-                note: participant.note,
-                time: checkInTime
-            });
+            checkInRecords.push({ name, id, note: participant.note, time: checkInTime });
+            lastCheckedInParticipant = { ...participant };
 
-            // 更新顯示
             updateCheckInDisplay(participant);
             renderParticipantsList();
-            document.getElementById('scanStatus').textContent = `${name} 簽到成功！`;
+            updateTotalCountDisplay();
+            updateScanStatusText('checkInSuccess', 'checkIn', name);
         }
 
         function processCheckOut(name, id) {
             const now = new Date();
             const checkOutTime = formatDate(now);
 
-            // 防止重複掃描
-            isScanningEnabled = false;
-            setTimeout(() => { isScanningEnabled = true; }, 2000);
-
-            // 檢查是否已簽到
             if (!checkInRecords.some(r => r.id === id)) {
-                document.getElementById('checkOutScanStatus').textContent = `${name} 尚未簽到，無法簽退`;
+                updateScanStatusText('noCheckInCantCheckOut', 'checkOut', name);
                 return;
             }
-
-            // 檢查是否已經簽退
             if (checkOutRecords.some(r => r.id === id)) {
-                document.getElementById('checkOutScanStatus').textContent = `${name} 已經簽退過了`;
+                updateScanStatusText('alreadyCheckedOut', 'checkOut', name);
                 return;
             }
 
-            // 更新參與者記錄
             const participant = participants.find(p => p.id === id);
             if (participant) {
                 participant.checkOutTime = checkOutTime;
+            } else {
+                console.warn("Checked-out participant not found in main list:", name, id);
             }
 
-            checkOutRecords.push({
-                name: name,
-                id: id,
-                note: participant?.note || '',
-                time: checkOutTime
-            });
+            checkOutRecords.push({ name, id, note: participant?.note || '', time: checkOutTime });
+            lastCheckedOutParticipant = participant ? { ...participant } : { name, id, note: '', checkOutTime };
 
-            // 更新顯示
-            updateCheckOutDisplay(participant || { name, id, note: '' });
+
+            updateCheckOutDisplay(participant || { name, id, note: '', checkOutTime });
             renderCheckOutList();
-            document.getElementById('checkOutScanStatus').textContent = `${name} 簽退成功！`;
+            updateTotalCountDisplay();
+            updateScanStatusText('checkOutSuccess', 'checkOut', name);
         }
 
         function updateCheckInDisplay(participant) {
+            if (!participant) return;
             document.getElementById('lastCheckInName').textContent = getDisplayName(participant.name);
             document.getElementById('lastCheckInID').textContent = getDisplayID(participant.id);
             document.getElementById('lastCheckInNote').textContent = participant.note || '-';
-            document.getElementById('lastCheckInTime').textContent = participant.checkInTime;
+            document.getElementById('lastCheckInTime').textContent = participant.checkInTime || '-';
             document.getElementById('checkInCount').textContent = checkInRecords.length;
-            updateTotalCountDisplay();
         }
 
         function updateCheckOutDisplay(participant) {
+            if (!participant) return;
             document.getElementById('lastCheckOutName').textContent = getDisplayName(participant.name);
             document.getElementById('lastCheckOutID').textContent = getDisplayID(participant.id);
             document.getElementById('lastCheckOutNote').textContent = participant.note || '-';
-            document.getElementById('lastCheckOutTime').textContent = participant.checkOutTime;
+            document.getElementById('lastCheckOutTime').textContent = participant.checkOutTime || '-';
             document.getElementById('checkOutCount').textContent = checkOutRecords.length;
-            updateTotalCountDisplay();
         }
 
         function getDisplayName(name) {
+            if (!name) return '-';
             return document.getElementById('showFullName').checked ?
                 name :
-                name.length <= 2 ? name : `${name.charAt(0)}***${name.charAt(name.length - 1)}`;
+                name.length <= 2 ? name : `${name.charAt(0)}*${name.charAt(name.length - 1)}`;
         }
-
         function getDisplayID(id) {
+            if (!id) return '-';
             return document.getElementById('showFullID').checked ?
                 id :
-                id.length <= 2 ? id : `${id.charAt(0)}***${id.charAt(id.length - 1)}`;
+                id.length <= 4 ? id : `${id.substring(0, 2)}***${id.substring(id.length - 2)}`;
         }
 
         function formatDate(date) {
-            return date.toLocaleString('zh-TW', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            }).replace(/\//g, '-');
+            return date.toLocaleString('en-CA', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            }).replace(',', ''); // YYYY-MM-DD HH:MM:SS
         }
 
         function downloadCSV() {
-            const records = participants.map(p => ({
-                Name: p.name,
-                ID: p.id,
-                Note: p.note || '',
-                InCSV: p.inCSV ? 'Yes' : 'No',
-                CheckInTime: p.checkInTime || '',
-                CheckOutTime: p.checkOutTime || ''
-            }));
+            const finalRecordsMap = new Map();
+            participants.forEach(p => {
+                finalRecordsMap.set(p.id, {
+                    Name: p.name,
+                    ID: p.id,
+                    Note: p.note || '',
+                    InCSV: p.inCSV ? 'Yes' : 'No',
+                    CheckInTime: p.checkInTime || '',
+                    CheckOutTime: p.checkOutTime || ''
+                });
+            });
 
             checkInRecords.forEach(record => {
-                if (!participants.some(p => p.id === record.id)) {
-                    records.push({
+                if (!finalRecordsMap.has(record.id)) {
+                    const checkOutRecord = checkOutRecords.find(co => co.id === record.id);
+                    finalRecordsMap.set(record.id, {
                         Name: record.name,
                         ID: record.id,
                         Note: record.note || '',
                         InCSV: 'No',
                         CheckInTime: record.time || '',
-                        CheckOutTime: ''
+                        CheckOutTime: checkOutRecord ? checkOutRecord.time : ''
                     });
+                } else {
+                    const existing = finalRecordsMap.get(record.id);
+                    if (!existing.CheckInTime && record.time) {
+                        existing.CheckInTime = record.time;
+                    }
                 }
             });
 
-            // 使用 Big5 編碼產生 CSV
-            const csv = Papa.unparse(records, {
-                header: true,
-                newline: '\n'
+            checkOutRecords.forEach(record => {
+                if (finalRecordsMap.has(record.id)) {
+                    const existing = finalRecordsMap.get(record.id);
+                    if (!existing.CheckOutTime && record.time) {
+                        existing.CheckOutTime = record.time;
+                    }
+                }
             });
 
-            // 使用 Big5 編碼確保 Excel 可以正確讀取
-            const encoder = new TextEncoder();
-            const blob = new Blob([encoder.encode(csv)], {
-                type: 'text/csv;charset=big5'
+            const recordsArray = Array.from(finalRecordsMap.values());
+            const csv = Papa.unparse(recordsArray, {
+                header: true,
+                newline: '\r\n'
             });
+
+            const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+            const blob = new Blob([bom, csv], { type: 'text/csv;charset=utf-8;' });
 
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            const eventName = document.getElementById('checkOutEventName').textContent;
+
+            const eventNameInput = document.getElementById('eventName');
+            const eventName = eventNameInput?.value.trim() || document.getElementById('checkOutEventName')?.textContent || 'Event';
             const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
             const filename = `${eventName}_Attendance_${dateStr}.csv`;
 
@@ -1034,169 +1136,170 @@
             checkInRecords = [];
             checkOutRecords = [];
             expectedParticipantsCount = 0;
+            lastCheckedInParticipant = null;
+            lastCheckedOutParticipant = null;
+            currentFileContent = null;
+            currentEncoding = 'big5';
             document.getElementById('eventName').value = '';
             document.getElementById('participantsPreview').classList.add('hidden');
+            updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
+            updateCheckOutDisplay({ name: '-', id: '-', note: '-', checkOutTime: '-' });
+            renderParticipantsList();
+            renderCheckOutList();
+            updateTotalCountDisplay();
         }
 
-        // 參與者列表渲染函數
         function renderParticipantsList() {
             const allList = document.getElementById('allParticipantsList');
             const checkedInList = document.getElementById('checkedInParticipantsList');
 
-            // 渲染所有參與者列表
-            if (allList) {
-                allList.innerHTML = participants.map(participant => `
-            <div class="py-3 flex justify-between items-center">
-                <div>
-                    <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
-                    <span class="text-gray-400">(${getDisplayID(participant.id)})</span>
-                    ${participant.note ? `<span class="text-gray-500 ml-2">${participant.note}</span>` : ''}
-                </div>
-                <div class="flex items-center">
-                    <span class="px-2 py-1 text-sm rounded ${participant.checkInTime ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}">
-                        ${participant.checkInTime ? '已簽到' : '未簽到'}
-                    </span>
-                </div>
-            </div>
-        `).join('');
-            }
+            if (!allList || !checkedInList) return;
 
-            // 渲染已簽到參與者列表
-            if (checkedInList) {
-                const checkedInParticipants = participants.filter(p => p.checkInTime);
-                if (checkedInParticipants.length === 0) {
-                    checkedInList.innerHTML = '<div class="py-3 text-gray-400">尚無參與者簽到</div>';
-                } else {
-                    checkedInList.innerHTML = checkedInParticipants.map(participant => `
+            const sortedParticipants = [...participants].sort((a, b) => a.name.localeCompare(b.name, currentLang === 'zh-TW' ? 'zh-Hant' : 'en'));
+
+            allList.innerHTML = sortedParticipants.map(participant => `
                 <div class="py-3 flex justify-between items-center">
                     <div>
                         <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
-                        <span class="text-gray-400">(${getDisplayID(participant.id)})</span>
-                        ${participant.note ? `<span class="text-gray-500 ml-2">${participant.note}</span>` : ''}
+                        <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                        ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
                     </div>
-                    <div class="text-sm text-gray-400">
-                        ${participant.checkInTime}
+                    <div class="flex items-center flex-shrink-0 ml-2">
+                        <span class="px-2 py-1 text-xs rounded ${participant.checkInTime ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}">
+                            ${participant.checkInTime ? languages[currentLang]['statusCheckedIn'] : languages[currentLang]['statusNotCheckedIn']}
+                        </span>
                     </div>
                 </div>
             `).join('');
-                }
+
+            const checkedInParticipants = sortedParticipants.filter(p => p.checkInTime);
+            if (checkedInParticipants.length === 0) {
+                checkedInList.innerHTML = `<div class="py-3 text-gray-400 text-center" data-lang-key="noParticipants">${languages[currentLang]['noParticipants']}</div>`;
+            } else {
+                checkedInList.innerHTML = checkedInParticipants.map(participant => `
+                    <div class="py-3 flex justify-between items-center">
+                        <div>
+                           <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                           <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                           ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                        </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                            ${participant.checkInTime}
+                        </div>
+                    </div>
+                `).join('');
             }
         }
+
 
         function renderCheckOutList() {
             const allList = document.getElementById('allCheckOutParticipantsList');
             const needCheckOutList = document.getElementById('needCheckOutParticipantsList');
             const checkedOutList = document.getElementById('checkedOutParticipantsList');
 
-            // 渲染所有參與者列表
-            if (allList) {
-                allList.innerHTML = participants.map(participant => `
+            if (!allList || !needCheckOutList || !checkedOutList) return; // Ensure elements exist
+
+            const sortedParticipants = [...participants].sort((a, b) => a.name.localeCompare(b.name, currentLang === 'zh-TW' ? 'zh-Hant' : 'en'));
+
+            allList.innerHTML = sortedParticipants.map(participant => `
+                <div class="py-3 flex justify-between items-center">
+                    <div>
+                         <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                         <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                         ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                    </div>
+                    <div class="flex items-center flex-shrink-0 ml-2">
+                        <span class="px-2 py-1 text-xs rounded ${getStatusClass(participant)}">
+                            ${getStatusText(participant)}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+
+            const needCheckOut = sortedParticipants.filter(p => p.checkInTime && !p.checkOutTime);
+            if (needCheckOut.length === 0) {
+                needCheckOutList.innerHTML = `<div class="py-3 text-gray-400 text-center" data-lang-key="noNeedCheckOut">${languages[currentLang]['noNeedCheckOut']}</div>`;
+            } else {
+                needCheckOutList.innerHTML = needCheckOut.map(participant => `
                     <div class="py-3 flex justify-between items-center">
-                        <div>
-                            <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
-                            <span class="text-gray-400">(${getDisplayID(participant.id)})</span>
-                            ${participant.note ? `<span class="text-gray-500 ml-2">${participant.note}</span>` : ''}
+                         <div>
+                             <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                             <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                             ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
                         </div>
-                        <div class="flex items-center">
-                            <span class="px-2 py-1 text-sm rounded ${getStatusClass(participant)}">
-                                ${getStatusText(participant)}
-                            </span>
+                        <div class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                             ${languages[currentLang]['checkInTime']}: ${participant.checkInTime}
                         </div>
                     </div>
                 `).join('');
             }
 
-            // 渲染待簽退列表
-            if (needCheckOutList) {
-                const needCheckOut = participants.filter(p => p.checkInTime && !p.checkOutTime);
-                if (needCheckOut.length === 0) {
-                    needCheckOutList.innerHTML = '<div class="py-3 text-gray-400">無需簽退的參與者</div>';
-                } else {
-                    needCheckOutList.innerHTML = needCheckOut.map(participant => `
-                        <div class="py-3 flex justify-between items-center">
-                            <div>
-                                <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
-                                <span class="text-gray-400">(${getDisplayID(participant.id)})</span>
-                                ${participant.note ? `<span class="text-gray-500 ml-2">${participant.note}</span>` : ''}
-                            </div>
-                            <div class="text-sm text-gray-400">
-                                簽到時間: ${participant.checkInTime}
-                            </div>
+            const checkedOut = sortedParticipants.filter(p => p.checkOutTime);
+            if (checkedOut.length === 0) {
+                checkedOutList.innerHTML = `<div class="py-3 text-gray-400 text-center" data-lang-key="noCheckOut">${languages[currentLang]['noCheckOut']}</div>`;
+            } else {
+                checkedOutList.innerHTML = checkedOut.map(participant => `
+                    <div class="py-3 flex justify-between items-center">
+                         <div>
+                             <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                              <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                             ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
                         </div>
-                    `).join('');
-                }
-            }
-
-            // 渲染已簽退列表
-            if (checkedOutList) {
-                const checkedOut = participants.filter(p => p.checkOutTime);
-                if (checkedOut.length === 0) {
-                    checkedOutList.innerHTML = '<div class="py-3 text-gray-400">尚無參與者簽退</div>';
-                } else {
-                    checkedOutList.innerHTML = checkedOut.map(participant => `
-                        <div class="py-3 flex justify-between items-center">
-                            <div>
-                                <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
-                                <span class="text-gray-400">(${getDisplayID(participant.id)})</span>
-                                ${participant.note ? `<span class="text-gray-500 ml-2">${participant.note}</span>` : ''}
-                            </div>
-                            <div class="text-sm text-gray-400">
-                                簽退時間: ${participant.checkOutTime}
-                            </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                            ${languages[currentLang]['checkOutTime']}: ${participant.checkOutTime}
                         </div>
-                    `).join('');
-                }
+                    </div>
+                `).join('');
             }
         }
 
-        // 取得狀態樣式類別
         function getStatusClass(participant) {
             if (!participant.checkInTime) return 'bg-gray-500/20 text-gray-400';
             if (participant.checkOutTime) return 'bg-green-500/20 text-green-400';
-            return 'bg-blue-500/20 text-blue-400';
+            return 'bg-yellow-500/20 text-yellow-400';
         }
 
-        // 取得狀態文字
         function getStatusText(participant) {
-            if (!participant.checkInTime) return '未簽到';
-            if (participant.checkOutTime) return '已簽退';
-            return '待簽退';
+            if (!participant.checkInTime) return languages[currentLang]['statusNotCheckedIn'];
+            if (participant.checkOutTime) return languages[currentLang]['statusCheckedOut'];
+            return languages[currentLang]['statusNeedCheckOut'];
         }
 
-        // 初始化頁面設定
         function initializeCheckInPage(eventName) {
-            const checkInEventName = document.getElementById('checkInEventName');
-            const checkOutEventName = document.getElementById('checkOutEventName');
-
-            if (checkInEventName) {
-                checkInEventName.textContent = eventName;
-            }
-            if (checkOutEventName) {
-                checkOutEventName.textContent = eventName;
-            }
+            document.getElementById('checkInEventName').textContent = eventName;
+            document.getElementById('checkOutEventName').textContent = eventName;
 
             updateTotalCountDisplay();
             renderParticipantsList();
             updateDisplaySettings();
+            updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
         }
 
         function initializeCheckOutPage() {
-            renderCheckOutList();
             updateTotalCountDisplay();
+            renderCheckOutList();
             updateDisplaySettings();
+            updateCheckOutDisplay({ name: '-', id: '-', note: '-', checkOutTime: '-' });
         }
 
         function updateTotalCountDisplay() {
-            const totalCount = expectedParticipantsCount > 0 ? expectedParticipantsCount : participants.length;
-            document.getElementById('checkInTotal').textContent = ` / ${totalCount}`;
-            document.getElementById('checkOutTotal').textContent = ` / ${checkInRecords.length}`;
+            const checkInTotalToShow = expectedParticipantsCount > 0 ? expectedParticipantsCount : participants.length;
+            document.getElementById('checkInTotal').textContent = `/ ${checkInTotalToShow}`;
+            document.getElementById('checkOutTotal').textContent = `/ ${checkInRecords.length}`;
+            document.getElementById('checkInCount').textContent = checkInRecords.length;
+            document.getElementById('checkOutCount').textContent = checkOutRecords.length;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof jsQR !== 'function') {
                 console.error('jsQR library not loaded properly!');
-                alert('QR Code 掃描庫未正確載入，請檢查網路連接並重新整理頁面');
+                alert('QR Code scanning library failed to load. Please check your internet connection and refresh.'); // More user-friendly message
             }
+            if (typeof Papa !== 'object' || typeof Papa.parse !== 'function') {
+                console.error('PapaParse library not loaded properly!');
+                alert('CSV parsing library failed to load. Please check your internet connection and refresh.');
+            }
+            initializeLanguage();
         });
     </script>
 </body>
