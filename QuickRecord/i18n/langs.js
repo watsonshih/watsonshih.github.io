@@ -83,7 +83,10 @@ const languages = {
         switchToZh: '中',
         fieldRequired: '此欄位必填',
         nameRequired: '請輸入姓名',
-        idRequired: '請輸入 ID'
+        idRequired: '請輸入 ID',
+        confirmResumeData: '偵測到已有簽到或簽退資料，是否要繼續使用這些資料？',
+        backToSettings: '返回設定頁',
+        backToCheckIn: '返回簽到頁',
     },
     'en': {
         newCheckIn: 'Start New Check-in',
@@ -169,6 +172,9 @@ const languages = {
         switchToZh: '中',
         fieldRequired: 'This field is required',
         nameRequired: 'Please enter your name',
-        idRequired: 'Please enter your ID'
+        idRequired: 'Please enter your ID',
+        confirmResumeData: 'Previous check-in/out data found. Do you want to resume from it?',
+        backToSettings: 'Back to Settings',
+        backToCheckIn: 'Back to Check-in Page',
     }
 };

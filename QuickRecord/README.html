@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark" data-lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickRecord Documentation - 使用說明文件</title>
+    <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #1E1E1E;
+            --bg-secondary: #171717;
+            --bg-element: #2D2D2D;
+            --text-color: #E5E5E5;
+            --text-secondary: #A3A3A3;
+            --accent-color: #3B82F6;
+            --border-color: #404040;
+            --code-bg: #2D2D2D;
+        }
+
+        .light-mode {
+            --bg-color: #F5F5F5;
+            --bg-secondary: #FFFFFF;
+            --bg-element: #FFFFFF;
+            --text-color: #333333;
+            --text-secondary: #555555;
+            --accent-color: #3B82F6;
+            --border-color: #E5E5E5;
+            --code-bg: #F0F0F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+        }
+
+        html,
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        button {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--border-color);
+        }
+
+        .lang-btn {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .lang-btn:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .theme-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        main {
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .layout {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav.sidebar {
+            position: sticky;
+            top: 5rem;
+            height: calc(100vh - 5rem);
+            overflow-y: auto;
+            min-width: 250px;
+            padding-right: 1rem;
+            display: flex;
+            flex-direction: column;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+
+        nav.sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        nav.sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        nav.sidebar::-webkit-scrollbar-thumb {
+            background-color: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .nav-section {
+            margin-bottom: 1.75rem;
+        }
+
+        .nav-section-title {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 0.5rem;
+            border-radius: 4px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-links a.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .content {
+            flex: 1;
+            max-width: 100%;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding-top: 1rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.2rem;
+            margin: 1.25rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        ul,
+        ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            font-family: monospace;
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .image-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .caption {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .note {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #EF4444;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .tip {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10B981;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        th,
+        td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .steps {
+            counter-reset: step;
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .steps li {
+            list-style: none;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .steps li::before {
+            content: counter(step);
+            counter-increment: step;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .screenshot {
+            max-width: 100%;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Language specific display */
+        [lang="zh-TW"] .en-content {
+            display: none;
+        }
+
+        [lang="en"] .zh-content {
+            display: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            nav.sidebar {
+                position: relative;
+                top: 0;
+                height: auto;
+                width: 100%;
+                padding-right: 0;
+                margin-bottom: 2rem;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+        }
+
+        /* Table of contents on mobile */
+        .mobile-nav-toggle {
+            display: none;
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            background-color: var(--bg-element);
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav-toggle {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .nav-section {
+                display: none;
+            }
+
+            .nav-section.active {
+                display: block;
+            }
+        }
+
+        /* Dark mode toggle animation */
+        .sun-moon {
+            position: relative;
+            width: 20px;
+            height: 20px;
+        }
+
+        .sun,
+        .moon {
+            position: absolute;
+            transition: 0.3s;
+        }
+
+        .light-mode .sun {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .light-mode .moon {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .dark-mode .sun {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .dark-mode .moon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Print styles */
+        @media print {
+
+            header,
+            nav.sidebar,
+            footer,
+            .mobile-nav-toggle {
+                display: none;
+            }
+
+            body,
+            html {
+                background-color: white;
+                color: black;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .layout {
+                display: block;
+            }
+
+            .content {
+                max-width: 100%;
+            }
+
+            a {
+                color: black;
+                text-decoration: underline;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4 {
+                page-break-after: avoid;
+            }
+
+            img {
+                max-width: 500px;
+            }
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="https://watsonshih.github.io/QuickRecord/pic/icon.png" alt="QuickRecord Logo" width="24"
+                        height="24">
+                    QuickRecord Docs
+                </div>
+                <div class="nav-controls">
+                    <button id="theme-toggle" class="theme-btn">
+                        <span class="sun-moon">
+                            <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <span class="theme-text"></span>
+                    </button>
+                    <button id="lang-toggle" class="lang-btn">EN</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1 class="zh-content">QuickRecord 使用說明文件</h1>
+                <h1 class="en-content">QuickRecord Documentation</h1>
+                <p class="subtitle zh-content">活動簽到退系統完整指南 — 適用於活動籌辦者</p>
+                <p class="subtitle en-content">Complete Guide to Event Check-in/out System — For Event Organizers</p>
+            </section>
+
+            <button class="mobile-nav-toggle">
+                <span class="zh-content">目錄</span>
+                <span class="en-content">Table of Contents</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+
+            <div class="layout">
+                <nav class="sidebar">
+                    <div class="nav-section">
+                        <div class="nav-section-title zh-content">入門</div>
+                        <div class="nav-section-title en-content">Getting Started</div>
+                        <ul class="nav-links">
+                            <li><a href="#introduction" class="zh-content">系統介紹</a></li>
+                            <li><a href="#introduction" class="en-content">Introduction</a></li>
+                            <li><a href="#features" class="zh-content">功能特色</a></li>
+                            <li><a href="#features" class="en-content">Features</a></li>
+                            <li><a href="#requirements" class="zh-content">系統需求</a></li>
+                            <li><a href="#requirements" class="en-content">System Requirements</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title zh-content">操作指南</div>
+                        <div class="nav-section-title en-content">User Guide</div>
+                        <ul class="nav-links">
+                            <li><a href="#setup" class="zh-content">設置活動</a></li>
+                            <li><a href="#setup" class="en-content">Event Setup</a></li>
+                            <li><a href="#csv-import" class="zh-content">CSV 匯入</a></li>
+                            <li><a href="#csv-import" class="en-content">CSV Import</a></li>
+                            <li><a href="#check-in" class="zh-content">簽到流程</a></li>
+                            <li><a href="#check-in" class="en-content">Check-in Process</a></li>
+                            <li><a href="#check-out" class="zh-content">簽退流程</a></li>
+                            <li><a href="#check-out" class="en-content">Check-out Process</a></li>
+                            <li><a href="#data-export" class="zh-content">資料匯出</a></li>
+                            <li><a href="#data-export" class="en-content">Data Export</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title zh-content">參與者指南</div>
+                        <div class="nav-section-title en-content">Participant Guide</div>
+                        <ul class="nav-links">
+                            <li><a href="#participant-page" class="zh-content">參與者頁面</a></li>
+                            <li><a href="#participant-page" class="en-content">Participant Page</a></li>
+                            <li><a href="#qr-generation" class="zh-content">QR Code 生成</a></li>
+                            <li><a href="#qr-generation" class="en-content">QR Code Generation</a></li>
+                            <li><a href="#participant-experience" class="zh-content">參與者體驗</a></li>
+                            <li><a href="#participant-experience" class="en-content">Participant Experience</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-section-title zh-content">常見問題</div>
+                        <div class="nav-section-title en-content">FAQs & Troubleshooting</div>
+                        <ul class="nav-links">
+                            <li><a href="#faq" class="zh-content">常見問題</a></li>
+                            <li><a href="#faq" class="en-content">Frequently Asked Questions</a></li>
+                            <li><a href="#troubleshooting" class="zh-content">問題排解</a></li>
+                            <li><a href="#troubleshooting" class="en-content">Troubleshooting</a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="content">
+                    <!-- Introduction Section -->
+                    <section id="introduction" class="section">
+                        <h2 class="zh-content">系統介紹</h2>
+                        <h2 class="en-content">Introduction</h2>
+
+                        <div class="zh-content">
+                            <p>QuickRecord 是一個簡單易用的活動簽到退系統，專為各類型活動設計，無需安裝任何應用程式，直接使用網頁瀏覽器即可操作。本系統透過 QR Code
+                                掃描技術，大幅提升簽到退的效率與準確性，適合研討會、課程、會議、社團活動等場合使用。</p>
+
+                            <p>系統分為兩個主要介面：活動籌辦者（管理員）介面和參與者介面。活動籌辦者負責設置活動、掃描 QR Code、管理參與者名單；而參與者則可以使用手機生成個人專屬的 QR Code
+                                進行簽到退。</p>
+                        </div>
+
+                        <div class="en-content">
+                            <p>QuickRecord is an easy-to-use event check-in/out system designed for various types of
+                                events. It requires no application installation and operates directly through a web
+                                browser. This system uses QR code scanning technology to significantly improve the
+                                efficiency and accuracy of attendance tracking, making it ideal for seminars, courses,
+                                meetings, club activities, and more.</p>
+
+                            <p>The system consists of two main interfaces: the Event Organizer (Admin) interface and the
+                                Participant interface. Event organizers are responsible for setting up events, scanning
+                                QR codes, and managing participant lists, while participants can use their mobile phones
+                                to generate personalized QR codes for check-in and check-out.</p>
+                        </div>
+                    </section>
+
+                    <!-- Features Section -->
+                    <section id="features" class="section">
+                        <h2 class="zh-content">功能特色</h2>
+                        <h2 class="en-content">Features</h2>
+
+                        <div class="zh-content">
+                            <ul>
+                                <li><strong>無需伺服器：</strong>完全在瀏覽器端運行，不需架設伺服器</li>
+                                <li><strong>QR Code 掃描：</strong>即時掃描 QR Code 進行簽到退</li>
+                                <li><strong>CSV 匯入/匯出：</strong>支援預先匯入參與者名單，並可匯出完整簽到退紀錄</li>
+                                <li><strong>雙語系統：</strong>支援中文和英文介面</li>
+                                <li><strong>兩階段模式：</strong>支援簽到階段和簽退階段</li>
+                                <li><strong>即時統計：</strong>顯示簽到/簽退人數和詳細資訊</li>
+                                <li><strong>離線模式：</strong>一旦載入後，即使沒有網路連線也能正常運作</li>
+                                <li><strong>隱私保護：</strong>提供選項隱藏完整姓名和 ID</li>
+                            </ul>
+                        </div>
+
+                        <div class="en-content">
+                            <ul>
+                                <li><strong>No Server Required:</strong> Runs entirely in the browser, no server setup
+                                    needed</li>
+                                <li><strong>QR Code Scanning:</strong> Real-time QR code scanning for check-in/out</li>
+                                <li><strong>CSV Import/Export:</strong> Support for pre-importing participant lists and
+                                    exporting complete attendance records</li>
+                                <li><strong>Bilingual System:</strong> Support for both Chinese and English interfaces
+                                </li>
+                                <li><strong>Two-Phase Mode:</strong> Support for check-in and check-out phases</li>
+                                <li><strong>Real-time Statistics:</strong> Display of check-in/out counts and detailed
+                                    information</li>
+                                <li><strong>Offline Mode:</strong> Functions normally even without an internet
+                                    connection once loaded</li>
+                                <li><strong>Privacy Protection:</strong> Options to hide full names and IDs</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Requirements Section -->
+                    <section id="requirements" class="section">
+                        <h2 class="zh-content">系統需求</h2>
+                        <h2 class="en-content">System Requirements</h2>
+
+                        <div class="zh-content">
+                            <h3>活動籌辦者端</h3>
+                            <ul>
+                                <li>支援現代網頁瀏覽器（Google Chrome、Microsoft Edge、Safari、Firefox 等）</li>
+                                <li>具備攝影機的裝置（筆電、平板或手機）</li>
+                                <li>初次載入時需要網路連線</li>
+                            </ul>
+
+                            <h3>參與者端</h3>
+                            <ul>
+                                <li>任何可瀏覽網頁的裝置</li>
+                                <li>初次載入時需要網路連線</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>注意：</strong>由於需要使用攝影機功能，建議活動籌辦者使用具備攝影機的桌機或筆電，並搭配 Chrome 或 Edge 瀏覽器以獲得最佳掃描體驗。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <h3>For Event Organizers</h3>
+                            <ul>
+                                <li>Modern web browser (Google Chrome, Microsoft Edge, Safari, Firefox, etc.)</li>
+                                <li>Device with a camera (laptop, tablet, or smartphone)</li>
+                                <li>Internet connection for initial loading</li>
+                            </ul>
+
+                            <h3>For Participants</h3>
+                            <ul>
+                                <li>Any device that can browse the web</li>
+                                <li>Internet connection for initial loading</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>Note:</strong> Due to the need for camera functionality, it is recommended
+                                    that event organizers use a desktop or laptop with a camera, paired with Chrome or
+                                    Edge browsers for the best scanning experience.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Event Setup Section -->
+                    <section id="setup" class="section">
+                        <h2 class="zh-content">設置活動</h2>
+                        <h2 class="en-content">Event Setup</h2>
+
+                        <div class="zh-content">
+                            <p>要開始使用 QuickRecord 進行活動簽到，請依照以下步驟設置您的活動：</p>
+
+                            <ol class="steps">
+                                <li>
+                                    <h4>訪問主頁面</h4>
+                                    <p>在瀏覽器中開啟 QuickRecord 網站。首頁提供兩個選項：「直接開始」或「上傳 CSV」。</p>
+                                </li>
+                                <li>
+                                    <h4>選擇啟動方式</h4>
+                                    <p>您可以選擇：</p>
+                                    <ul>
+                                        <li><strong>直接開始：</strong>無需預先名單，參與者可以現場登記並生成 QR Code</li>
+                                        <li><strong>上傳 CSV：</strong>匯入預先準備好的參與者名單（適合已有報名資料的活動）</li>
+                                    </ul>
+                                    <p>若您選擇直接開始，系統會帶您進入活動資訊設定頁面。</p>
+                                </li>
+                                <li>
+                                    <h4>填寫活動資訊</h4>
+                                    <p>輸入活動名稱（必填）。此名稱將顯示在簽到頁面並用於匯出的 CSV 檔案名稱。</p>
+                                </li>
+                                <li>
+                                    <h4>設定顯示選項</h4>
+                                    <p>調整以下顯示設定：</p>
+                                    <ul>
+                                        <li><strong>顯示報到人數：</strong>在簽到/簽退頁面顯示人數統計</li>
+                                        <li><strong>顯示完整姓名：</strong>若關閉此選項，系統將隱藏部分姓名以保護隱私</li>
+                                        <li><strong>顯示完整 ID：</strong>若關閉此選項，系統將隱藏部分 ID 以保護隱私</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h4>開始簽到階段</h4>
+                                    <p>點擊「開始簽到」按鈕後，系統將啟動攝影機並進入簽到模式。</p>
+                                </li>
+                            </ol>
+
+                            <div class="tip">
+                                <p><strong>提示：</strong>如果是預先有參與者名單的活動（如研討會、課程），建議上傳 CSV 檔案，以便系統可以核對資料並提供更完整的統計。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>To start using QuickRecord for event check-in, follow these steps to set up your event:
+                            </p>
+
+                            <ol class="steps">
+                                <li>
+                                    <h4>Access the Main Page</h4>
+                                    <p>Open the QuickRecord website in your browser. The homepage provides two options:
+                                        "Start Directly" or
+                                        "Upload CSV".</p>
+                                </li>
+                                <li>
+                                    <h4>Choose a Startup Method</h4>
+                                    <p>You can choose:</p>
+                                    <ul>
+                                        <li><strong>Start Directly:</strong> No pre-existing list needed; participants
+                                            can register on-site
+                                            and generate QR codes</li>
+                                        <li><strong>Upload CSV:</strong> Import a pre-prepared participant list
+                                            (suitable for events with
+                                            registration data)</li>
+                                    </ul>
+                                    <p>If you choose to start directly, the system will take you to the event
+                                        information settings page.</p>
+                                </li>
+                                <li>
+                                    <h4>Enter Event Information</h4>
+                                    <p>Input the event name (required). This name will be displayed on the check-in page
+                                        and used for the
+                                        exported CSV filename.</p>
+                                </li>
+                                <li>
+                                    <h4>Configure Display Options</h4>
+                                    <p>Adjust the following display settings:</p>
+                                    <ul>
+                                        <li><strong>Show Attendance Count:</strong> Display attendance statistics on the
+                                            check-in/out pages
+                                        </li>
+                                        <li><strong>Show Full Name:</strong> If disabled, the system will partially hide
+                                            names to protect
+                                            privacy</li>
+                                        <li><strong>Show Full ID:</strong> If disabled, the system will partially hide
+                                            IDs to protect
+                                            privacy</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h4>Start the Check-in Phase</h4>
+                                    <p>After clicking the "Start Check-in" button, the system will activate the camera
+                                        and enter check-in
+                                        mode.</p>
+                                </li>
+                            </ol>
+
+                            <div class="tip">
+                                <p><strong>Tip:</strong> For events with pre-registered participants (such as seminars
+                                    or courses), it's
+                                    recommended to upload a CSV file so that the system can verify data and provide more
+                                    complete
+                                    statistics.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- CSV Import Section -->
+                    <section id="csv-import" class="section">
+                        <h2 class="zh-content">CSV 匯入</h2>
+                        <h2 class="en-content">CSV Import</h2>
+
+                        <div class="zh-content">
+                            <p>QuickRecord 支援透過 CSV 檔案匯入參與者名單，讓您能夠預先載入已報名的參與者資料。以下是準備與匯入 CSV 檔案的步驟：</p>
+
+                            <h3>準備 CSV 檔案</h3>
+                            <p>您的 CSV 檔案必須包含以下欄位：</p>
+                            <ul>
+                                <li><strong>Name：</strong>參與者姓名（必填）</li>
+                                <li><strong>ID：</strong>參與者識別碼（必填，可以是學號、員工編號、身分證字號等）</li>
+                                <li><strong>Note：</strong>備註（選填，可留空）</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>重要：</strong>CSV 檔案的第一列必須是欄位標題，且標題必須包含「Name」和「ID」（大小寫敏感）。</p>
+                            </div>
+
+                            <h3>CSV 範例格式</h3>
+                            <p>以下是標準 CSV 檔案的範例內容：</p>
+                            <pre><code>Name,ID,Note
+張小明,A12345678,團隊A
+李大華,B87654321,團隊B
+王美麗,C13579246,特殊飲食需求</code></pre>
+
+                            <h3>匯入步驟</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>下載模板（選擇性）</h4>
+                                    <p>如果需要範本，可以點擊主頁面的「下載 CSV 模板」按鈕下載標準格式的 CSV 檔案。</p>
+                                </li>
+                                <li>
+                                    <h4>上傳 CSV 檔案</h4>
+                                    <p>在 QuickRecord 首頁，將您準備好的 CSV 檔案拖放到指定區域，或點擊該區域選擇檔案上傳。</p>
+                                </li>
+                                <li>
+                                    <h4>檢查編碼問題</h4>
+                                    <p>如果上傳後發現中文字元顯示為亂碼，可以點擊「出現亂碼？」切換檔案編碼（系統支援 UTF-8 和 Big5 編碼）。</p>
+                                </li>
+                                <li>
+                                    <h4>預覽參與者名單</h4>
+                                    <p>系統將顯示已匯入的參與者名單預覽，請確認資料正確無誤。</p>
+                                </li>
+                                <li>
+                                    <h4>完成設定</h4>
+                                    <p>確認名單無誤後，填寫活動名稱並調整顯示設定，然後點擊「開始簽到」按鈕。</p>
+                                </li>
+                            </ol>
+
+                            <div class="warning">
+                                <p><strong>注意：</strong>請確保 CSV 檔案中的「Name」和「ID」欄位不包含逗號，以避免解析錯誤。如果資料中包含逗號，請將該欄位值用雙引號括起來。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>QuickRecord supports importing participant lists via CSV files, allowing you to preload
+                                data for registered
+                                participants. Here are the steps to prepare and import a CSV file:</p>
+
+                            <h3>Preparing the CSV File</h3>
+                            <p>Your CSV file must include the following fields:</p>
+                            <ul>
+                                <li><strong>Name:</strong> Participant name (required)</li>
+                                <li><strong>ID:</strong> Participant identifier (required, can be a student ID, employee
+                                    number, national
+                                    ID, etc.)</li>
+                                <li><strong>Note:</strong> Additional remarks (optional, can be left empty)</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>Important:</strong> The first row of the CSV file must be column headers, and
+                                    the headers must
+                                    include "Name" and "ID" (case-sensitive).</p>
+                            </div>
+
+                            <h3>CSV Example Format</h3>
+                            <p>Here is an example of a standard CSV file content:</p>
+                            <pre><code>Name,ID,Note
+John Smith,A12345678,Team A
+Jane Doe,B87654321,Team B
+Robert Johnson,C13579246,Special dietary needs</code></pre>
+
+                            <h3>Import Steps</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>Download Template (Optional)</h4>
+                                    <p>If you need a template, you can click the "Download CSV Template" button on the
+                                        main page to download
+                                        a standard format CSV file.</p>
+                                </li>
+                                <li>
+                                    <h4>Upload CSV File</h4>
+                                    <p>On the QuickRecord homepage, drag and drop your prepared CSV file to the
+                                        designated area, or click
+                                        the area to select a file to upload.</p>
+                                </li>
+                                <li>
+                                    <h4>Check for Encoding Issues</h4>
+                                    <p>If you find that Chinese characters appear as garbled text after uploading, you
+                                        can click "Encoding
+                                        Issue?" to switch the file encoding (the system supports UTF-8 and Big5
+                                        encodings).</p>
+                                </li>
+                                <li>
+                                    <h4>Preview Participant List</h4>
+                                    <p>The system will display a preview of the imported participant list. Please
+                                        confirm that the data is
+                                        correct.</p>
+                                </li>
+                                <li>
+                                    <h4>Complete Setup</h4>
+                                    <p>After confirming the list is correct, enter the event name and adjust the display
+                                        settings, then
+                                        click the "Start Check-in" button.</p>
+                                </li>
+                            </ol>
+
+                            <div class="warning">
+                                <p><strong>Caution:</strong> Ensure that the "Name" and "ID" fields in your CSV file do
+                                    not contain commas,
+                                    to avoid parsing errors. If your data includes commas, enclose the field value in
+                                    double quotes.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Check-in Process Section -->
+                    <section id="check-in" class="section">
+                        <h2 class="zh-content">簽到流程</h2>
+                        <h2 class="en-content">Check-in Process</h2>
+
+                        <div class="zh-content">
+                            <p>設置完成後，系統將進入簽到模式。此時活動籌辦者需要使用系統掃描參與者的 QR Code 進行簽到。以下是完整的簽到流程：</p>
+
+                            <h3>活動籌辦者操作步驟</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>準備掃描</h4>
+                                    <p>進入簽到頁面後，系統會自動啟動攝影機。左側區域會顯示攝影機預覽，右側則顯示活動資訊和最後簽到資訊。</p>
+                                    <p>請確保攝影機已成功啟動，掃描狀態顯示「攝影機已啟動，請對準 QR Code」。</p>
+                                </li>
+                                <li>
+                                    <h4>掃描 QR Code</h4>
+                                    <p>請要求參與者出示其 QR Code（參與者可通過訪問 QuickRecord 的使用者頁面生成）。將攝影機對準 QR Code 直到系統成功識別並處理。</p>
+                                </li>
+                                <li>
+                                    <h4>確認簽到成功</h4>
+                                    <p>當系統成功掃描並處理 QR Code 後，會顯示「簽到成功！」的訊息，並更新最後簽到資訊區域以顯示該參與者的資料和簽到時間。</p>
+                                </li>
+                                <li>
+                                    <h4>檢視簽到名單</h4>
+                                    <p>頁面下方顯示兩個標籤：「所有參與者」和「已簽到參與者」。您可以切換這些標籤來檢視不同的參與者名單。</p>
+                                </li>
+                                <li>
+                                    <h4>完成簽到階段</h4>
+                                    <p>當所有參與者完成簽到，或活動進入需要簽退的階段時，點擊右側的「結束簽到並進入簽退」按鈕。系統將詢問確認後進入簽退模式。</p>
+                                    <div class="note">
+                                        <p><strong>注意：</strong>一旦進入簽退模式，將無法再進行簽到操作。請確保所有參與者已完成簽到再進行此操作。</p>
+                                    </div>
+                                </li>
+                            </ol>
+
+                            <h3>特殊情況處理</h3>
+                            <ul>
+                                <li><strong>重複簽到：</strong>如果參與者已完成簽到，再次掃描其 QR Code 會顯示「已經簽到過了」的提示。</li>
+                                <li><strong>未在名單中的參與者：</strong>如果掃描了未在預先匯入名單中的參與者 QR Code，系統會自動將其加入參與者名單，並完成簽到。</li>
+                                <li><strong>攝影機無法啟動：</strong>如果攝影機無法啟動，系統會顯示錯誤訊息。請檢查瀏覽器權限和攝影機連接。</li>
+                            </ul>
+
+                            <div class="tip">
+                                <p><strong>提示：</strong>為了提高掃描效率，建議在光線良好的環境下操作，並確保 QR Code 清晰可見，無反光或陰影遮擋。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>After setup is complete, the system will enter check-in mode. At this point, event
+                                organizers need to use the
+                                system to scan participants' QR codes for check-in. Here is the complete check-in
+                                process:</p>
+
+                            <h3>Event Organizer Operation Steps</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>Prepare for Scanning</h4>
+                                    <p>After entering the check-in page, the system will automatically activate the
+                                        camera. The left area
+                                        shows the camera preview, while the right side displays event information and
+                                        the latest check-in
+                                        information.</p>
+                                    <p>Ensure that the camera has been successfully activated, with the scanning status
+                                        showing "Camera is
+                                        ready, please align QR Code".</p>
+                                </li>
+                                <li>
+                                    <h4>Scan QR Codes</h4>
+                                    <p>Ask participants to present their QR codes (participants can generate these by
+                                        visiting the
+                                        QuickRecord user page). Point the camera at the QR code until the system
+                                        successfully identifies and
+                                        processes it.</p>
+                                </li>
+                                <li>
+                                    <h4>Confirm Check-in Success</h4>
+                                    <p>When the system successfully scans and processes a QR code, it will display a
+                                        "Check-in Success!"
+                                        message and update the latest check-in information area to show that
+                                        participant's data and check-in
+                                        time.</p>
+                                </li>
+                                <li>
+                                    <h4>View Check-in List</h4>
+                                    <p>The bottom of the page displays two tabs: "All Participants" and "Checked-in
+                                        Participants". You can
+                                        switch between these tabs to view different participant lists.</p>
+                                </li>
+                                <li>
+                                    <h4>Complete the Check-in Phase</h4>
+                                    <p>When all participants have completed check-in, or when the event enters a phase
+                                        requiring check-out,
+                                        click the "End Check-in and Start Check-out" button on the right. The system
+                                        will ask for
+                                        confirmation before entering check-out mode.</p>
+                                    <div class="note">
+                                        <p><strong>Note:</strong> Once in check-out mode, check-in operations can no
+                                            longer be performed.
+                                            Make sure all participants have completed check-in before performing this
+                                            operation.</p>
+                                    </div>
+                                </li>
+                            </ol>
+
+                            <h3>Handling Special Situations</h3>
+                            <ul>
+                                <li><strong>Duplicate Check-in:</strong> If a participant has already completed
+                                    check-in, scanning their QR
+                                    code again will display an "Already Checked In" prompt.</li>
+                                <li><strong>Participants Not on the List:</strong> If you scan a QR code for a
+                                    participant who is not on the
+                                    pre-imported list, the system will automatically add them to the participant list
+                                    and complete the
+                                    check-in.</li>
+                                <li><strong>Camera Cannot Start:</strong> If the camera cannot start, the system will
+                                    display an error
+                                    message. Check browser permissions and camera connections.</li>
+                            </ul>
+
+                            <div class="tip">
+                                <p><strong>Tip:</strong> To improve scanning efficiency, it is recommended to operate in
+                                    a well-lit
+                                    environment and ensure that the QR code is clearly visible, with no glare or shadows
+                                    obscuring it.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Check-out Process Section -->
+                    <section id="check-out" class="section">
+                        <h2 class="zh-content">簽退流程</h2>
+                        <h2 class="en-content">Check-out Process</h2>
+
+                        <div class="zh-content">
+                            <p>當活動進入需要簽退的階段時，您可以從簽到模式切換到簽退模式。簽退流程與簽到類似，但有一些重要的差異。以下是簽退操作的詳細步驟：</p>
+
+                            <h3>進入簽退模式</h3>
+                            <p>在簽到頁面點擊「結束簽到並進入簽退」按鈕後，系統會顯示確認對話框。確認後，系統將關閉簽到頁面的攝影機，並開啟簽退頁面。</p>
+
+                            <h3>活動籌辦者操作步驟</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>準備掃描</h4>
+                                    <p>進入簽退頁面後，系統會自動啟動攝影機。左側區域顯示攝影機預覽，右側顯示活動資訊和最後簽退資訊。</p>
+                                </li>
+                                <li>
+                                    <h4>掃描 QR Code</h4>
+                                    <p>請要求參與者出示其 QR Code，與簽到時相同的 QR Code。將攝影機對準 QR Code 直到系統成功識別並處理。</p>
+                                </li>
+                                <li>
+                                    <h4>確認簽退成功</h4>
+                                    <p>當系統成功掃描並處理 QR Code 後，會顯示「簽退成功！」的訊息，並更新最後簽退資訊區域以顯示該參與者的資料和簽退時間。</p>
+                                </li>
+                                <li>
+                                    <h4>檢視簽退狀態</h4>
+                                    <p>頁面下方顯示三個標籤：「所有參與者」、「待簽退參與者」和「已簽退參與者」。您可以切換這些標籤來檢視不同狀態的參與者名單。</p>
+                                </li>
+                                <li>
+                                    <h4>完成簽退階段</h4>
+                                    <p>當所有參與者完成簽退或活動結束時，點擊右側的「結束簽退並下載紀錄」按鈕。系統將詢問確認後下載完整的簽到退記錄 CSV 檔案，並返回主頁面。</p>
+                                </li>
+                            </ol>
+
+                            <h3>特殊情況處理</h3>
+                            <ul>
+                                <li><strong>未簽到參與者：</strong>如果掃描了未完成簽到的參與者 QR Code，系統會顯示「尚未簽到，無法簽退」的提示。</li>
+                                <li><strong>重複簽退：</strong>如果參與者已完成簽退，再次掃描其 QR Code 會顯示「已經簽退過了」的提示。</li>
+                                <li><strong>部分參與者無需簽退：</strong>並非所有活動都需要每位參與者簽退。您可以在尚有參與者未簽退的情況下，仍點擊「結束簽退並下載紀錄」按鈕結束活動。
+                                </li>
+                            </ul>
+
+                            <div class="warning">
+                                <p><strong>重要：</strong>一旦完成簽退階段並下載記錄，系統將清空所有資料並返回主頁面。請確保您已成功下載並保存簽到退記錄，因為這些資料無法在系統中恢復。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>When the event enters a phase requiring check-out, you can switch from check-in mode to
+                                check-out mode. The
+                                check-out process is similar to check-in, but with some important differences. Here are
+                                the detailed steps
+                                for the check-out operation:</p>
+
+                            <h3>Entering Check-out Mode</h3>
+                            <p>After clicking the "End Check-in and Start Check-out" button on the check-in page, the
+                                system will display a
+                                confirmation dialog. After confirmation, the system will close the camera on the
+                                check-in page and open the
+                                check-out page.</p>
+
+                            <h3>Event Organizer Operation Steps</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>Prepare for Scanning</h4>
+                                    <p>After entering the check-out page, the system will automatically activate the
+                                        camera. The left area
+                                        shows the camera preview, while the right side displays event information and
+                                        the latest check-out
+                                        information.</p>
+                                </li>
+                                <li>
+                                    <h4>Scan QR Codes</h4>
+                                    <p>Ask participants to present their QR codes, the same QR codes used for check-in.
+                                        Point the camera at
+                                        the QR code until the system successfully identifies and processes it.</p>
+                                </li>
+                                <li>
+                                    <h4>Confirm Check-out Success</h4>
+                                    <p>When the system successfully scans and processes a QR code, it will display a
+                                        "Check-out Success!"
+                                        message and update the latest check-out information area to show that
+                                        participant's data and
+                                        check-out time.</p>
+                                </li>
+                                <li>
+                                    <h4>View Check-out Status</h4>
+                                    <p>The bottom of the page displays three tabs: "All Participants", "Awaiting
+                                        Check-out", and
+                                        "Checked-out Participants". You can switch between these tabs to view
+                                        participant lists in different
+                                        states.</p>
+                                </li>
+                                <li>
+                                    <h4>Complete the Check-out Phase</h4>
+                                    <p>When all participants have completed check-out or the event ends, click the "End
+                                        Check-out and
+                                        Download Records" button on the right. The system will ask for confirmation
+                                        before downloading a
+                                        complete check-in/check-out record CSV file and returning to the main page.</p>
+                                </li>
+                            </ol>
+
+                            <h3>Handling Special Situations</h3>
+                            <ul>
+                                <li><strong>Participants Who Haven't Checked In:</strong> If you scan a QR code for a
+                                    participant who has
+                                    not completed check-in, the system will display a "Not checked in, cannot check out"
+                                    prompt.</li>
+                                <li><strong>Duplicate Check-out:</strong> If a participant has already completed
+                                    check-out, scanning their
+                                    QR code again will display an "Already Checked Out" prompt.</li>
+                                <li><strong>Some Participants Don't Need to Check Out:</strong> Not all events require
+                                    every participant to
+                                    check out. You can still click the "End Check-out and Download Records" button to
+                                    end the event even if
+                                    some participants have not checked out.</li>
+                            </ul>
+
+                            <div class="warning">
+                                <p><strong>Important:</strong> Once you complete the check-out phase and download the
+                                    records, the system
+                                    will clear all data and return to the main page. Make sure you have successfully
+                                    downloaded and saved
+                                    the check-in/check-out records, as this data cannot be recovered in the system.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Data Export Section -->
+                    <section id="data-export" class="section">
+                        <h2 class="zh-content">資料匯出</h2>
+                        <h2 class="en-content">Data Export</h2>
+
+                        <div class="zh-content">
+                            <p>活動結束後，QuickRecord 將生成完整的簽到退記錄，並以 CSV 檔案形式下載。以下是關於資料匯出的詳細資訊：</p>
+
+                            <h3>匯出流程</h3>
+                            <ol>
+                                <li>在簽退頁面點擊「結束簽退並下載紀錄」按鈕</li>
+                                <li>系統會顯示確認對話框</li>
+                                <li>確認後，系統會自動生成並下載 CSV 檔案</li>
+                                <li>下載完成後，系統會清空資料並返回主頁面</li>
+                            </ol>
+
+                            <h3>匯出 CSV 檔案格式</h3>
+                            <p>匯出的 CSV 檔案包含以下欄位：</p>
+                            <ul>
+                                <li><strong>Name：</strong>參與者姓名</li>
+                                <li><strong>ID：</strong>參與者識別碼</li>
+                                <li><strong>Note：</strong>備註資訊（如有）</li>
+                                <li><strong>InCSV：</strong>標示該參與者是否在原始匯入的名單中（「Yes」或「No」）</li>
+                                <li><strong>CheckInTime：</strong>簽到時間（格式：YYYY-MM-DD HH:MM:SS）</li>
+                                <li><strong>CheckOutTime：</strong>簽退時間（格式：YYYY-MM-DD HH:MM:SS），若未簽退則為空</li>
+                            </ul>
+
+                            <h3>檔案命名與儲存</h3>
+                            <p>匯出的 CSV 檔案將以下列格式命名：</p>
+                            <pre><code>活動名稱_Attendance_YYYYMMDD.csv</code></pre>
+                            <p>其中：</p>
+                            <ul>
+                                <li><strong>活動名稱：</strong>您在設置時輸入的活動名稱</li>
+                                <li><strong>YYYYMMDD：</strong>當前日期（年月日）</li>
+                            </ul>
+
+                            <h3>資料處理建議</h3>
+                            <p>下載 CSV 檔案後，建議您：</p>
+                            <ul>
+                                <li>立即備份檔案至安全位置</li>
+                                <li>使用 Excel 或 Google 試算表等軟體開啟並檢查資料完整性</li>
+                                <li>如有需要，可以進一步處理資料，例如計算參與時間、篩選特定條件的參與者等</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>注意：</strong>匯出的 CSV 檔案使用 UTF-8 編碼。如果在 Excel
+                                    中開啟時出現中文亂碼，建議使用「資料」選單中的「從文字」功能匯入，並指定編碼為 UTF-8。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>After the event ends, QuickRecord will generate complete check-in/check-out records and
+                                download them as a
+                                CSV file. Here is detailed information about data export:</p>
+
+                            <h3>Export Process</h3>
+                            <ol>
+                                <li>Click the "End Check-out and Download Records" button on the check-out page</li>
+                                <li>The system will display a confirmation dialog</li>
+                                <li>After confirmation, the system will automatically generate and download a CSV file
+                                </li>
+                                <li>After the download is complete, the system will clear the data and return to the
+                                    main page</li>
+                            </ol>
+
+                            <h3>Exported CSV File Format</h3>
+                            <p>The exported CSV file includes the following fields:</p>
+                            <ul>
+                                <li><strong>Name:</strong> Participant name</li>
+                                <li><strong>ID:</strong> Participant identifier</li>
+                                <li><strong>Note:</strong> Additional information (if any)</li>
+                                <li><strong>InCSV:</strong> Indicates whether the participant was in the originally
+                                    imported list ("Yes" or
+                                    "No")</li>
+                                <li><strong>CheckInTime:</strong> Check-in time (format: YYYY-MM-DD HH:MM:SS)</li>
+                                <li><strong>CheckOutTime:</strong> Check-out time (format: YYYY-MM-DD HH:MM:SS), empty
+                                    if not checked out
+                                </li>
+                            </ul>
+
+                            <h3>File Naming and Storage</h3>
+                            <p>The exported CSV file will be named in the following format:</p>
+                            <pre><code>EventName_Attendance_YYYYMMDD.csv</code></pre>
+                            <p>Where:</p>
+                            <ul>
+                                <li><strong>EventName:</strong> The event name you entered during setup</li>
+                                <li><strong>YYYYMMDD:</strong> Current date (year, month, day)</li>
+                            </ul>
+
+                            <h3>Data Processing Recommendations</h3>
+                            <p>After downloading the CSV file, it is recommended that you:</p>
+                            <ul>
+                                <li>Immediately back up the file to a secure location</li>
+                                <li>Use Excel or Google Sheets to open and check data integrity</li>
+                                <li>If needed, further process the data, such as calculating participation time or
+                                    filtering participants by
+                                    specific criteria</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>Note:</strong> The exported CSV file uses UTF-8 encoding. If you see garbled
+                                    Chinese characters
+                                    when opening it in Excel, it is recommended to use the "From Text" function in the
+                                    "Data" menu to import
+                                    it, specifying UTF-8 encoding.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Participant Page Section -->
+                    <section id="participant-page" class="section">
+                        <h2 class="zh-content">參與者頁面</h2>
+                        <h2 class="en-content">Participant Page</h2>
+
+                        <div class="zh-content">
+                            <p>QuickRecord 提供專門的參與者頁面，讓參與者可以生成自己的 QR Code 進行簽到退。以下是關於參與者頁面的詳細資訊：</p>
+
+                            <h3>參與者頁面存取</h3>
+                            <p>活動籌辦者需要提供參與者頁面的連結給所有參與者。參與者頁面網址通常為：</p>
+                            <pre><code>https://watsonshih.github.io/QuickRecord/user.html</code></pre>
+
+                            <div class="tip">
+                                <p><strong>提示：</strong>您可以將此連結透過電子郵件、簡訊或其他通訊方式發送給參與者，或在活動現場提供 QR Code 或短網址供參與者存取。</p>
+                            </div>
+
+                            <h3>參與者操作流程</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>訪問參與者頁面</h4>
+                                    <p>參與者使用手機或其他裝置訪問參與者頁面網址。</p>
+                                </li>
+                                <li>
+                                    <h4>填寫個人資訊</h4>
+                                    <p>參與者需要填寫：</p>
+                                    <ul>
+                                        <li><strong>姓名：</strong>參與者的全名</li>
+                                        <li><strong>ID：</strong>依據活動籌辦者指定的識別碼格式（如：學號、身分證字號等）</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h4>生成 QR Code</h4>
+                                    <p>點擊「生成 QR Code」按鈕後，系統會根據填寫的資訊生成一個專屬的 QR Code。</p>
+                                </li>
+                                <li>
+                                    <h4>出示 QR Code</h4>
+                                    <p>參與者將生成的 QR Code 出示給活動工作人員進行掃描，完成簽到或簽退。</p>
+                                </li>
+                            </ol>
+
+                            <h3>預填資訊功能（進階）</h3>
+                            <p>如果活動籌辦者希望為參與者預先填寫部分資訊，可以使用網址參數的方式：</p>
+                            <pre><code>https://watsonshih.github.io/QuickRecord/user.html?name=張小明&id=A12345678</code></pre>
+                            <p>當參與者訪問此連結時，「姓名」和「ID」欄位會自動填入指定的值，並且系統會自動生成 QR Code。這對於提前發送個人化連結給參與者特別有用。</p>
+
+                            <div class="warning">
+                                <p><strong>注意：</strong>當使用預填資訊功能時，請確保網址中不包含敏感個人資訊，或者使用加密手段保護資訊安全。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>QuickRecord provides a dedicated participant page that allows participants to generate
+                                their own QR codes for
+                                check-in and check-out. Here is detailed information about the participant page:</p>
+
+                            <h3>Accessing the Participant Page</h3>
+                            <p>Event organizers need to provide the participant page link to all participants. The
+                                participant page URL is
+                                usually:</p>
+                            <pre><code>https://watsonshih.github.io/QuickRecord/user.html</code></pre>
+
+                            <div class="tip">
+                                <p><strong>Tip:</strong> You can send this link to participants via email, text message,
+                                    or other
+                                    communication methods, or provide a QR code or short URL for participants to access
+                                    at the event venue.
+                                </p>
+                            </div>
+
+                            <h3>Participant Operation Process</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>Visit the Participant Page</h4>
+                                    <p>Participants use their mobile phones or other devices to access the participant
+                                        page URL.</p>
+                                </li>
+                                <li>
+                                    <h4>Fill in Personal Information</h4>
+                                    <p>Participants need to fill in:</p>
+                                    <ul>
+                                        <li><strong>Name:</strong> The participant's full name</li>
+                                        <li><strong>ID:</strong> According to the identifier format specified by the
+                                            event organizer (e.g.,
+                                            student ID, national ID number, etc.)</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <h4>Generate QR Code</h4>
+                                    <p>After clicking the "Generate QR Code" button, the system will generate a
+                                        personalized QR code based
+                                        on the information provided.</p>
+                                </li>
+                                <li>
+                                    <h4>Present the QR Code</h4>
+                                    <p>Participants present the generated QR code to event staff for scanning,
+                                        completing check-in or
+                                        check-out.</p>
+                                </li>
+                            </ol>
+
+                            <h3>Pre-filled Information Feature (Advanced)</h3>
+                            <p>If event organizers wish to pre-fill some information for participants, they can use URL
+                                parameters:</p>
+                            <pre><code>https://watsonshih.github.io/QuickRecord/user.html?name=John%20Smith&id=A12345678</code></pre>
+                            <p>When participants visit this link, the "Name" and "ID" fields will be automatically
+                                filled with the specified
+                                values, and the system will automatically generate a QR code. This is particularly
+                                useful for sending
+                                personalized links to participants in advance.</p>
+
+                            <div class="warning">
+                                <p><strong>Caution:</strong> When using the pre-filled information feature, ensure that
+                                    the URL does not
+                                    contain sensitive personal information, or use encryption methods to protect
+                                    information security.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- QR Generation Section -->
+                    <section id="qr-generation" class="section">
+                        <h2 class="zh-content">QR Code 生成</h2>
+                        <h2 class="en-content">QR Code Generation</h2>
+
+                        <div class="zh-content">
+                            <p>QuickRecord 系統透過 QR Code 技術進行簽到退操作。了解 QR Code 的生成方式和格式有助於活動籌辦者更好地排解問題。</p>
+
+                            <h3>QR Code 資料格式</h3>
+                            <p>QuickRecord 生成的 QR Code 包含以下格式的資料：</p>
+                            <pre><code>name:{參與者姓名},id:{參與者ID}</code></pre>
+                            <p>例如：</p>
+                            <pre><code>name:張小明,id:A12345678</code></pre>
+
+                            <p>實際儲存在 QR Code 中的資料會進行 URL 編碼，以確保特殊字元不會導致解析問題：</p>
+                            <pre><code>name:%E5%BC%B5%E5%B0%8F%E6%98%8E,id:A12345678</code></pre>
+
+                            <h3>自定義 QR Code</h3>
+                            <p>如果您有特殊需求，可以使用其他 QR Code 生成工具，只需確保生成的 QR Code 包含正確格式的資料：</p>
+                            <ul>
+                                <li>必須包含「name:」和「id:」前綴</li>
+                                <li>name 和 id 之間使用逗號分隔</li>
+                                <li>特殊字元建議進行 URL 編碼</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>注意：</strong>雖然技術上可以使用其他 QR Code 生成工具，但強烈建議使用 QuickRecord 的參與者頁面生成 QR
+                                    Code，以確保格式正確且與系統兼容。</p>
+                            </div>
+
+                            <h3>批量生成 QR Code</h3>
+                            <p>對於大型活動，您可能希望預先為所有參與者生成 QR Code。推薦的方法是：</p>
+                            <ol>
+                                <li>為每位參與者建立個人化的預填資訊連結：
+                                    <pre><code>https://watsonshih.github.io/QuickRecord/user.html?name={參與者姓名}&id={參與者ID}</code></pre>
+                                </li>
+                                <li>將這些連結轉換為 QR Code（可使用第三方批量 QR Code 生成工具）</li>
+                                <li>將 QR Code 列印在識別證或資料袋上，或以電子方式發送給參與者</li>
+                            </ol>
+
+                            <div class="tip">
+                                <p><strong>提示：</strong>如果參與者姓名包含特殊字元，請確保在 URL 中正確編碼。大多數 QR Code 生成工具會自動處理 URL 編碼。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>The QuickRecord system uses QR code technology for check-in and check-out operations.
+                                Understanding how QR
+                                codes are generated and formatted helps event organizers better troubleshoot issues.</p>
+
+                            <h3>QR Code Data Format</h3>
+                            <p>QR codes generated by QuickRecord contain data in the following format:</p>
+                            <pre><code>name:{participant name},id:{participant ID}</code></pre>
+                            <p>For example:</p>
+                            <pre><code>name:John Smith,id:A12345678</code></pre>
+
+                            <p>The actual data stored in the QR code is URL-encoded to ensure that special characters
+                                don't cause parsing
+                                issues:</p>
+                            <pre><code>name:John%20Smith,id:A12345678</code></pre>
+
+                            <h3>Custom QR Codes</h3>
+                            <p>If you have special requirements, you can use other QR code generation tools, just make
+                                sure the generated QR
+                                code contains data in the correct format:</p>
+                            <ul>
+                                <li>Must include the "name:" and "id:" prefixes</li>
+                                <li>The name and id are separated by a comma</li>
+                                <li>Special characters should be URL-encoded</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>Note:</strong> Although it is technically possible to use other QR code
+                                    generation tools, it is
+                                    strongly recommended to use the QuickRecord participant page to generate QR codes to
+                                    ensure the format
+                                    is correct and compatible with the system.</p>
+                            </div>
+
+                            <h3>Batch Generation of QR Codes</h3>
+                            <p>For large events, you may want to pre-generate QR codes for all participants. The
+                                recommended method is:</p>
+                            <ol>
+                                <li>Create personalized pre-filled information links for each participant:
+                                    <pre><code>https://watsonshih.github.io/QuickRecord/user.html?name={participant name}&id={participant ID}</code></pre>
+                                </li>
+                                <li>Convert these links to QR codes (using third-party batch QR code generation tools)
+                                </li>
+                                <li>Print the QR codes on badges or in information packets, or send them electronically
+                                    to participants</li>
+                            </ol>
+
+                            <div class="tip">
+                                <p><strong>Tip:</strong> If participant names contain special characters, make sure they
+                                    are properly
+                                    encoded in the URL. Most QR code generation tools will handle URL encoding
+                                    automatically.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Participant Experience Section -->
+                    <section id="participant-experience" class="section">
+                        <h2 class="zh-content">參與者體驗</h2>
+                        <h2 class="en-content">Participant Experience</h2>
+
+                        <div class="zh-content">
+                            <p>了解參與者使用 QuickRecord 的體驗有助於活動籌辦者提供更好的指引和協助。以下是參與者的完整體驗流程：</p>
+
+                            <h3>參與者簽到流程</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>獲取參與者頁面連結</h4>
+                                    <p>參與者從活動籌辦者處獲得 QuickRecord 參與者頁面的連結，可能透過電子郵件、簡訊、活動通知或現場指示。</p>
+                                </li>
+                                <li>
+                                    <h4>訪問參與者頁面</h4>
+                                    <p>參與者使用智慧型手機、平板或電腦訪問連結，開啟參與者頁面。</p>
+                                </li>
+                                <li>
+                                    <h4>填寫或確認個人資訊</h4>
+                                    <p>如果是預填連結，參與者只需確認資訊正確；如果是空白頁面，則需填寫姓名和 ID。</p>
+                                </li>
+                                <li>
+                                    <h4>生成個人 QR Code</h4>
+                                    <p>點擊「生成 QR Code」按鈕後，系統會顯示一個包含參與者資訊的 QR Code。</p>
+                                </li>
+                                <li>
+                                    <h4>出示 QR Code 進行簽到</h4>
+                                    <p>參與者將手機螢幕上的 QR Code 出示給活動工作人員，由工作人員使用 QuickRecord 掃描完成簽到。</p>
+                                </li>
+                                <li>
+                                    <h4>保存 QR Code 頁面</h4>
+                                    <p>參與者應保持 QR Code 頁面開啟，或截圖保存，以便之後進行簽退使用。</p>
+                                </li>
+                            </ol>
+
+                            <h3>簽退時的體驗</h3>
+                            <p>當活動需要簽退時，參與者需要：</p>
+                            <ol>
+                                <li>再次開啟 QR Code 頁面（如果已關閉，則需重新生成，確保填寫與簽到時相同的資訊）</li>
+                                <li>將 QR Code 出示給工作人員進行掃描</li>
+                                <li>確認掃描成功</li>
+                            </ol>
+
+                            <h3>提供給參與者的指導建議</h3>
+                            <p>活動籌辦者可以提供以下指導給參與者，以確保順暢的簽到退體驗：</p>
+                            <ul>
+                                <li>請保持手機螢幕亮度適中，以利於 QR Code 被掃描</li>
+                                <li>建議截圖保存 QR Code，以便在沒有網路連線時也能出示</li>
+                                <li>確保填寫的資訊與報名資料一致，特別是 ID 欄位</li>
+                                <li>若使用同一裝置進行多人簽到，請每次都填寫正確的個人資訊</li>
+                                <li>如有技術問題，請立即聯絡活動工作人員協助</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>提示：</strong>為了提高簽到退效率，建議在活動通知中附上參與者頁面的連結和簡要操作指南，讓參與者提前熟悉流程。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>Understanding how participants experience QuickRecord helps event organizers provide
+                                better guidance and
+                                assistance. Here is the complete participant experience flow:</p>
+
+                            <h3>Participant Check-in Process</h3>
+                            <ol class="steps">
+                                <li>
+                                    <h4>Obtain Participant Page Link</h4>
+                                    <p>Participants receive the QuickRecord participant page link from event organizers,
+                                        possibly through
+                                        email, text message, event notifications, or on-site instructions.</p>
+                                </li>
+                                <li>
+                                    <h4>Access the Participant Page</h4>
+                                    <p>Participants use smartphones, tablets, or computers to access the link and open
+                                        the participant page.
+                                    </p>
+                                </li>
+                                <li>
+                                    <h4>Fill in or Confirm Personal Information</h4>
+                                    <p>If using a pre-filled link, participants only need to confirm the information is
+                                        correct; if using a
+                                        blank page, they need to fill in their name and ID.</p>
+                                </li>
+                                <li>
+                                    <h4>Generate Personal QR Code</h4>
+                                    <p>After clicking the "Generate QR Code" button, the system displays a QR code
+                                        containing the
+                                        participant's information.</p>
+                                </li>
+                                <li>
+                                    <h4>Present QR Code for Check-in</h4>
+                                    <p>Participants present the QR code on their phone screen to event staff, who use
+                                        QuickRecord to scan
+                                        and complete the check-in.</p>
+                                </li>
+                                <li>
+                                    <h4>Save the QR Code Page</h4>
+                                    <p>Participants should keep the QR code page open, or take a screenshot to save it
+                                        for later check-out
+                                        use.</p>
+                                </li>
+                            </ol>
+
+                            <h3>Check-out Experience</h3>
+                            <p>When the event requires check-out, participants need to:</p>
+                            <ol>
+                                <li>Open the QR code page again (if closed, they need to regenerate it, ensuring they
+                                    fill in the same
+                                    information as during check-in)</li>
+                                <li>Present the QR code to staff for scanning</li>
+                                <li>Confirm successful scanning</li>
+                            </ol>
+
+                            <h3>Guidance Recommendations for Participants</h3>
+                            <p>Event organizers can provide the following guidance to participants to ensure a smooth
+                                check-in/check-out
+                                experience:</p>
+                            <ul>
+                                <li>Keep your phone screen brightness at an appropriate level to facilitate QR code
+                                    scanning</li>
+                                <li>It is recommended to take a screenshot of the QR code so it can be presented even
+                                    when there is no
+                                    internet connection</li>
+                                <li>Ensure that the information entered matches your registration data, especially the
+                                    ID field</li>
+                                <li>If using the same device for multiple people to check in, please enter the correct
+                                    personal information
+                                    each time</li>
+                                <li>If you encounter technical issues, please contact event staff immediately for
+                                    assistance</li>
+                            </ul>
+
+                            <div class="note">
+                                <p><strong>Tip:</strong> To improve check-in/check-out efficiency, it is recommended to
+                                    include the
+                                    participant page link and a brief operation guide in the event notification,
+                                    allowing participants to
+                                    familiarize themselves with the process in advance.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- FAQ Section -->
+                    <section id="faq" class="section">
+                        <h2 class="zh-content">常見問題</h2>
+                        <h2 class="en-content">Frequently Asked Questions</h2>
+
+                        <div class="zh-content">
+                            <h3>關於系統</h3>
+                            <div class="mb-6">
+                                <h4>QuickRecord 需要網路連線嗎？</h4>
+                                <p>QuickRecord 僅在初次載入頁面時需要網路連線。一旦載入完成，系統可以離線運作，包括掃描 QR
+                                    Code、記錄簽到退資訊等。但請注意，如果重新整理頁面或關閉瀏覽器，您將需要再次連線到網路。</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>系統支援哪些裝置？</h4>
+                                <p>QuickRecord 支援任何具備現代網頁瀏覽器的裝置。對於活動籌辦者而言，需要具備攝影機的裝置（如筆記型電腦、平板或智慧型手機）。建議使用 Chrome 或 Edge
+                                    瀏覽器以獲得最佳體驗。</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>資料會儲存在哪裡？</h4>
+                                <p>所有資料僅存儲在您的瀏覽器本地記憶體中，不會上傳到任何伺服器。當您完成活動並下載 CSV 檔案後，數據將被清除。因此，請確保在結束活動前下載資料。</p>
+                            </div>
+
+                            <h3>關於 CSV 匯入</h3>
+                            <div class="mb-6">
+                                <h4>為什麼匯入 CSV 時出現亂碼？</h4>
+                                <p>這通常是由於編碼問題。QuickRecord 支援 UTF-8 和 Big5 兩種編碼。如果發現中文字元顯示為亂碼，請點擊「出現亂碼？」按鈕切換編碼方式。</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>可以匯入超過 1000 人的名單嗎？</h4>
+                                <p>理論上可以，但建議將大型活動分批進行簽到，以確保瀏覽器性能穩定。或者考慮使用較高性能的設備運行系統。</p>
+                            </div>
+
+                            <h3>關於簽到退操作</h3>
+                            <div class="mb-6">
+                                <h4>如何處理忘記簽到但需要簽退的參與者？</h4>
+                                <p>系統要求參與者必須先完成簽到才能進行簽退。對於錯過簽到的參與者，您可以：
+                                <ol>
+                                    <li>回到簽到階段（必須重新設置活動）</li>
+                                    <li>在下載的 CSV 檔案中手動修改資料</li>
+                                </ol>
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>攝影機無法啟動怎麼辦？</h4>
+                                <p>請檢查：
+                                <ul>
+                                    <li>瀏覽器是否獲得了攝影機使用權限</li>
+                                    <li>是否有其他應用程式正在使用攝影機</li>
+                                    <li>攝影機是否正常連接並運作</li>
+                                    <li>嘗試刷新頁面或使用不同的瀏覽器</li>
+                                </ul>
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>QR Code 掃描不成功怎麼辦？</h4>
+                                <p>提高掃描成功率的方法：
+                                <ul>
+                                    <li>確保環境光線充足</li>
+                                    <li>保持手機螢幕亮度足夠</li>
+                                    <li>保持攝影機與 QR Code 之間的適當距離</li>
+                                    <li>檢查 QR Code 是否清晰可見（無反光或褶皺）</li>
+                                </ul>
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>如何在不中斷簽到的情況下切換裝置？</h4>
+                                <p>由於資料僅存儲在本地，無法直接在裝置間轉移。建議：
+                                <ul>
+                                    <li>完成當前簽到階段，下載資料</li>
+                                    <li>在新裝置上重新設置活動並匯入先前下載的資料</li>
+                                    <li>繼續簽到或進入簽退階段</li>
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <h3>About the System</h3>
+                            <div class="mb-6">
+                                <h4>Does QuickRecord require an internet connection?</h4>
+                                <p>QuickRecord only requires an internet connection when initially loading the page.
+                                    Once loaded, the system
+                                    can operate offline, including scanning QR codes and recording check-in/out
+                                    information. However, please
+                                    note that if you refresh the page or close the browser, you will need to connect to
+                                    the internet again.
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>What devices does the system support?</h4>
+                                <p>QuickRecord supports any device with a modern web browser. For event organizers, a
+                                    device with a camera
+                                    (such as a laptop, tablet, or smartphone) is required. It is recommended to use
+                                    Chrome or Edge browsers
+                                    for the best experience.</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>Where is the data stored?</h4>
+                                <p>All data is stored only in your browser's local memory and is not uploaded to any
+                                    server. When you
+                                    complete the event and download the CSV file, the data will be cleared. Therefore,
+                                    make sure to download
+                                    the data before ending the event.</p>
+                            </div>
+
+                            <h3>About CSV Import</h3>
+                            <div class="mb-6">
+                                <h4>Why do I see garbled text when importing CSV?</h4>
+                                <p>This is usually due to encoding issues. QuickRecord supports two encodings: UTF-8 and
+                                    Big5. If you find
+                                    Chinese characters displaying as garbled text, click the "Encoding Issue?" button to
+                                    switch encoding
+                                    methods.</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>Can I import a list of more than 1000 people?</h4>
+                                <p>Theoretically yes, but it is recommended to divide large events into batches for
+                                    check-in to ensure
+                                    stable browser performance. Alternatively, consider using higher-performance
+                                    equipment to run the
+                                    system.</p>
+                            </div>
+
+                            <h3>About Check-in/out Operations</h3>
+                            <div class="mb-6">
+                                <h4>How do I handle participants who forgot to check in but need to check out?</h4>
+                                <p>The system requires participants to complete check-in before they can check out. For
+                                    participants who
+                                    missed check-in, you can:
+                                <ol>
+                                    <li>Return to the check-in phase (must reset the event)</li>
+                                    <li>Manually modify the data in the downloaded CSV file</li>
+                                </ol>
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>What if the camera cannot start?</h4>
+                                <p>Please check:
+                                <ul>
+                                    <li>Whether the browser has been granted permission to use the camera</li>
+                                    <li>Whether another application is currently using the camera</li>
+                                    <li>Whether the camera is properly connected and functioning</li>
+                                    <li>Try refreshing the page or using a different browser</li>
+                                </ul>
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>What if QR code scanning is unsuccessful?</h4>
+                                <p>Methods to improve scanning success rate:
+                                <ul>
+                                    <li>Ensure adequate environmental lighting</li>
+                                    <li>Keep the phone screen brightness sufficient</li>
+                                    <li>Maintain an appropriate distance between the camera and the QR code</li>
+                                    <li>Check that the QR code is clearly visible (no reflections or creases)</li>
+                                </ul>
+                                </p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>How do I switch devices without interrupting check-in?</h4>
+                                <p>Since data is only stored locally, it cannot be directly transferred between devices.
+                                    Recommendations:
+                                <ul>
+                                    <li>Complete the current check-in phase and download the data</li>
+                                    <li>Set up the event on the new device and import the previously downloaded data
+                                    </li>
+                                    <li>Continue check-in or move to the check-out phase</li>
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Troubleshooting Section -->
+                    <section id="troubleshooting" class="section">
+                        <h2 class="zh-content">問題排解</h2>
+                        <h2 class="en-content">Troubleshooting</h2>
+
+                        <div class="zh-content">
+                            <p>使用 QuickRecord 時可能會遇到一些技術問題。以下是常見問題的解決方法：</p>
+
+                            <h3>攝影機相關問題</h3>
+                            <div class="mb-6">
+                                <h4>問題：攝影機無法啟動</h4>
+                                <p><strong>可能原因與解決方法：</strong></p>
+                                <ul>
+                                    <li><strong>權限問題：</strong>確保瀏覽器已獲得攝影機存取權限。點擊瀏覽器地址欄的鎖頭圖示，檢查攝影機權限設定。</li>
+                                    <li><strong>設備佔用：</strong>關閉可能正在使用攝影機的其他應用程式或瀏覽器分頁。</li>
+                                    <li><strong>硬體問題：</strong>確認攝影機硬體正常運作，試著在其他應用程式中測試攝影機。</li>
+                                    <li><strong>瀏覽器兼容性：</strong>嘗試使用 Chrome 或 Edge 瀏覽器，它們對 WebRTC 技術支援較好。</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>問題：QR Code 掃描不成功或反應緩慢</h4>
+                                <p><strong>可能原因與解決方法：</strong></p>
+                                <ul>
+                                    <li><strong>光線不足：</strong>確保環境有充足的光線照射 QR Code。</li>
+                                    <li><strong>距離不適當：</strong>調整攝影機與 QR Code 之間的距離，通常 15-30 公分為佳。</li>
+                                    <li><strong>模糊或損壞的 QR Code：</strong>確保 QR Code 清晰完整，無破損或褶皺。</li>
+                                    <li><strong>螢幕亮度：</strong>調高顯示 QR Code 的設備螢幕亮度。</li>
+                                    <li><strong>設備效能：</strong>如果掃描反應緩慢，可能是設備效能不足，嘗試使用效能較佳的設備。</li>
+                                </ul>
+                            </div>
+
+                            <h3>CSV 檔案問題</h3>
+                            <div class="mb-6">
+                                <h4>問題：無法上傳或解析 CSV 檔案</h4>
+                                <p><strong>可能原因與解決方法：</strong></p>
+                                <ul>
+                                    <li><strong>檔案格式：</strong>確保檔案是標準的 CSV 格式，以逗號分隔。</li>
+                                    <li><strong>欄位標題：</strong>確認第一列包含正確的欄位標題，且大小寫正確（Name, ID, Note）。</li>
+                                    <li><strong>特殊字元：</strong>如果資料中包含逗號，請確保將該欄位值用雙引號括起來。</li>
+                                    <li><strong>檔案大小：</strong>如果檔案過大，可能導致瀏覽器記憶體不足，建議分割檔案。</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>問題：匯出的 CSV 檔案中有亂碼</h4>
+                                <p><strong>可能原因與解決方法：</strong></p>
+                                <ul>
+                                    <li><strong>編碼問題：</strong>匯出的 CSV 檔案使用 UTF-8 編碼。如使用 Excel 開啟出現亂碼，請：
+                                        <ol>
+                                            <li>在 Excel 中選擇「資料」選單</li>
+                                            <li>選擇「從文字/CSV」或「從文字」</li>
+                                            <li>選擇 CSV 檔案並指定編碼為 UTF-8</li>
+                                            <li>完成匯入精靈</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <h3>系統操作問題</h3>
+                            <div class="mb-6">
+                                <h4>問題：系統運行緩慢或當機</h4>
+                                <p><strong>可能原因與解決方法：</strong></p>
+                                <ul>
+                                    <li><strong>參與者數量過多：</strong>大量資料可能導致瀏覽器效能下降，建議減少一次處理的參與者數量。</li>
+                                    <li><strong>瀏覽器資源不足：</strong>關閉不必要的分頁和應用程式，釋放系統資源。</li>
+                                    <li><strong>長時間運行：</strong>如活動時間較長，可考慮定期重新啟動系統，但記得先下載當前資料。</li>
+                                    <li><strong>裝置過熱：</strong>長時間使用攝影機可能導致設備過熱，確保設備有適當的散熱。</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>問題：意外關閉或重新整理頁面導致資料遺失</h4>
+                                <p><strong>可能原因與解決方法：</strong></p>
+                                <ul>
+                                    <li><strong>資料恢復：</strong>不幸的是，如果頁面被重新整理或關閉，本地儲存的資料將會遺失。建議：
+                                        <ol>
+                                            <li>定期手動記錄重要資訊</li>
+                                            <li>在長時間活動的中間階段下載資料備份</li>
+                                            <li>避免在瀏覽器設定為自動更新的環境中使用系統</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="warning">
+                                <p><strong>注意：</strong>如遇到無法解決的技術問題，建議準備備用的簽到退方案，如傳統的紙本簽到表。</p>
+                            </div>
+                        </div>
+
+                        <div class="en-content">
+                            <p>You may encounter some technical issues when using QuickRecord. Here are solutions to
+                                common problems:</p>
+
+                            <h3>Camera-Related Issues</h3>
+                            <div class="mb-6">
+                                <h4>Problem: Camera Cannot Start</h4>
+                                <p><strong>Possible Causes and Solutions:</strong></p>
+                                <ul>
+                                    <li><strong>Permission Issues:</strong> Ensure the browser has been granted access
+                                        to the camera. Click
+                                        the lock icon in the browser address bar to check camera permission settings.
+                                    </li>
+                                    <li><strong>Device Occupation:</strong> Close other applications or browser tabs
+                                        that may be using the
+                                        camera.</li>
+                                    <li><strong>Hardware Issues:</strong> Confirm that the camera hardware is working
+                                        properly; try testing
+                                        the camera in other applications.</li>
+                                    <li><strong>Browser Compatibility:</strong> Try using Chrome or Edge browsers, which
+                                        have better support
+                                        for WebRTC technology.</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>Problem: QR Code Scanning Unsuccessful or Slow</h4>
+                                <p><strong>Possible Causes and Solutions:</strong></p>
+                                <ul>
+                                    <li><strong>Insufficient Light:</strong> Ensure there is adequate lighting on the QR
+                                        code.</li>
+                                    <li><strong>Inappropriate Distance:</strong> Adjust the distance between the camera
+                                        and the QR code;
+                                        typically 15-30 cm is optimal.</li>
+                                    <li><strong>Blurry or Damaged QR Code:</strong> Ensure the QR code is clear and
+                                        intact, without damage
+                                        or creases.</li>
+                                    <li><strong>Screen Brightness:</strong> Increase the screen brightness of the device
+                                        displaying the QR
+                                        code.</li>
+                                    <li><strong>Device Performance:</strong> If scanning is slow, the device performance
+                                        may be
+                                        insufficient; try using a device with better performance.</li>
+                                </ul>
+                            </div>
+
+                            <h3>CSV File Issues</h3>
+                            <div class="mb-6">
+                                <h4>Problem: Cannot Upload or Parse CSV File</h4>
+                                <p><strong>Possible Causes and Solutions:</strong></p>
+                                <ul>
+                                    <li><strong>File Format:</strong> Ensure the file is in standard CSV format,
+                                        separated by commas.</li>
+                                    <li><strong>Column Headers:</strong> Confirm that the first row includes the correct
+                                        field headers with
+                                        proper case sensitivity (Name, ID, Note).</li>
+                                    <li><strong>Special Characters:</strong> If the data contains commas, ensure that
+                                        the field value is
+                                        enclosed in double quotes.</li>
+                                    <li><strong>File Size:</strong> If the file is too large, it may cause the browser
+                                        to run out of memory;
+                                        consider splitting the file.</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>Problem: Garbled Text in Exported CSV File</h4>
+                                <p><strong>Possible Causes and Solutions:</strong></p>
+                                <ul>
+                                    <li><strong>Encoding Issues:</strong> Exported CSV files use UTF-8 encoding. If you
+                                        see garbled text
+                                        when opening in Excel:
+                                        <ol>
+                                            <li>In Excel, select the "Data" menu</li>
+                                            <li>Choose "From Text/CSV" or "From Text"</li>
+                                            <li>Select the CSV file and specify the encoding as UTF-8</li>
+                                            <li>Complete the import wizard</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <h3>System Operation Issues</h3>
+                            <div class="mb-6">
+                                <h4>Problem: System Running Slowly or Crashing</h4>
+                                <p><strong>Possible Causes and Solutions:</strong></p>
+                                <ul>
+                                    <li><strong>Too Many Participants:</strong> Large amounts of data may cause browser
+                                        performance to
+                                        decline; consider reducing the number of participants processed at once.</li>
+                                    <li><strong>Insufficient Browser Resources:</strong> Close unnecessary tabs and
+                                        applications to free up
+                                        system resources.</li>
+                                    <li><strong>Long Running Time:</strong> For longer events, consider restarting the
+                                        system periodically,
+                                        but remember to download the current data first.</li>
+                                    <li><strong>Device Overheating:</strong> Using the camera for extended periods may
+                                        cause the device to
+                                        overheat; ensure the device has proper ventilation.</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6">
+                                <h4>Problem: Accidental Page Close or Refresh Causing Data Loss</h4>
+                                <p><strong>Possible Causes and Solutions:</strong></p>
+                                <ul>
+                                    <li><strong>Data Recovery:</strong> Unfortunately, if the page is refreshed or
+                                        closed, locally stored
+                                        data will be lost. Recommendations:
+                                        <ol>
+                                            <li>Periodically manually record important information</li>
+                                            <li>Download data backups during the middle stages of long events</li>
+                                            <li>Avoid using the system in environments where the browser is set to
+                                                update automatically</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="warning">
+                                <p><strong>Note:</strong> If you encounter technical issues that cannot be resolved, it
+                                    is recommended to
+                                    prepare a backup check-in/out method, such as traditional paper sign-in sheets.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p class="zh-content">© 2023-2025 QuickRecord 文檔 | 由 <a href="https://watsonshih.github.io/"
+                        target="_blank">Watson</a> 提供</p>
+                <p class="en-content">© 2023-2025 QuickRecord Documentation | Provided by <a
+                        href="https://watsonshih.github.io/" target="_blank">Watson</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language Toggle
+        const htmlElement = document.documentElement;
+        const langToggleBtn = document.getElementById('lang-toggle');
+
+        // Initialize language based on stored preference or browser default
+        function initializeLanguage() {
+            const storedLang = localStorage.getItem('quickRecordDocsLang');
+            if (storedLang) {
+                setLanguage(storedLang);
+            } else {
+                const browserLang = navigator.language || navigator.userLanguage;
+                if (browserLang.includes('zh')) {
+                    setLanguage('zh-TW');
+                } else {
+                    setLanguage('en');
+                }
+            }
+        }
+
+        function setLanguage(lang) {
+            htmlElement.setAttribute('lang', lang);
+            localStorage.setItem('quickRecordDocsLang', lang);
+
+            if (lang === 'zh-TW') {
+                langToggleBtn.textContent = 'EN';
+                // document.querySelector('.theme-text').textContent = '主題';
+            } else {
+                langToggleBtn.textContent = '中';
+                // document.querySelector('.theme-text').textContent = 'Theme';
+            }
+        }
+
+        langToggleBtn.addEventListener('click', () => {
+            const currentLang = htmlElement.getAttribute('lang');
+            const newLang = currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+            setLanguage(newLang);
+        });
+
+        // Theme Toggle
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const bodyElement = document.body;
+
+        function initializeTheme() {
+            const storedTheme = localStorage.getItem('quickRecordDocsTheme');
+            if (storedTheme) {
+                setTheme(storedTheme);
+            }
+        }
+
+        function setTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.remove('dark-mode');
+                bodyElement.classList.add('light-mode');
+            } else {
+                bodyElement.classList.remove('light-mode');
+                bodyElement.classList.add('dark-mode');
+            }
+            localStorage.setItem('quickRecordDocsTheme', theme);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isDarkMode = bodyElement.classList.contains('dark-mode');
+            setTheme(isDarkMode ? 'light' : 'dark');
+        });
+
+        // Mobile navigation
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        const navSections = document.querySelectorAll('.nav-section');
+
+        mobileNavToggle.addEventListener('click', () => {
+            navSections.forEach(section => {
+                section.classList.toggle('active');
+            });
+        });
+
+        // Active link highlighting
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        function setActiveLink() {
+            const currentHash = window.location.hash || '#introduction';
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentHash) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        window.addEventListener('hashchange', setActiveLink);
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+
+                    // Update URL hash without scrolling
+                    history.pushState(null, null, targetId);
+                    setActiveLink();
+                }
+            });
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLanguage();
+            initializeTheme();
+            setActiveLink();
+        });
+    </script>
+</body>
+
+</html>

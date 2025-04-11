@@ -274,6 +274,12 @@
                         </dl>
                     </div>
 
+                    <button id="backToInfo"
+                        class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg mt-4"
+                        data-lang-key="backToSettings">
+                        返回設定頁
+                    </button>
+
                     <button id="endCheckIn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium
                         py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="endCheckIn">
                         結束簽到並進入簽退
@@ -358,6 +364,12 @@
                             </div>
                         </dl>
                     </div>
+
+                    <button id="backToCheckIn"
+                        class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg mt-4"
+                        data-lang-key="backToCheckIn">
+                        返回簽到頁
+                    </button>
 
                     <button id="endCheckOut" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium
                         py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="endCheckOut">
@@ -724,6 +736,17 @@
             }
             updateDisplaySettings();
             initializeCheckInPage(eventName);
+            showPage(checkInPage);
+            startCheckInCamera();
+        });
+
+        document.getElementById('backToInfo').addEventListener('click', () => {
+            stopCheckInCamera();
+            showPage(infoPage);
+        });
+
+        document.getElementById('backToCheckIn').addEventListener('click', () => {
+            stopCheckOutCamera();
             showPage(checkInPage);
             startCheckInCamera();
         });
@@ -1112,8 +1135,9 @@
                 newline: '\r\n'
             });
 
-            const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
-            const blob = new Blob([bom, csv], { type: 'text/csv;charset=utf-8;' });
+            const encoder = new TextEncoder('big5');
+            const csvData = encoder.encode(csv);
+            const blob = new Blob([csvData], { type: 'text/csv;charset=big5' });
 
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -1197,7 +1221,7 @@
             const needCheckOutList = document.getElementById('needCheckOutParticipantsList');
             const checkedOutList = document.getElementById('checkedOutParticipantsList');
 
-            if (!allList || !needCheckOutList || !checkedOutList) return; // Ensure elements exist
+            if (!allList || !needCheckOutList || !checkedOutList) return;
 
             const sortedParticipants = [...participants].sort((a, b) => a.name.localeCompare(b.name, currentLang === 'zh-TW' ? 'zh-Hant' : 'en'));
 
@@ -1293,7 +1317,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (typeof jsQR !== 'function') {
                 console.error('jsQR library not loaded properly!');
-                alert('QR Code scanning library failed to load. Please check your internet connection and refresh.'); // More user-friendly message
+                alert('QR Code scanning library failed to load. Please check your internet connection and refresh.');
             }
             if (typeof Papa !== 'object' || typeof Papa.parse !== 'function') {
                 console.error('PapaParse library not loaded properly!');
