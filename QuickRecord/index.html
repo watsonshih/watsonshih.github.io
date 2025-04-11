@@ -118,6 +118,20 @@
         </div>
     </nav>
 
+    <div id="customConfirmModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-300 opacity-0">
+        <div id="confirmBox"
+            class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0">
+            <div id="confirmMessage" class="text-sm mb-6"></div>
+            <div class="flex justify-end gap-3">
+                <button id="cancelConfirmBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700"
+                    data-lang-key="cancel">取消</button>
+                <button id="okConfirmBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                    data-lang-key="confirm">確認</button>
+            </div>
+        </div>
+    </div>
+
     <main class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div id="mainPage" class="page-transition">
             <div class="max-w-lg mx-auto">
@@ -506,6 +520,7 @@
         let currentFileContent = null;
         let lastCheckedInParticipant = null;
         let lastCheckedOutParticipant = null;
+        let hasAskedToResumeData = false;
 
         // DOM 元素參考
         const mainPage = document.getElementById('mainPage');
@@ -514,6 +529,53 @@
         const checkOutPage = document.getElementById('checkOutPage');
         const currentTimeDisplay = document.getElementById('currentTime');
         const participantsPreview = document.getElementById('participantsPreview');
+
+        function showConfirmModal(messageKey) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customConfirmModal');
+                const box = document.getElementById('confirmBox');
+                const msg = document.getElementById('confirmMessage');
+                const okBtn = document.getElementById('okConfirmBtn');
+                const cancelBtn = document.getElementById('cancelConfirmBtn');
+
+                msg.textContent = languages[currentLang][messageKey] || messageKey;
+                modal.classList.remove('hidden');
+
+                requestAnimationFrame(() => {
+                    modal.classList.add('opacity-100');
+                    box.classList.add('opacity-100', 'scale-100');
+                    box.classList.remove('scale-95');
+                });
+
+                const cleanup = () => {
+                    modal.classList.remove('opacity-100');
+                    box.classList.remove('opacity-100', 'scale-100');
+                    box.classList.add('scale-95');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+
+                    okBtn.removeEventListener('click', onOk);
+                    cancelBtn.removeEventListener('click', onCancel);
+                };
+
+                const onOk = () => { cleanup(); resolve(true); };
+                const onCancel = () => { cleanup(); resolve(false); };
+
+                okBtn.addEventListener('click', onOk);
+                cancelBtn.addEventListener('click', onCancel);
+            });
+        }
+
+        window.addEventListener('beforeunload', function (e) {
+            if (!checkInPage.classList.contains('hidden') || !checkOutPage.classList.contains('hidden')) {
+                const confirmationMessage = languages[currentLang]['leaveDuringCheckPrompt'] || 'Are you sure you want to close the page? All data will be lost.';
+                e.preventDefault();
+                e.returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
 
         function updateTime() {
             const now = new Date();
@@ -628,6 +690,13 @@
             try {
                 const decoder = new TextDecoder(currentEncoding);
                 const content = decoder.decode(currentFileContent);
+
+                if ((content.match(/�/g) || []).length > 5 && currentEncoding === 'big5') {
+                    console.warn("Detected possible encoding issue with Big5. Retrying with UTF-8...");
+                    currentEncoding = 'utf-8';
+                    return parseWithCurrentEncoding();
+                }
+
                 parseCSVContent(content);
             } catch (error) {
                 console.error(`${currentEncoding} 解碼失敗:`, error);
@@ -645,7 +714,7 @@
             Papa.parse(content, {
                 header: true,
                 skipEmptyLines: true,
-                complete: function (results) {
+                complete: async function (results) {
                     const headers = results.meta.fields;
                     const hasName = headers.some(h => h.trim().toLowerCase() === 'name');
                     const hasId = headers.some(h => h.trim().toLowerCase() === 'id');
@@ -658,17 +727,47 @@
                     const nameHeader = headers.find(h => h.trim().toLowerCase() === 'name');
                     const idHeader = headers.find(h => h.trim().toLowerCase() === 'id');
                     const noteHeader = headers.find(h => h.trim().toLowerCase() === 'note');
+                    const checkInHeader = headers.find(h => h.trim().toLowerCase() === 'checkintime');
+                    const checkOutHeader = headers.find(h => h.trim().toLowerCase() === 'checkouttime');
 
                     participants = results.data.map(row => ({
                         name: row[nameHeader]?.startsWith('name:') ? row[nameHeader].substring(5).trim() : row[nameHeader],
                         id: row[idHeader]?.startsWith('id:') ? row[idHeader].substring(3).trim() : row[idHeader],
                         note: noteHeader ? (row[noteHeader] || '') : '',
                         inCSV: true,
-                        checkInTime: '',
-                        checkOutTime: ''
+                        checkInTime: checkInHeader ? (row[checkInHeader] || '') : '',
+                        checkOutTime: checkOutHeader ? (row[checkOutHeader] || '') : ''
                     }));
 
                     expectedParticipantsCount = participants.length;
+
+                    if (!hasAskedToResumeData) {
+                        const hasPreviousData = participants.some(p => p.checkInTime || p.checkOutTime);
+                        if (hasPreviousData) {
+                            hasAskedToResumeData = true;
+                            const resume = await showConfirmModal('confirmResumeData'); // ✅ 非同步等 Modal 回應
+                            if (!resume) {
+                                participants.forEach(p => {
+                                    p.checkInTime = '';
+                                    p.checkOutTime = '';
+                                });
+                            } else {
+                                checkInRecords = participants.filter(p => p.checkInTime).map(p => ({
+                                    name: p.name,
+                                    id: p.id,
+                                    note: p.note,
+                                    time: p.checkInTime
+                                }));
+                                checkOutRecords = participants.filter(p => p.checkOutTime).map(p => ({
+                                    name: p.name,
+                                    id: p.id,
+                                    note: p.note,
+                                    time: p.checkOutTime
+                                }));
+                            }
+                        }
+                    }
+
                     renderParticipantsPreview();
                     showPage(infoPage);
                 },
@@ -726,6 +825,7 @@
             participants = [];
             expectedParticipantsCount = 0;
             document.getElementById('eventName').value = '';
+            resetSystem();
         });
 
         document.getElementById('startCheckIn').addEventListener('click', () => {
@@ -752,21 +852,25 @@
         });
 
         document.getElementById('endCheckIn').addEventListener('click', () => {
-            if (confirm(languages[currentLang]['confirmEndCheckIn'])) {
-                stopCheckInCamera();
-                initializeCheckOutPage();
-                showPage(checkOutPage);
-                startCheckOutCamera();
-            }
+            showConfirmModal('confirmEndCheckIn').then(confirmed => {
+                if (confirmed) {
+                    stopCheckInCamera();
+                    initializeCheckOutPage();
+                    showPage(checkOutPage);
+                    startCheckOutCamera();
+                }
+            });
         });
 
         document.getElementById('endCheckOut').addEventListener('click', () => {
-            if (confirm(languages[currentLang]['confirmEndCheckOut'])) {
-                stopCheckOutCamera();
-                downloadCSV();
-                showPage(mainPage);
-                resetSystem();
-            }
+            showConfirmModal('confirmEndCheckOut').then(confirmed => {
+                if (confirmed) {
+                    stopCheckOutCamera();
+                    downloadCSV();
+                    showPage(mainPage);
+                    resetSystem();
+                }
+            });
         });
 
         function updateDisplaySettings() {
@@ -1043,7 +1147,6 @@
             checkOutRecords.push({ name, id, note: participant?.note || '', time: checkOutTime });
             lastCheckedOutParticipant = participant ? { ...participant } : { name, id, note: '', checkOutTime };
 
-
             updateCheckOutDisplay(participant || { name, id, note: '', checkOutTime });
             renderCheckOutList();
             updateTotalCountDisplay();
@@ -1164,14 +1267,27 @@
             lastCheckedOutParticipant = null;
             currentFileContent = null;
             currentEncoding = 'big5';
+            hasAskedToResumeData = false;
+
             document.getElementById('eventName').value = '';
             document.getElementById('participantsPreview').classList.add('hidden');
+            document.getElementById('fileInput').value = '';
+
             updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
             updateCheckOutDisplay({ name: '-', id: '-', note: '-', checkOutTime: '-' });
+
             renderParticipantsList();
             renderCheckOutList();
             updateTotalCountDisplay();
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                const tabName = button.getAttribute('data-tab');
+                if (tabName === 'allParticipants' || tabName === 'allCheckOutParticipants') {
+                    button.click();
+                }
+            });
         }
+
 
         function renderParticipantsList() {
             const allList = document.getElementById('allParticipantsList');

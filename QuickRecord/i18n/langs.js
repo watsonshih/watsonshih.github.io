@@ -87,6 +87,9 @@ const languages = {
         confirmResumeData: '偵測到已有簽到或簽退資料，是否要繼續使用這些資料？',
         backToSettings: '返回設定頁',
         backToCheckIn: '返回簽到頁',
+        confirm: '確認',
+        cancel: '取消',
+        leaveDuringCheckPrompt: '目前正在簽到或簽退，確定要關閉頁面嗎？直接關閉所有資料將會遺失。'
     },
     'en': {
         newCheckIn: 'Start New Check-in',
@@ -176,5 +179,8 @@ const languages = {
         confirmResumeData: 'Previous check-in/out data found. Do you want to resume from it?',
         backToSettings: 'Back to Settings',
         backToCheckIn: 'Back to Check-in Page',
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+        leaveDuringCheckPrompt: 'You are currently checking in or out. Are you sure you want to close the page? Closing will lose all unsaved data.'
     }
 };
