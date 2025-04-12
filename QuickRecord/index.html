@@ -140,7 +140,7 @@
             }
 
             50% {
-                background-color: rgba(209, 213, 219, 0.8);
+                background-color: rgba(209, 213, 219, 1);
             }
         }
     </style>
@@ -148,6 +148,10 @@
 </head>
 
 <body class="bg-dark-100">
+    <audio id="successAudio" src="bgm/success.mp3" preload="auto"></audio>
+    <audio id="warningAudio" src="bgm/warning.mp3" preload="auto"></audio>
+    <audio id="errorAudio" src="bgm/error.mp3" preload="auto"></audio>
+
     <nav class="bg-dark-50 border-b border-dark-300">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -1542,6 +1546,12 @@
                 indicator.classList.add('breathing');
             } else {
                 indicator.classList.add(type);
+
+                const audio = document.getElementById(`${type}Audio`);
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(err => console.warn('Audio error:', err));
+                }
 
                 setTimeout(() => {
                     indicator.classList.remove(type);
