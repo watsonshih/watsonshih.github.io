@@ -96,11 +96,58 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #6B7280;
         }
+
+        .status-indicator {
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            height: 0.5em;
+            background-color: rgba(209, 213, 219, 0.5);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-indicator.visible {
+            opacity: 1;
+        }
+
+        .status-indicator.breathing {
+            animation: breathing 2s ease-in-out infinite;
+        }
+
+        .status-indicator.success {
+            background-color: rgb(34, 197, 94);
+            animation: none;
+        }
+
+        .status-indicator.warning {
+            background-color: rgb(234, 179, 8);
+            animation: none;
+        }
+
+        .status-indicator.error {
+            background-color: rgb(239, 68, 68);
+            animation: none;
+        }
+
+        @keyframes breathing {
+
+            0%,
+            100% {
+                background-color: rgba(209, 213, 219, 0.2);
+            }
+
+            50% {
+                background-color: rgba(209, 213, 219, 0.8);
+            }
+        }
     </style>
     <script src="i18n/langs.js"></script>
 </head>
 
-<body class="bg-dark-100 text-gray-200">
+<body class="bg-dark-100">
     <nav class="bg-dark-50 border-b border-dark-300">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -117,6 +164,7 @@
             </div>
         </div>
     </nav>
+    <div id="statusIndicator" class="status-indicator"></div>
 
     <div id="customConfirmModal"
         class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
@@ -261,7 +309,8 @@
                         <video id="checkInVideo" class="w-full h-full object-cover"></video>
                     </div>
                     <div class="mt-4 text-center">
-                        <span id="scanStatus" class="animate-pulse-slow" data-lang-key="preparingScan">準備掃描 QR
+                        <span id="scanStatus" class="animate-pulse-slow text-gray-100"
+                            data-lang-key="preparingScan">準備掃描 QR
                             Code...</span>
                     </div>
                 </div>
@@ -353,7 +402,8 @@
                         <video id="checkOutVideo" class="w-full h-full object-cover"></video>
                     </div>
                     <div class="mt-4 text-center">
-                        <span id="checkOutScanStatus" class="animate-pulse-slow" data-lang-key="preparingScan">準備掃描 QR
+                        <span id="checkOutScanStatus" class="animate-pulse-slow text-gray-100"
+                            data-lang-key="preparingScan">準備掃描 QR
                             Code...</span>
                     </div>
                 </div>
@@ -793,7 +843,7 @@
                         const hasPreviousData = participants.some(p => p.checkInTime || p.checkOutTime);
                         if (hasPreviousData) {
                             hasAskedToResumeData = true;
-                            const resume = await showConfirmModal('confirmResumeData'); // ✅ 非同步等 Modal 回應
+                            const resume = await showConfirmModal('confirmResumeData');
                             if (!resume) {
                                 participants.forEach(p => {
                                     p.checkInTime = '';
@@ -886,39 +936,44 @@
             initializeCheckInPage(eventName);
             showPage(checkInPage);
             startCheckInCamera();
+            showStatusIndicator('normal');
         });
 
         document.getElementById('backToInfo').addEventListener('click', () => {
             stopCheckInCamera();
+            hideStatusIndicator();
             showPage(infoPage);
         });
 
         document.getElementById('backToCheckIn').addEventListener('click', () => {
             stopCheckOutCamera();
+            hideStatusIndicator();
             showPage(checkInPage);
             startCheckInCamera();
+            showStatusIndicator('normal');
         });
 
-        document.getElementById('endCheckIn').addEventListener('click', () => {
-            showConfirmModal('confirmEndCheckIn').then(confirmed => {
-                if (confirmed) {
-                    stopCheckInCamera();
-                    initializeCheckOutPage();
-                    showPage(checkOutPage);
-                    startCheckOutCamera();
-                }
-            });
+        document.getElementById('endCheckIn').addEventListener('click', async () => {
+            const confirmed = await showConfirmModal('confirmEndCheckIn');
+            if (confirmed) {
+                stopCheckInCamera();
+                hideStatusIndicator();
+                initializeCheckOutPage();
+                showPage(checkOutPage);
+                startCheckOutCamera();
+                showStatusIndicator('normal');
+            }
         });
 
-        document.getElementById('endCheckOut').addEventListener('click', () => {
-            showConfirmModal('confirmEndCheckOut').then(confirmed => {
-                if (confirmed) {
-                    stopCheckOutCamera();
-                    downloadCSV();
-                    showPage(mainPage);
-                    resetSystem();
-                }
-            });
+        document.getElementById('endCheckOut').addEventListener('click', async () => {
+            const confirmed = await showConfirmModal('confirmEndCheckOut');
+            if (confirmed) {
+                stopCheckOutCamera();
+                hideStatusIndicator();
+                downloadCSV();
+                showPage(mainPage);
+                resetSystem();
+            }
         });
 
         function updateDisplaySettings() {
@@ -1129,6 +1184,7 @@
             } catch (error) {
                 console.error(`QR Code processing error (${mode}):`, error);
                 updateScanStatusText('qrScanError', mode);
+                showStatusIndicator('error');
             } finally {
                 setTimeout(() => {
                     isScanningEnabled = true;
@@ -1148,6 +1204,7 @@
 
             if (checkInRecords.some(r => r.id === id)) {
                 updateScanStatusText('alreadyCheckedIn', 'checkIn', name);
+                showStatusIndicator('warning');
                 return;
             }
 
@@ -1170,6 +1227,7 @@
             renderParticipantsList();
             updateTotalCountDisplay();
             updateScanStatusText('checkInSuccess', 'checkIn', name);
+            showStatusIndicator('success');
         }
 
         function processCheckOut(name, id) {
@@ -1178,10 +1236,12 @@
 
             if (!checkInRecords.some(r => r.id === id)) {
                 updateScanStatusText('noCheckInCantCheckOut', 'checkOut', name);
+                showStatusIndicator('error');
                 return;
             }
             if (checkOutRecords.some(r => r.id === id)) {
                 updateScanStatusText('alreadyCheckedOut', 'checkOut', name);
+                showStatusIndicator('warning');
                 return;
             }
 
@@ -1199,6 +1259,7 @@
             renderCheckOutList();
             updateTotalCountDisplay();
             updateScanStatusText('checkOutSuccess', 'checkOut', name);
+            showStatusIndicator('success');
         }
 
         function updateCheckInDisplay(participant) {
@@ -1476,6 +1537,28 @@
             document.getElementById('checkOutTotal').textContent = `/ ${checkInRecords.length}`;
             document.getElementById('checkInCount').textContent = checkInRecords.length;
             document.getElementById('checkOutCount').textContent = checkOutRecords.length;
+        }
+
+        function showStatusIndicator(type = 'normal') {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.classList.remove('success', 'warning', 'error', 'breathing');
+            indicator.classList.add('visible');
+
+            if (type === 'normal') {
+                indicator.classList.add('breathing');
+            } else {
+                indicator.classList.add(type);
+
+                setTimeout(() => {
+                    indicator.classList.remove(type);
+                    indicator.classList.add('breathing');
+                }, 2000);
+            }
+        }
+
+        function hideStatusIndicator() {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.classList.remove('visible', 'success', 'warning', 'error', 'breathing');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
