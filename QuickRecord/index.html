@@ -1212,11 +1212,7 @@
             if (!participant) {
                 participant = { name, id, note: '', inCSV: false, checkInTime: '', checkOutTime: '' };
                 participants.push(participant);
-                if (expectedParticipantsCount === 0) {
-                    expectedParticipantsCount = participants.length;
-                } else {
-                    console.log("Participant not in original list added:", name, id);
-                }
+                expectedParticipantsCount = participants.length;
             }
 
             participant.checkInTime = checkInTime;
@@ -1347,9 +1343,7 @@
                 newline: '\r\n'
             });
 
-            const encoder = new TextEncoder('big5');
-            const csvData = encoder.encode(csv);
-            const blob = new Blob([csvData], { type: 'text/csv;charset=big5' });
+            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8' });
 
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -1357,7 +1351,7 @@
             const eventNameInput = document.getElementById('eventName');
             const eventName = eventNameInput?.value.trim() || document.getElementById('checkOutEventName')?.textContent || 'Event';
             const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-            const filename = `${eventName}_Attendance_${dateStr}.csv`;
+            const filename = `${eventName}_QuickRecord_${dateStr}.csv`;
 
             link.href = url;
             link.setAttribute('download', filename);
