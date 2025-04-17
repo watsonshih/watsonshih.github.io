@@ -219,9 +219,18 @@
         }
     </style>
     <script src="i18n/langs.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <script>
+        function onSubmit(token) {
+            document.getElementById("demo-form").submit();
+        }
+    </script>
 </head>
 
 <body class="bg-dark-100">
+    <button class="g-recaptcha" data-sitekey="6Lc4BRwrAAAAAIBUTWfQ2qXUM1USKJ5UonT-99bf" data-callback='onSubmit'
+        data-action='submit'>Submit</button>
+
     <audio id="successAudio" src="bgm/success.mp3" preload="auto"></audio>
     <audio id="warningAudio" src="bgm/warning.mp3" preload="auto"></audio>
     <audio id="errorAudio" src="bgm/error.mp3" preload="auto"></audio>
