@@ -276,11 +276,10 @@ h6 {
     width: 100vw;
     height: 100vh;
     display: grid;
-    justify-content: center;
-    align-content: start;
+    align-content: center;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(22, 22, 23, .3), rgba(22, 22, 23, 1));
-    padding: 70vh 0 0;
     z-index: 1;
+    justify-content: center;
 }
 
 .introhero_p {

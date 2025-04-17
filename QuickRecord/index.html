@@ -364,11 +364,10 @@
                                 <input type="checkbox" id="enableFirebaseSync"
                                     class="rounded bg-dark-200 border-dark-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-dark-100"
                                     disabled>
-                                <span class="ml-2 text-gray-300" data-lang-key="enableCloudSync">啟用雲端同步
-                                    (產生分享連結以恢復狀態)</span>
+                                <span class="ml-2 text-gray-300" data-lang-key="enableCloudSync">啟用雲端同步</span>
                             </label>
                             <p class="text-xs text-gray-500 mt-2" data-lang-key="cloudSyncNote">
-                                注意</p>
+                                注意：資料僅會暫時保存，可能隨時被清除，請儘速下載。</p>
                         </div>
                     </div>
 
@@ -1418,7 +1417,7 @@
             if (!name) return '-';
             return document.getElementById('showFullName').checked ?
                 name :
-                name.length <= 2 ? name : `${name.charAt(0)}*${name.charAt(name.length - 1)}`;
+                name.length <= 1 ? name : `${name.charAt(0)}*${name.charAt(name.length - 1)}`;
         }
         function getDisplayID(id) {
             if (!id) return '-';

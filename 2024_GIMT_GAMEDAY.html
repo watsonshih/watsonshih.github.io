@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="這個禮拜五，就在學校同樂吧！">
+    <meta name="description" content="臺科大智慧製造所遊戲日，這個禮拜五，就在學校同樂吧！">
     <link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
     <link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
     <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/GIMT_PIC/12switch.jpg">
     <meta itemprop="image" content="https://watsonshih.github.io/GIMT_PIC/12switch.jpg">
     <meta property="og:image" content="https://watsonshih.github.io/GIMT_PIC/12switch.jpg">
     <title>2024 GIMT GAMEDAY</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;600&family=Noto+Sans+TC:wght@300;600&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;600&family=Noto+Sans+TC:wght@300;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
@@ -200,8 +201,8 @@
     </div>
 
     <button class="toTop" title="gotoTop" style="display: inline-block;">
-    	<span>Top</span>
-	</button>
+        <span>Top</span>
+    </button>
 </body>
 
 <script>
@@ -211,25 +212,26 @@
     });
 </script>
 <script>
-	$(document).ready(function(){
-	    gotop();
-	}); 
-	$(window).scroll(function(){
-	    gotop();
-	});
-	$('.toTop').click(function(){
-	    $('html, body, .wrap').animate({scrollTop: '0px'}, 200);
-		 $(".focusable").focus();
-	});
-	function gotop(){
-	    var  winH = $(window).height();
-	    var  scroll = $(window).scrollTop();
-	    if(scroll > 100){
-	        $('.toTop').show();
-	    }
-	    else {
-	        $('.toTop').hide();
-	    }
-	}
+    $(document).ready(function () {
+        gotop();
+    });
+    $(window).scroll(function () {
+        gotop();
+    });
+    $('.toTop').click(function () {
+        $('html, body, .wrap').animate({ scrollTop: '0px' }, 200);
+        $(".focusable").focus();
+    });
+    function gotop() {
+        var winH = $(window).height();
+        var scroll = $(window).scrollTop();
+        if (scroll > 100) {
+            $('.toTop').show();
+        }
+        else {
+            $('.toTop').hide();
+        }
+    }
 </script>
+
 </html>
