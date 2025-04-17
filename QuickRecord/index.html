@@ -44,6 +44,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
+        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
+
         async function initializeFirebase() {
             const firebaseConfig = {
                 apiKey: "AIzaSyDJ9gczXFRnKF4tVBDo15Q9ckdSTJhoAHQ",
@@ -58,12 +60,19 @@
 
             try {
                 const app = initializeApp(firebaseConfig);
+                const appCheck = initializeAppCheck(app, {
+                    provider: new ReCaptchaV3Provider('6Lc4BRwrAAAAAIBUTWfQ2qXUM1USKJ5UonT-99bf'),
+                    isTokenAutoRefreshEnabled: true
+                });
                 const database = getDatabase(app);
-                console.log("Firebase Initialized (from init module)");
                 return database;
             } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                showAlertModal('firebaseConnectError');
+                console.error("Firebase initialization or App Check failed:", error);
+                if (error.code && error.code.includes('appCheck')) {
+                    showAlertModal('reCAPTCHAfailed');
+                } else {
+                    showAlertModal('firebaseConnectError');
+                }
                 throw error;
             }
         }
@@ -219,18 +228,9 @@
         }
     </style>
     <script src="i18n/langs.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js"></script>
-    <script>
-        function onSubmit(token) {
-            document.getElementById("demo-form").submit();
-        }
-    </script>
 </head>
 
 <body class="bg-dark-100">
-    <button class="g-recaptcha hidden" data-sitekey="6Lc4BRwrAAAAAIBUTWfQ2qXUM1USKJ5UonT-99bf" data-callback='onSubmit'
-        data-action='submit'>Submit</button>
-
     <audio id="successAudio" src="bgm/success.mp3" preload="auto"></audio>
     <audio id="warningAudio" src="bgm/warning.mp3" preload="auto"></audio>
     <audio id="errorAudio" src="bgm/error.mp3" preload="auto"></audio>

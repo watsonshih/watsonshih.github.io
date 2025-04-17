@@ -104,6 +104,7 @@ const languages = {
         loadingSession: "正在載入點名狀態...",
         firebaseNotReady: "雲端同步服務無法使用。",
         leaveDuringCheckPrompt: "您確定要關閉頁面嗎？未同步的資料將會遺失。",
+        reCAPTCHAfailed: "無法驗證，請檢查 reCAPTCHA 驗證或稍後再試。",
     },
     'en': {
         newCheckIn: 'Start New Check-in',
@@ -210,5 +211,6 @@ const languages = {
         loadingSession: "Loading session state...",
         firebaseNotReady: "Cloud sync service is not available.",
         leaveDuringCheckPrompt: "Are you sure you want to close the page? Unsynced data will be lost.",
+        reCAPTCHAfailed: "Verification failed. Please check reCAPTCHA or try again later.",
     }
 };
