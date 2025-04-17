@@ -198,7 +198,6 @@
             background-color: rgba(23, 73, 136, 0.1);
             border: 1px solid rgb(23, 73, 136);
             padding: 8px 12px;
-            border-radius: 6px;
             font-size: 0.8rem;
             margin-top: 10px;
             word-break: break-all;
@@ -408,8 +407,8 @@
 
         <div id="checkInPage" class="hidden page-transition">
             <div id="sessionLinkContainerCheckIn" class="mb-4 mx-auto hidden">
-                <p class="text-sm text-gray-300 mb-1" data-lang-key="sessionLinkInfo">使用此連結恢復點名狀態:</p>
-                <div id="sessionLinkDisplayCheckIn" class="session-link-display text-gray-200"></div>
+                <div id="sessionLinkDisplayCheckIn" class="session-link-display rounded-lg text-gray-200"
+                    data-lang-key="sessionLinkInfo">已啟用雲端同步，點此複製連結以共用、恢復本次點名階段。</div>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
@@ -505,8 +504,8 @@
 
         <div id="checkOutPage" class="hidden page-transition">
             <div id="sessionLinkContainerCheckOut" class="mb-4 mx-auto hidden">
-                <p class="text-sm text-gray-300 mb-1" data-lang-key="sessionLinkInfo">使用此連結恢復點名狀態:</p>
-                <div id="sessionLinkDisplayCheckOut" class="session-link-display text-gray-200"></div>
+                <div id="sessionLinkDisplayCheckIn" class="session-link-display rounded-lg text-gray-200"
+                    data-lang-key="sessionLinkInfo">已啟用雲端同步，點此複製連結以共用、恢復本次點名階段。</div>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
@@ -1722,8 +1721,6 @@
         function updateSessionLinkDisplay() {
             if (firebaseSyncEnabled && currentSessionId) {
                 const sessionUrl = `${window.location.origin}${window.location.pathname}?session=${currentSessionId}`;
-                sessionLinkDisplayCheckIn.textContent = sessionUrl;
-                sessionLinkDisplayCheckOut.textContent = sessionUrl;
                 sessionLinkContainerCheckIn.classList.remove('hidden');
                 sessionLinkContainerCheckOut.classList.remove('hidden');
             } else {
@@ -1735,7 +1732,7 @@
         [sessionLinkDisplayCheckIn, sessionLinkDisplayCheckOut].forEach(el => {
             el.addEventListener('click', () => {
                 if (el.textContent) {
-                    navigator.clipboard.writeText(el.textContent)
+                    navigator.clipboard.writeText(sessionUrl)
                         .then(() => showAlertModal('linkCopied'))
                         .catch(err => console.error('Failed to copy link:', err));
                 }
