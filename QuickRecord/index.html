@@ -1733,14 +1733,16 @@
         }
 
         [sessionLinkDisplayCheckIn, sessionLinkDisplayCheckOut].forEach(el => {
-            el.addEventListener('click', () => {
-                if (el.textContent) {
-                    navigator.clipboard
-                        .writeText(getSessionUrl())
-                        .then(() => showAlertModal('linkCopied'))
-                        .catch(err => console.error('Failed to copy link:', err));
-                }
-            });
+            if (el) {
+                el.addEventListener('click', () => {
+                    if (el.textContent) {
+                        navigator.clipboard
+                            .writeText(getSessionUrl())
+                            .then(() => showAlertModal('linkCopied'))
+                            .catch(err => console.error('Failed to copy link:', err));
+                    }
+                });
+            }
         });
 
         async function saveSessionToFirebase() {
