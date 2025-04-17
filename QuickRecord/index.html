@@ -38,6 +38,46 @@
             }
         }
     </script>
+    <script type="module">
+        import { ref, set, get, child, serverTimestamp, update } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+        async function initializeFirebase() {
+            const firebaseConfig = {
+                apiKey: "AIzaSyDJ9gczXFRnKF4tVBDo15Q9ckdSTJhoAHQ",
+                authDomain: "quickrecord-client01.firebaseapp.com",
+                projectId: "quickrecord-client01",
+                storageBucket: "quickrecord-client01.appspot.com",
+                messagingSenderId: "424804839473",
+                appId: "1:424804839473:web:84253720e4a6547ca82510",
+                measurementId: "G-GTYM59Z2NC",
+                databaseURL: "https://quickrecord-client01-default-rtdb.firebaseio.com/"
+            };
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                const database = getDatabase(app);
+                console.log("Firebase Initialized (from init module)");
+                return database;
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showAlertModal('firebaseConnectError');
+                throw error;
+            }
+        }
+
+        window.firebaseInitPromise = initializeFirebase();
+
+        window.fbRef = ref;
+        window.fbSet = set;
+        window.fbGet = get;
+        window.fbServerTimestamp = serverTimestamp;
+        window.fbUpdate = update;
+        window.fbChild = child;
+
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
 
@@ -143,6 +183,40 @@
                 background-color: rgba(209, 213, 219, 1);
             }
         }
+
+        .session-link-display {
+            background-color: rgba(23, 73, 136, 0.1);
+            border: 1px solid rgb(23, 73, 136);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            word-break: break-all;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .session-link-display:hover {
+            background-color: rgba(29, 93, 174, 0.2);
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.2em;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
     </style>
     <script src="i18n/langs.js"></script>
 </head>
@@ -151,6 +225,10 @@
     <audio id="successAudio" src="bgm/success.mp3" preload="auto"></audio>
     <audio id="warningAudio" src="bgm/warning.mp3" preload="auto"></audio>
     <audio id="errorAudio" src="bgm/error.mp3" preload="auto"></audio>
+
+    <div id="loadingOverlay" class="hidden">
+        <span data-lang-key="loadingSession">正在載入點名狀態...</span>
+    </div>
 
     <nav class="bg-dark-50 border-b border-dark-300">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
@@ -270,6 +348,19 @@
                                 </label>
                             </div>
                         </div>
+
+                        <div class="border-t border-dark-300 pt-4">
+                            <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="cloudSync">雲端同步</h3>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="enableFirebaseSync"
+                                    class="rounded bg-dark-200 border-dark-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-dark-100"
+                                    disabled>
+                                <span class="ml-2 text-gray-300" data-lang-key="enableCloudSync">啟用雲端同步
+                                    (產生分享連結以恢復狀態)</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-2" data-lang-key="cloudSyncNote">
+                                注意</p>
+                        </div>
                     </div>
 
                     <div class="mt-6 flex space-x-4">
@@ -306,6 +397,10 @@
         </div>
 
         <div id="checkInPage" class="hidden page-transition">
+            <div id="sessionLinkContainerCheckIn" class="mb-4 mx-auto hidden">
+                <p class="text-sm text-gray-300 mb-1" data-lang-key="sessionLinkInfo">使用此連結恢復點名狀態:</p>
+                <div id="sessionLinkDisplayCheckIn" class="session-link-display text-gray-200"></div>
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
                     <h2 class="text-xl font-semibold text-gray-100 mb-4" data-lang-key="qrCodeScan">QR Code 掃描</h2>
@@ -399,6 +494,10 @@
         </div>
 
         <div id="checkOutPage" class="hidden page-transition">
+            <div id="sessionLinkContainerCheckOut" class="mb-4 max-w-2xl mx-auto hidden">
+                <p class="text-sm text-gray-300 mb-1" data-lang-key="sessionLinkInfo">使用此連結恢復點名狀態 (點擊複製):</p>
+                <div id="sessionLinkDisplayCheckOut" class="session-link-display text-gray-200"></div>
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
                     <h2 class="text-xl font-semibold text-gray-100 mb-4" data-lang-key="qrCodeScan">QR Code 掃描</h2>
@@ -513,6 +612,7 @@
         let currentLang = 'zh-TW';
         const langSwitchBtn = document.getElementById('langSwitchBtn');
         const htmlTag = document.documentElement;
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
         function setLanguage(lang) {
             if (!languages[lang]) {
@@ -573,6 +673,16 @@
             setLanguage(newLang);
         });
 
+        function showLoadingOverlay(messageKey = 'loadingSession') {
+            const messageSpan = loadingOverlay.querySelector('span');
+            messageSpan.textContent = languages[currentLang][messageKey] || messageKey;
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoadingOverlay() {
+            loadingOverlay.classList.add('hidden');
+        }
+
         // 全域變數
         let participants = [];
         let checkInRecords = [];
@@ -589,6 +699,12 @@
         let lastCheckedOutParticipant = null;
         let hasAskedToResumeData = false;
 
+        // Firebase variables
+        let db = window.firebaseDB;
+        let firebaseSyncEnabled = false;
+        let currentSessionId = null;
+        let sessionRef = null;
+
         // DOM 元素參考
         const mainPage = document.getElementById('mainPage');
         const infoPage = document.getElementById('infoPage');
@@ -596,6 +712,11 @@
         const checkOutPage = document.getElementById('checkOutPage');
         const currentTimeDisplay = document.getElementById('currentTime');
         const participantsPreview = document.getElementById('participantsPreview');
+        const enableFirebaseSyncCheckbox = document.getElementById('enableFirebaseSync');
+        const sessionLinkContainerCheckIn = document.getElementById('sessionLinkContainerCheckIn');
+        const sessionLinkDisplayCheckIn = document.getElementById('sessionLinkDisplayCheckIn');
+        const sessionLinkContainerCheckOut = document.getElementById('sessionLinkContainerCheckOut');
+        const sessionLinkDisplayCheckOut = document.getElementById('sessionLinkDisplayCheckOut');
 
         function showConfirmModal(messageKey) {
             return new Promise((resolve) => {
@@ -811,7 +932,6 @@
             parseWithCurrentEncoding();
         });
 
-
         function parseCSVContent(content) {
             Papa.parse(content, {
                 header: true,
@@ -936,6 +1056,9 @@
                 showAlertModal('enterEventName');
                 return;
             }
+            enableFirebaseSyncCheckbox.disabled = true;
+            firebaseSyncEnabled = enableFirebaseSyncCheckbox.checked;
+
             updateDisplaySettings();
             initializeCheckInPage(eventName);
             showPage(checkInPage);
@@ -1228,6 +1351,7 @@
             updateTotalCountDisplay();
             updateScanStatusText('checkInSuccess', 'checkIn', name);
             showStatusIndicator('success');
+            saveSessionToFirebase();
         }
 
         function processCheckOut(name, id) {
@@ -1260,6 +1384,7 @@
             updateTotalCountDisplay();
             updateScanStatusText('checkOutSuccess', 'checkOut', name);
             showStatusIndicator('success');
+            saveSessionToFirebase();
         }
 
         function updateCheckInDisplay(participant) {
@@ -1375,10 +1500,20 @@
             currentFileContent = null;
             currentEncoding = 'big5';
             hasAskedToResumeData = false;
+            firebaseSyncEnabled = false;
+            currentSessionId = null;
+            sessionRef = null;
 
             document.getElementById('eventName').value = '';
             document.getElementById('participantsPreview').classList.add('hidden');
             document.getElementById('fileInput').value = '';
+            enableFirebaseSyncCheckbox.checked = false;
+            enableFirebaseSyncCheckbox.disabled = !db;
+            updateSessionLinkDisplay();
+
+            if (window.location.search.includes('session=')) {
+                history.pushState(null, '', window.location.pathname);
+            }
 
             updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
             updateCheckOutDisplay({ name: '-', id: '-', note: '-', checkOutTime: '-' });
@@ -1520,6 +1655,15 @@
             renderParticipantsList();
             updateDisplaySettings();
             updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
+
+            if (firebaseSyncEnabled && !currentSessionId && db) {
+                currentSessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+                sessionRef = window.fbRef(db, `sessions/${currentSessionId}`);
+                const newUrl = `${window.location.pathname}?session=${currentSessionId}`;
+                history.pushState({ sessionId: currentSessionId }, '', newUrl);
+                updateSessionLinkDisplay();
+                saveSessionToFirebase();
+            }
         }
 
         function initializeCheckOutPage() {
@@ -1565,16 +1709,150 @@
             indicator.classList.remove('visible', 'success', 'warning', 'error', 'breathing');
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        function updateSessionLinkDisplay() {
+            if (firebaseSyncEnabled && currentSessionId) {
+                const sessionUrl = `${window.location.origin}${window.location.pathname}?session=${currentSessionId}`;
+                sessionLinkDisplayCheckIn.textContent = sessionUrl;
+                sessionLinkDisplayCheckOut.textContent = sessionUrl;
+                sessionLinkContainerCheckIn.classList.remove('hidden');
+                sessionLinkContainerCheckOut.classList.remove('hidden');
+            } else {
+                sessionLinkContainerCheckIn.classList.add('hidden');
+                sessionLinkContainerCheckOut.classList.add('hidden');
+            }
+        }
+
+        [sessionLinkDisplayCheckIn, sessionLinkDisplayCheckOut].forEach(el => {
+            el.addEventListener('click', () => {
+                if (el.textContent) {
+                    navigator.clipboard.writeText(el.textContent)
+                        .then(() => showAlertModal('linkCopied'))
+                        .catch(err => console.error('Failed to copy link:', err));
+                }
+            });
+        });
+
+        async function saveSessionToFirebase() {
+            if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
+            const participantsData = {};
+            participants.forEach(p => participantsData[p.id] = { ...p });
+            const sessionData = {
+                eventName: document.getElementById('eventName').value.trim(),
+                settings: {
+                    showCount: document.getElementById('showCount').checked,
+                    showFullName: document.getElementById('showFullName').checked,
+                    showFullID: document.getElementById('showFullID').checked,
+                },
+                participants: participantsData,
+                createdAt: window.fbServerTimestamp(),
+                lastUpdated: window.fbServerTimestamp(),
+                currentLang: currentLang
+            };
+            try {
+                await window.fbSet(sessionRef, sessionData);
+                console.log("Session saved successfully.");
+            } catch (error) {
+                console.error("Error saving session to Firebase:", error);
+            }
+        }
+
+        async function loadSessionFromFirebase(sessionId) {
+            if (!db) return false;
+            showLoadingOverlay();
+            currentSessionId = sessionId;
+            sessionRef = window.fbRef(db, `sessions/${currentSessionId}`);
+            try {
+                const snapshot = await window.fbGet(sessionRef);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('eventName').value = data.eventName || '';
+                    document.getElementById('showCount').checked = data.settings?.showCount ?? true;
+                    document.getElementById('showFullName').checked = data.settings?.showFullName ?? true;
+                    document.getElementById('showFullID').checked = data.settings?.showFullID ?? true;
+                    participants = Object.values(data.participants || {});
+                    expectedParticipantsCount = participants.length;
+
+                    checkInRecords = participants
+                        .filter(p => p.checkInTime)
+                        .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkInTime }))
+                        .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+                    checkOutRecords = participants
+                        .filter(p => p.checkOutTime)
+                        .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkOutTime }))
+                        .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+                    lastCheckedInParticipant = checkInRecords.length > 0 ? participants.find(p => p.id === checkInRecords[checkInRecords.length - 1].id) : null;
+                    lastCheckedOutParticipant = checkOutRecords.length > 0 ? participants.find(p => p.id === checkOutRecords[checkOutRecords.length - 1].id) : null;
+
+                    firebaseSyncEnabled = true;
+                    enableFirebaseSyncCheckbox.checked = true;
+                    enableFirebaseSyncCheckbox.disabled = true;
+                    if (data.currentLang) {
+                        setLanguage(data.currentLang);
+                    }
+
+                    updateSessionLinkDisplay();
+                    updateDisplaySettings();
+                    updateTotalCountDisplay();
+
+                    renderParticipantsPreview();
+                    showPage(infoPage);
+
+                    hideLoadingOverlay();
+                    return true;
+                } else {
+                    showAlertModal('sessionNotFound');
+                    history.replaceState(null, '', window.location.pathname);
+                    hideLoadingOverlay();
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error loading session from Firebase:", error);
+                showAlertModal('firebaseLoadError');
+                history.replaceState(null, '', window.location.pathname);
+                hideLoadingOverlay();
+                return false;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                db = await window.firebaseInitPromise;
+                if (db && enableFirebaseSyncCheckbox) {
+                    enableFirebaseSyncCheckbox.disabled = false;
+                } else if (!db) {
+                    if (enableFirebaseSyncCheckbox) enableFirebaseSyncCheckbox.disabled = true;
+                }
+            } catch (error) {
+                if (enableFirebaseSyncCheckbox) enableFirebaseSyncCheckbox.disabled = true;
+            }
+
             if (typeof jsQR !== 'function') {
-                console.error('jsQR library not loaded properly!');
                 alert('QR Code scanning library failed to load. Please check your internet connection and refresh.');
             }
             if (typeof Papa !== 'object' || typeof Papa.parse !== 'function') {
-                console.error('PapaParse library not loaded properly!');
                 alert('CSV parsing library failed to load. Please check your internet connection and refresh.');
             }
+
             initializeLanguage();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionIdFromUrl = urlParams.get('session');
+
+            if (sessionIdFromUrl && db) {
+                const loaded = await loadSessionFromFirebase(sessionIdFromUrl);
+                if (!loaded) {
+                    showPage(mainPage);
+                }
+            } else {
+                if (sessionIdFromUrl && !db) {
+                    showAlertModal('firebaseNotReady');
+                    history.replaceState(null, '', window.location.pathname);
+                }
+                showPage(mainPage);
+            }
+            hideLoadingOverlay();
         });
     </script>
 </body>
