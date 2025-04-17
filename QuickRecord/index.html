@@ -1718,9 +1718,12 @@
             indicator.classList.remove('visible', 'success', 'warning', 'error', 'breathing');
         }
 
+        function getSessionUrl() {
+            return `${window.location.origin}${window.location.pathname}?session=${currentSessionId}`;
+        }
+
         function updateSessionLinkDisplay() {
             if (firebaseSyncEnabled && currentSessionId) {
-                const sessionUrl = `${window.location.origin}${window.location.pathname}?session=${currentSessionId}`;
                 sessionLinkContainerCheckIn.classList.remove('hidden');
                 sessionLinkContainerCheckOut.classList.remove('hidden');
             } else {
@@ -1732,7 +1735,8 @@
         [sessionLinkDisplayCheckIn, sessionLinkDisplayCheckOut].forEach(el => {
             el.addEventListener('click', () => {
                 if (el.textContent) {
-                    navigator.clipboard.writeText(sessionUrl)
+                    navigator.clipboard
+                        .writeText(getSessionUrl())
                         .then(() => showAlertModal('linkCopied'))
                         .catch(err => console.error('Failed to copy link:', err));
                 }
