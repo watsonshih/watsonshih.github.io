@@ -85,6 +85,7 @@
         window.fbServerTimestamp = serverTimestamp;
         window.fbUpdate = update;
         window.fbChild = child;
+        window.fbOnValue = onValue;
 
     </script>
     <style>
@@ -1823,7 +1824,7 @@
 
                     hideLoadingOverlay();
 
-                    onValue(sessionRef, snapshot => {
+                    window.fbOnValue(sessionRef, snapshot => {
                         if (!snapshot.exists()) return;
                         const data = snapshot.val();
                         participants = Object.values(data.participants || {});
