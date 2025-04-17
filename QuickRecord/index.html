@@ -39,7 +39,7 @@
         }
     </script>
     <script type="module">
-        import { ref, set, get, child, serverTimestamp, update, onValue } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+        import { ref, set, get, child, serverTimestamp, update } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
@@ -1360,7 +1360,7 @@
             updateTotalCountDisplay();
             updateScanStatusText('checkInSuccess', 'checkIn', name);
             showStatusIndicator('success');
-            saveSingleParticipantToFirebase(participant);
+            saveSessionToFirebase();
         }
 
         function processCheckOut(name, id) {
@@ -1393,7 +1393,7 @@
             updateTotalCountDisplay();
             updateScanStatusText('checkOutSuccess', 'checkOut', name);
             showStatusIndicator('success');
-            saveSingleParticipantToFirebase(participant);
+            saveSessionToFirebase();
         }
 
         function updateCheckInDisplay(participant) {
@@ -1765,19 +1765,6 @@
             }
         }
 
-        async function saveSingleParticipantToFirebase(participant) {
-            if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
-            const pRef = child(sessionRef, `participants/${participant.id}`);
-            const data = {
-                name: participant.name,
-                note: participant.note || '',
-                checkInTime: participant.checkInTime || '',
-                checkOutTime: participant.checkOutTime || '',
-            };
-            await update(pRef, data);
-            await update(sessionRef, { lastUpdated: serverTimestamp() });
-        }
-
         async function loadSessionFromFirebase(sessionId) {
             if (!db) return false;
             showLoadingOverlay();
@@ -1822,25 +1809,6 @@
                     showPage(infoPage);
 
                     hideLoadingOverlay();
-
-                    onValue(sessionRef, snapshot => {
-                        if (!snapshot.exists()) return;
-                        const data = snapshot.val();
-                        participants = Object.values(data.participants || {});
-                        expectedParticipantsCount = participants.length;
-                        checkInRecords = participants
-                            .filter(p => p.checkInTime)
-                            .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkInTime }))
-                            .sort((a, b) => new Date(a.time) - new Date(b.time));
-                        checkOutRecords = participants
-                            .filter(p => p.checkOutTime)
-                            .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkOutTime }))
-                            .sort((a, b) => new Date(a.time) - new Date(b.time));
-                        renderParticipantsList();
-                        renderCheckOutList();
-                        updateTotalCountDisplay();
-                    });
-
                     return true;
                 } else {
                     showAlertModal('sessionNotFound');
