@@ -1768,15 +1768,16 @@
 
         async function saveSingleParticipantToFirebase(participant) {
             if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
-            const pRef = child(sessionRef, `participants/${participant.id}`);
+            const pRef = window.fbChild(sessionRef, `participants/${participant.id}`);
             const data = {
                 name: participant.name,
                 note: participant.note || '',
                 checkInTime: participant.checkInTime || '',
                 checkOutTime: participant.checkOutTime || '',
+                inCSV: participant.inCSV !== undefined ? participant.inCSV : false
             };
-            await update(pRef, data);
-            await update(sessionRef, { lastUpdated: serverTimestamp() });
+            await window.fbUpdate(pRef, data);
+            await window.fbUpdate(sessionRef, { lastUpdated: window.fbServerTimestamp() });
         }
 
         async function loadSessionFromFirebase(sessionId) {
