@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員 - ILO 學生就學狀態追蹤系統 (模擬)</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #dbeafe;
+            --light-gray: #f9fafb;
+            --medium-gray: #e5e7eb;
+            --dark-gray: #374151;
+            --darker-gray: #1f2937;
+            --white: #fff;
+            --red: #dc2626;
+            --red-light: #fee2e2;
+            --orange: #f59e0b;
+            --orange-light: #fef3c7;
+            --yellow: #f59e0b;
+            --yellow-dark: #d97706;
+            --green: #10b981;
+            --green-light: #d1fae5;
+            --info-bg: #dbeafe;
+            --info-border: #93c5fd;
+            --info-text: #1e40af;
+            --warning-bg: #fef3c7;
+            --warning-border: #fcd34d;
+            --warning-text: #92400e;
+            --danger-bg: #fee2e2;
+            --danger-border: #fca5a5;
+            --danger-text: #b91c1c;
+            --success-bg: #d1fae5;
+            --success-border: #6ee7b7;
+            --success-text: #065f46;
+            --radius-sm: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            line-height: 1.5;
+        }
+
+        nav {
+            background: linear-gradient(to bottom, var(--primary-dark), var(--primary-color));
+            color: var(--white);
+            width: 260px;
+            padding: 20px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
+        }
+
+        nav h2 {
+            margin-top: 0;
+            font-size: 1.3em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 30px;
+        }
+
+        nav li {
+            margin: 0;
+            margin-bottom: 5px;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            display: block;
+            padding: 12px 15px;
+            border-radius: var(--radius-md);
+            margin-bottom: 5px;
+            transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-sm);
+        }
+
+        nav a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-footer {
+            margin-top: auto;
+            font-size: 0.8em;
+            opacity: 0.8;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        h1,
+        h2 {
+            color: var(--darker-gray);
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 1.8em;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-top: 30px;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: var(--darker-gray);
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            color: var(--darker-gray);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            background-color: var(--white);
+            box-shadow: var(--shadow-sm);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--medium-gray);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.95em;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #f9fafb;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        button,
+        select,
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="datetime-local"],
+        input[type="file"],
+        textarea {
+            padding: 10px 14px;
+            margin: 3px 0;
+            font-size: 0.95em;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--radius-md);
+            box-sizing: border-box;
+            transition: var(--transition);
+            background-color: var(--white);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            outline: none;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            border-radius: var(--radius-md);
+            padding: 10px 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        button i {
+            font-size: 0.9em;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+            transform: none;
+        }
+
+        button.secondary {
+            background-color: #6b7280;
+        }
+
+        button.secondary:hover {
+            background-color: #4b5563;
+        }
+
+        button.warning {
+            background-color: var(--yellow);
+            color: #7c2d12;
+        }
+
+        button.warning:hover {
+            background-color: var(--yellow-dark);
+        }
+
+        button.danger {
+            background-color: var(--red);
+        }
+
+        button.danger:hover {
+            background-color: #b91c1c;
+        }
+
+        button.success {
+            background-color: var(--green);
+        }
+
+        button.success:hover {
+            background-color: #059669;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-section,
+        .form-section,
+        .info-box,
+        .program-card {
+            background-color: var(--white);
+            padding: 24px;
+            margin-bottom: 25px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: none;
+            transition: var(--transition);
+        }
+
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-grid label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.95em;
+            color: var(--darker-gray);
+        }
+
+        .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .readonly,
+        input:read-only,
+        select:disabled,
+        textarea:read-only {
+            background-color: #f3f4f6;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .error-message {
+            color: var(--red);
+            font-size: 0.85em;
+            margin-top: 4px;
+            display: block;
+        }
+
+        input.error,
+        select.error,
+        textarea.error {
+            border-color: var(--red);
+            background-color: var(--red-light);
+        }
+
+        .status-待提交 {
+            color: var(--orange);
+            font-weight: 600;
+            background-color: var(--orange-light);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .status-待審核 {
+            color: var(--primary-color);
+            font-weight: 600;
+            background-color: var(--primary-light);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .status-已退回 {
+            color: var(--danger-text);
+            font-weight: 600;
+            background-color: var(--danger-bg);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .status-已通過 {
+            color: var(--success-text);
+            font-weight: 600;
+            background-color: var(--success-bg);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .status-不適用 {
+            color: #6b7280;
+            background-color: #f3f4f6;
+            font-style: italic;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .highlight {
+            background-color: var(--warning-bg);
+            border-left: 3px solid var(--warning-text);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 4% auto;
+            padding: 0;
+            border: none;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: var(--radius-lg);
+            border-top-right-radius: var(--radius-lg);
+            background-color: #f9fafb;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            font-size: 1.4em;
+            color: var(--primary-dark);
+        }
+
+        .modal-body {
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 18px 25px;
+            border-top: 1px solid var(--medium-gray);
+            text-align: right;
+            background-color: #f9fafb;
+            border-bottom-left-radius: var(--radius-lg);
+            border-bottom-right-radius: var(--radius-lg);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-close {
+            color: #6b7280;
+            background: none;
+            border: none;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 5px;
+            box-shadow: none;
+        }
+
+        .modal-close:hover {
+            color: var(--darker-gray);
+            background: none;
+            box-shadow: none;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .required::after {
+            content: "*";
+            color: var(--red);
+            margin-left: 3px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .alert {
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert::before {
+            content: '';
+            font-weight: bold;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .alert-info {
+            background-color: var(--info-bg);
+            border-color: var(--info-border);
+            color: var(--info-text);
+        }
+
+        .alert-info::before {
+            content: 'ℹ';
+            background-color: var(--info-text);
+            color: var(--white);
+        }
+
+        .alert-warning {
+            background-color: var(--warning-bg);
+            border-color: var(--warning-border);
+            color: var(--warning-text);
+        }
+
+        .alert-warning::before {
+            content: '!';
+            background-color: var(--warning-text);
+            color: var(--white);
+        }
+
+        .alert-danger {
+            background-color: var(--danger-bg);
+            border-color: var(--danger-border);
+            color: var(--danger-text);
+        }
+
+        .alert-danger::before {
+            content: '✖';
+            background-color: var(--danger-text);
+            color: var(--white);
+        }
+
+        .alert-success {
+            background-color: var(--success-bg);
+            border-color: var(--success-border);
+            color: var(--success-text);
+        }
+
+        .alert-success::before {
+            content: '✔';
+            background-color: var(--success-text);
+            color: var(--white);
+        }
+
+        .upload-placeholder {
+            font-style: italic;
+            color: #6b7280;
+            padding: 3px 0;
+            display: inline-block;
+        }
+
+        .table-container {
+            max-height: 65vh;
+            overflow-y: auto;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--radius-md);
+            margin-top: 15px;
+            box-shadow: var(--shadow-sm);
+            scrollbar-width: thin;
+            scrollbar-color: var(--medium-gray) #f9fafb;
+        }
+
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f9fafb;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: var(--medium-gray);
+            border-radius: 10px;
+            border: 2px solid #f9fafb;
+        }
+
+        #audit-log-table {
+            margin-top: 0;
+        }
+
+        #review-modal-content table {
+            font-size: 0.9em;
+        }
+
+        #review-modal-content th,
+        #review-modal-content td {
+            padding: 8px 10px;
+        }
+
+        #review-actions {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f9fafb;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        #review-actions label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        #review-actions textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #program-list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .program-card {
+            padding: 20px;
+            border-left: 5px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .program-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .program-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            border: none;
+            color: var(--primary-dark);
+        }
+
+        .program-card p {
+            font-size: 0.95em;
+            color: #4b5563;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .program-card .action-buttons {
+            margin-top: auto;
+            justify-content: flex-start;
+        }
+
+        .program-card .action-buttons button {
+            font-size: 0.9em;
+            padding: 8px 12px;
+        }
+
+        #student-list-view {
+            display: none;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+            }
+
+            nav {
+                width: 100%;
+                padding: 15px;
+            }
+
+            nav ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+
+            nav a {
+                padding: 8px 12px;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-section>* {
+                width: 100%;
+            }
+
+            #program-list-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h2 style="color: var(--light-gray);"><i class="fas fa-user-shield"></i> 管理員選單</h2>
+        <ul>
+            <li><a href="#students" class="nav-link active" onclick="showSection('students')"><i
+                        class="fas fa-users"></i> 學生資料管理</a></li>
+            <li><a href="#registration" class="nav-link" onclick="showSection('registration')"><i
+                        class="fas fa-clipboard-check"></i> 註冊補助審核</a></li>
+            <li><a href="#not-registered" class="nav-link" onclick="showSection('not-registered')"><i
+                        class="fas fa-user-slash"></i> 不註冊審核</a></li>
+            <li><a href="#export" class="nav-link" onclick="showSection('export')"><i class="fas fa-file-export"></i>
+                    印領清冊匯出</a></li>
+            <li><a href="#system" class="nav-link" onclick="showSection('system')"><i class="fas fa-cogs"></i> 系統管理</a>
+            </li>
+        </ul>
+        <div class="nav-footer">
+            <p>Demo 版本，不可用於實際使用途</p>
+            <p>V20250415</p>
+        </div>
+    </nav>
+    <main id="main-content">
+        <section id="students" class="section active">
+            <h1><i class="fas fa-users"></i> 學生資料管理</h1>
+
+            <div class="action-buttons" style="margin-bottom: 20px; text-align: right; display: none;">
+                <button onclick="openAddStudentModal()"><i class="fas fa-plus"></i> 新增學生至系統</button>
+            </div>
+            <h3>請選擇要管理的專班</h3>
+            <div id="program-list-container">
+                <p id="no-programs-found" style="display: none;">系統中尚無專班資料。</p>
+            </div>
+
+            <div id="student-list-view" style="display: none;">
+                <button class="back-button secondary" onclick="showProgramList_Admin()"><i
+                        class="fas fa-arrow-left"></i> 返回專班列表</button>
+                <h2 id="student-list-header">學生列表</h2>
+                <div class="table-container">
+                    <table id="student-list-table">
+                        <thead>
+                            <tr>
+                                <th>護照號碼</th>
+                                <th>英文姓名</th>
+                                <th>國籍</th>
+                                <th>學校</th>
+                                <th>當學期入學情況</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="registration" class="section">
+            <h1><i class="fas fa-clipboard-check"></i> 註冊與補助登錄 (審核)</h1>
+            <div class="filter-section">
+                <label for="reg-filter-school">學校:</label>
+                <select id="reg-filter-school" onchange="filterProgramList('registration')">
+                    <option value="">所有學校</option>
+                </select>
+                <label for="reg-filter-status">審核狀態:</label>
+                <select id="reg-filter-status" onchange="filterProgramList('registration')">
+                    <option value="">所有狀態</option>
+                    <option value="待審核">待審核</option>
+                    <option value="已通過">已通過</option>
+                    <option value="已退回">已退回</option>
+                    <option value="待提交">待提交</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table id="registration-program-table">
+                    <thead>
+                        <tr>
+                            <th>學校名稱</th>
+                            <th>專班名稱 (學期)</th>
+                            <th>狀態</th>
+                            <th>提交時間</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="not-registered" class="section">
+            <h1><i class="fas fa-user-slash"></i> 不註冊學生處理 (審核)</h1>
+            <div class="filter-section">
+                <label for="nr-filter-school">學校:</label>
+                <select id="nr-filter-school" onchange="filterProgramList('not-registered')">
+                    <option value="">所有學校</option>
+                </select>
+                <label for="nr-filter-status">審核狀態:</label>
+                <select id="nr-filter-status" onchange="filterProgramList('not-registered')">
+                    <option value="">所有狀態</option>
+                    <option value="待審核">待審核</option>
+                    <option value="已通過">已通過</option>
+                    <option value="已退回">已退回</option>
+                    <option value="待提交">待提交</option>
+                    <option value="不適用">不適用</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table id="not-registered-program-table">
+                    <thead>
+                        <tr>
+                            <th>學校名稱</th>
+                            <th>專班名稱 (學期)</th>
+                            <th>狀態</th>
+                            <th>提交時間</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="export" class="section">
+            <h1><i class="fas fa-file-export"></i> 印領清冊匯出</h1>
+            <div class="form-section">
+                <h2>選擇匯出範圍與類型</h2>
+                <div>
+                    <label for="export-type">匯出單據類型:</label>
+                    <select id="export-type">
+                        <option value="subsidy">補助清冊</option>
+                        <option value="overpayment">溢領清冊</option>
+                    </select>
+                </div>
+                <div style="margin-top: 15px;">
+                    <label>匯出範圍:</label><br>
+                    <input type="radio" id="export-by-program" name="export-scope" value="program" checked
+                        onchange="toggleExportOptions()"> <label for="export-by-program"
+                        style="font-weight: normal;">按專班匯出</label><br>
+                    <input type="radio" id="export-by-school" name="export-scope" value="school"
+                        onchange="toggleExportOptions()"> <label for="export-by-school"
+                        style="font-weight: normal;">按學校匯出</label>
+                </div>
+                <div id="export-school-selection" style="margin-top: 10px;">
+                    <label for="export-school">選擇學校:</label>
+                    <select id="export-school" onchange="populateExportPrograms()">
+                        <option value="">請選擇學校</option>
+                    </select>
+                </div>
+                <div id="export-program-selection" style="margin-top: 10px;">
+                    <label for="export-program">選擇專班:</label>
+                    <select id="export-program">
+                        <option value="">請選擇專班</option>
+                    </select>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label for="export-semester">選擇學期 (可選):</label>
+                    <input type="text" id="export-semester" placeholder="例如: 113-1">
+                </div>
+                <button onclick="simulateExport()" style="margin-top: 20px;"><i class="fas fa-download"></i> 匯出 Excel
+                    (.xlsx)</button>
+            </div>
+        </section>
+
+        <section id="system" class="section">
+            <h1><i class="fas fa-cogs"></i> 系統管理</h1>
+
+            <div class="form-section">
+                <h2><i class="far fa-clock"></i> 設定學校編輯開放時間</h2>
+                <p><strong>目前狀態:</strong> <span id="open-time-status" style="font-weight:bold;"></span></p>
+                <p>開始時間: <span id="current-start-time"></span></p>
+                <p>結束時間: <span id="current-end-time"></span></p>
+                <div style="margin-top: 15px;">
+                    <label for="set-start-time">設定開始時間:</label>
+                    <input type="datetime-local" id="set-start-time">
+                    <label for="set-end-time" style="margin-left: 10px;">設定結束時間:</label>
+                    <input type="datetime-local" id="set-end-time">
+                </div>
+                <div style="margin-top: 15px;">
+                    <button onclick="setOpenTime()" class="success"><i class="fas fa-check"></i> 更新開放時間</button>
+                    <button onclick="clearOpenTime()" class="danger" style="margin-left: 10px;"><i
+                            class="fas fa-times"></i> 清除開放時間 (關閉)</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2><i class="fas fa-user-cog"></i> 使用者帳號管理 (示意)</h2>
+                <p>此處應有新增/編輯學校帳號的功能。</p>
+                <button disabled><i class="fas fa-plus"></i> 新增學校帳號 (示意)</button>
+            </div>
+
+            <div class="filter-section">
+                <h2><i class="fas fa-history"></i> 編輯記錄 (Audit Trail)</h2>
+                <input type="text" id="log-search" placeholder="搜尋操作者、功能、對象或內容..." style="width: 300px;">
+                <button onclick="renderAuditLog()" style="margin-left: 5px;"><i class="fas fa-search"></i> 搜尋</button>
+            </div>
+            <div class="table-container">
+                <table id="audit-log-table">
+                    <thead>
+                        <tr>
+                            <th>操作時間</th>
+                            <th>操作者 (角色)</th>
+                            <th>操作功能</th>
+                            <th>操作對象</th>
+                            <th>變更內容摘要</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div id="log-pagination" style="text-align: center; margin-top: 15px;">
+                <button disabled class="secondary">上一頁</button>
+                <span style="margin: 0 10px;">頁 1 / 1</span>
+                <button disabled class="secondary">下一頁</button>
+            </div>
+        </section>
+
+        <div id="student-details-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="student-details-modal-title">學生詳細資料</h2>
+                    <button class="modal-close" onclick="closeModal('student-details-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <form id="student-details-form" class="form-grid">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="saveStudentDetails()" class="success"><i class="fas fa-save"></i> 儲存變更</button>
+                    <button onclick="closeModal('student-details-modal')" class="secondary">關閉</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="add-student-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>新增學生資料</h2>
+                    <button class="modal-close" onclick="closeModal('add-student-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="filter-section" style="padding: 15px; margin-bottom: 20px;">
+                        <label for="add-student-school" class="required">選擇學校:</label>
+                        <select id="add-student-school" onchange="populateAddStudentPrograms()" required>
+                            <option value="">請選擇</option>
+                        </select>
+                        <label for="add-student-program" class="required" style="margin-left: 10px;">選擇專班:</label>
+                        <select id="add-student-program" onchange="populateAddStudentProgramDetails()" required>
+                            <option value="">請選擇</option>
+                        </select>
+                    </div>
+                    <form id="add-student-form" class="form-grid">
+                        <div><label for="add-護照號碼" class="required">護照號碼:</label><input type="text" id="add-護照號碼"
+                                required onblur="checkPassportIdExists(this.value, null)"> <span
+                                id="add-passport-check-msg" class="error-message"></span></div>
+                        <div><label for="add-英文姓名" class="required">英文姓名:</label><input type="text" id="add-英文姓名"
+                                required></div>
+                        <div><label for="add-國籍" class="required">國籍:</label><select id="add-國籍" required></select>
+                        </div>
+                        <div><label for="add-身分證字號">身分證字號:</label><input type="text" id="add-身分證字號"></div>
+                        <div><label for="add-出生年月日" class="required">出生年月日:</label><input type="date" id="add-出生年月日"
+                                required></div>
+                        <div><label class="required">生理性別:</label>
+                            <div><input type="radio" name="add-生理性別" value="男" id="add-gender-male" required><label
+                                    for="add-gender-male" style="font-weight:normal; margin-right: 15px;">男</label>
+                                <input type="radio" name="add-生理性別" value="女" id="add-gender-female"><label
+                                    for="add-gender-female" style="font-weight:normal;">女</label>
+                            </div>
+                        </div>
+                        <div><label for="add-合作企業名稱" class="required">合作企業名稱:</label><input type="text" id="add-合作企業名稱"
+                                required></div>
+                        <div><label for="add-生活津貼" class="required">生活津貼:</label><input type="number" id="add-生活津貼"
+                                min="0" max="10000" required></div>
+
+                        <div class="full-width info-box" style="background-color: #f8f9fa;">
+                            <h4 style="margin-top:0; border:none; padding:0;">專班資訊 (自動帶入)</h4>
+                            <div class="form-grid">
+                                <div><label>台灣開班學校名稱:</label><input type="text" id="add-台灣開班學校名稱" readonly
+                                        class="readonly"></div>
+                                <div><label>台灣開班學校系所:</label><input type="text" id="add-台灣開班學校系所" readonly
+                                        class="readonly"></div>
+                                <div><label>台灣專班名稱:</label><input type="text" id="add-台灣專班名稱" readonly class="readonly">
+                                </div>
+                                <div><label>台灣專班領域:</label><input type="text" id="add-台灣專班領域" readonly class="readonly">
+                                </div>
+                                <div><label>台灣專班學制:</label><input type="text" id="add-台灣專班學制" readonly class="readonly">
+                                </div>
+                                <div><label>台灣專班授課語言:</label><input type="text" id="add-台灣專班授課語言" readonly
+                                        class="readonly"></div>
+                            </div>
+                        </div>
+
+                        <div class="full-width">
+                            <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">來源學校資訊</h4>
+                        </div>
+                        <div><label for="add-當地在學畢業學校名稱" class="required">當地在學/畢業學校名稱:</label><input type="text"
+                                id="add-當地在學畢業學校名稱" required></div>
+                        <div><label class="required">當地學校是否為推薦清單內:</label>
+                            <div><input type="radio" name="add-當地學校是否為推薦清單內之學校" value="是" id="add-recommend-yes"
+                                    required><label for="add-recommend-yes"
+                                    style="font-weight:normal; margin-right: 15px;">是</label> <input type="radio"
+                                    name="add-當地學校是否為推薦清單內之學校" value="否" id="add-recommend-no"><label
+                                    for="add-recommend-no" style="font-weight:normal;">否</label></div>
+                        </div>
+                        <div><label for="add-學校當地排名">學校當地排名:</label><input type="number" id="add-學校當地排名" min="0"></div>
+                        <div><label for="add-學校國際排名">學校國際排名:</label><input type="number" id="add-學校國際排名" min="0"></div>
+
+                        <div class="full-width">
+                            <h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">附件上傳 (限 PDF, 小於 5MB)</h4>
+                        </div>
+                        <div><label for="add-在校畢業成績單" class="required">在校/畢業成績單:</label><input type="file"
+                                id="add-在校畢業成績單" accept=".pdf" required></div>
+                        <div><label for="add-學校師長推薦信" class="required">學校師長推薦信:</label><input type="file"
+                                id="add-學校師長推薦信" accept=".pdf" required></div>
+                        <div><label for="add-其他具體學業表現優異證明" class="required">其他具體學業表現優異證明:</label><input type="file"
+                                id="add-其他具體學業表現優異證明" accept=".pdf" required></div>
+                        <div><label for="add-其他檢核資料" id="add-other-check-label" class="required">其他檢核資料:
+                                (本專班學制為本國生混班之學士班，必須上傳)</label><input type="file" id="add-其他檢核資料" accept=".pdf" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="submitAddStudent()" class="success"><i class="fas fa-check"></i> 確認新增</button>
+                    <button onclick="closeModal('add-student-modal')" class="secondary">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="review-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="review-modal-title">審核/檢視專班資料</h2> <button class="modal-close"
+                        onclick="closeModal('review-modal')">×</button>
+                </div>
+                <div class="modal-body">
+                    <div id="review-modal-info" class="info-box" style="background-color: #f9fafb;">
+                    </div>
+                    <div id="review-modal-content">
+                    </div>
+                    <div id="review-actions" style="display: none;">
+                        <h4 style="margin-top: 20px;">審核操作</h4>
+                        <label for="review-reject-reason">退回原因 (若需退回請填寫):</label>
+                        <textarea id="review-reject-reason" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" id="review-modal-footer">
+                    <button onclick="processReview('approve')" class="success" id="review-approve-btn"
+                        style="display: none;"><i class="fas fa-check"></i> 批准通過</button>
+                    <button onclick="processReview('reject')" class="danger" id="review-reject-btn"
+                        style="display: none;"><i class="fas fa-times"></i> 退回修改</button>
+                    <button onclick="closeModal('review-modal')" class="secondary">關閉</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        let students = [
+            { 護照號碼: "vH923022", 英文姓名: "Kyle Ramos", 國籍: "新加坡", 出生年月日: "1997-04-05", 生理性別: "男", 生活津貼: 9884, 當地在學畢業學校名稱: "Ruiz Group University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 41, 學校國際排名: 590, 成績單檔名: "we.pdf", 推薦信檔名: "outside.pdf", 優異證明檔名: "two.pdf", 其他檢核資料檔名: "movie.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 48000, 溢領費用: 0 },
+            { 護照號碼: "Sa456428", 英文姓名: "Bob Stevenson", 國籍: "印尼", 出生年月日: "2003-07-19", 生理性別: "男", 生活津貼: 6529, 當地在學畢業學校名稱: "Taylor-Gill University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 79, 學校國際排名: 673, 成績單檔名: "meet.pdf", 推薦信檔名: "he.pdf", 優異證明檔名: "poor.pdf", 其他檢核資料檔名: "field.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 50000, 溢領費用: 0 },
+            { 護照號碼: "VA599246", 英文姓名: "Angela Wheeler", 國籍: "印度", 出生年月日: "1999-12-22", 生理性別: "男", 生活津貼: 6066, 當地在學畢業學校名稱: "Allen Ltd University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 5, 學校國際排名: 863, 成績單檔名: "line.pdf", 推薦信檔名: "human.pdf", 優異證明檔名: "see.pdf", 其他檢核資料檔名: "type.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "不註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "不註冊", 未註冊原因: "學生決定回國就業", 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 53500 },
+            { 護照號碼: "XQ960696", 英文姓名: "Carol Brown", 國籍: "泰國", 出生年月日: "1996-12-19", 生理性別: "女", 生活津貼: 9297, 當地在學畢業學校名稱: "Rose-Freeman University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 67, 學校國際排名: 832, 成績單檔名: "option.pdf", 推薦信檔名: "PM.pdf", 優異證明檔名: "someone.pdf", 其他檢核資料檔名: "a.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 49000, 溢領費用: 0 },
+            { 護照號碼: "ZZ075470", 英文姓名: "Joshua Mccarty", 國籍: "日本", 出生年月日: "1995-09-15", 生理性別: "女", 生活津貼: 9748, 當地在學畢業學校名稱: "Anderson, Smith and Herring University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 58, 學校國際排名: 505, 成績單檔名: "key.pdf", 推薦信檔名: "four.pdf", 優異證明檔名: "about.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 50000, 溢領費用: 0 },
+            { 護照號碼: "mh300891", 英文姓名: "Christina Turner", 國籍: "緬甸", 出生年月日: "1997-05-21", 生理性別: "男", 生活津貼: 7656, 當地在學畢業學校名稱: "Alvarez Group University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 63, 學校國際排名: 602, 成績單檔名: "product.pdf", 推薦信檔名: "beat.pdf", 優異證明檔名: "age.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 47500, 溢領費用: 0 },
+            { 護照號碼: "PP471428", 英文姓名: "Shane Ramirez", 國籍: "日本", 出生年月日: "1994-08-08", 生理性別: "男", 生活津貼: 5132, 當地在學畢業學校名稱: "Williams Ltd University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 15, 學校國際排名: 723, 成績單檔名: "event.pdf", 推薦信檔名: "open.pdf", 優異證明檔名: "forward.pdf", 其他檢核資料檔名: "your.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 49500, 溢領費用: 0 },
+            { 護照號碼: "OB590977", 英文姓名: "Joshua Clark", 國籍: "印尼", 出生年月日: "2004-04-10", 生理性別: "女", 生活津貼: 8490, 當地在學畢業學校名稱: "Smith-Hernandez University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 13, 學校國際排名: 802, 成績單檔名: "goal.pdf", 推薦信檔名: "green.pdf", 優異證明檔名: "strategy.pdf", 其他檢核資料檔名: "hold.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 50000, 溢領費用: 0 },
+            { 護照號碼: "kj159004", 英文姓名: "Mrs. Jennifer Kelley", 國籍: "日本", 出生年月日: "1999-04-12", 生理性別: "男", 生活津貼: 9701, 當地在學畢業學校名稱: "Woods and Sons University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 4, 學校國際排名: 128, 成績單檔名: "world.pdf", 推薦信檔名: "anything.pdf", 優異證明檔名: "foot.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 48800, 溢領費用: 0 },
+            { 護照號碼: "tA281465", 英文姓名: "Justin Olson", 國籍: "越南", 出生年月日: "2000-01-08", 生理性別: "男", 生活津貼: 8204, 當地在學畢業學校名稱: "Martinez-Wilson University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 48, 學校國際排名: 854, 成績單檔名: "modern.pdf", 推薦信檔名: "last.pdf", 優異證明檔名: "always.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "國際金融產業學院", 台灣專班名稱: "112-1 國際金融人才教育專班", 台灣專班領域: "金融", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣銀行有限公司", 當學期入學情況: "已註冊", 身分證字號: "", 學期: "112-1", 註冊狀態: "已註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 47000, 溢領費用: 0 },
+
+            { 護照號碼: "zY660487", 英文姓名: "Tracy Howard", 國籍: "菲律賓", 出生年月日: "1998-01-01", 生理性別: "女", 生活津貼: 5331, 當地在學畢業學校名稱: "Taylor, Taylor and Davis University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 66, 學校國際排名: 498, 成績單檔名: "successful.pdf", 推薦信檔名: "enough.pdf", 優異證明檔名: "where.pdf", 其他檢核資料檔名: "no.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 1500, 補助_公證文件: 2000, 補助_健康檢查: 3000, 補助_單次簽證: 1800, 補助_單程來台機票: 8500, 補助_學雜費: 49000, 溢領費用: 0 },
+            { 護照號碼: "EJ924115", 英文姓名: "Jeffrey Carr", 國籍: "馬來西亞", 出生年月日: "1997-10-06", 生理性別: "女", 生活津貼: 7933, 當地在學畢業學校名稱: "Woods, Grimes and Green University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 65, 學校國際排名: 143, 成績單檔名: "support.pdf", 推薦信檔名: "why.pdf", 優異證明檔名: "official.pdf", 其他檢核資料檔名: "whole.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 1200, 補助_公證文件: 1500, 補助_健康檢查: 2800, 補助_單次簽證: 1600, 補助_單程來台機票: 7800, 補助_學雜費: 50000, 溢領費用: 0 },
+            { 護照號碼: "vp016097", 英文姓名: "Michele Brown", 國籍: "印度", 出生年月日: "2003-12-10", 生理性別: "女", 生活津貼: 9362, 當地在學畢業學校名稱: "Allen and Sons University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 40, 學校國際排名: 102, 成績單檔名: "suggest.pdf", 推薦信檔名: "of.pdf", 優異證明檔名: "line.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "tJ115871", 英文姓名: "Calvin Cook", 國籍: "緬甸", 出生年月日: "2003-06-24", 生理性別: "女", 生活津貼: 9585, 當地在學畢業學校名稱: "Maynard PLC University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 46, 學校國際排名: 445, 成績單檔名: "officer.pdf", 推薦信檔名: "people.pdf", 優異證明檔名: "field.pdf", 其他檢核資料檔名: "light.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "特殊不註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "特殊不註冊", 未註冊原因: "意外身亡", 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "sl196593", 英文姓名: "Cody Salazar", 國籍: "日本", 出生年月日: "1998-09-16", 生理性別: "女", 生活津貼: 8626, 當地在學畢業學校名稱: "Jones-Shelton University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 8, 學校國際排名: 825, 成績單檔名: "case.pdf", 推薦信檔名: "under.pdf", 優異證明檔名: "citizen.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "HZ018684", 英文姓名: "Daniel Shelton", 國籍: "柬埔寨", 出生年月日: "2001-06-03", 生理性別: "男", 生活津貼: 8267, 當地在學畢業學校名稱: "Hill, Vasquez and Davidson University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 79, 學校國際排名: 506, 成績單檔名: "school.pdf", 推薦信檔名: "whom.pdf", 優異證明檔名: "student.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "LO515917", 英文姓名: "Connor Smith", 國籍: "緬甸", 出生年月日: "1998-11-24", 生理性別: "男", 生活津貼: 7664, 當地在學畢業學校名稱: "Thornton LLC University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 25, 學校國際排名: 940, 成績單檔名: "study.pdf", 推薦信檔名: "conference.pdf", 優異證明檔名: "go.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "KO601230", 英文姓名: "Kimberly Becker", 國籍: "日本", 出生年月日: "1994-09-27", 生理性別: "男", 生活津貼: 9448, 當地在學畢業學校名稱: "Reid PLC University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 12, 學校國際排名: 83, 成績單檔名: "then.pdf", 推薦信檔名: "parent.pdf", 優異證明檔名: "call.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "bm615109", 英文姓名: "Cathy Martinez", 國籍: "泰國", 出生年月日: "1997-11-13", 生理性別: "女", 生活津貼: 5893, 當地在學畢業學校名稱: "Owen, Giles and Johnson University", 當地學校是否為推薦清單內之學校: "否", 學校當地排名: 71, 學校國際排名: 299, 成績單檔名: "large.pdf", 推薦信檔名: "pressure.pdf", 優異證明檔名: "blood.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+            { 護照號碼: "Bl413145", 英文姓名: "John Carlson", 國籍: "泰國", 出生年月日: "2000-12-10", 生理性別: "女", 生活津貼: 9426, 當地在學畢業學校名稱: "Green Ltd University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 78, 學校國際排名: 561, 成績單檔名: "many.pdf", 推薦信檔名: "this.pdf", 優異證明檔名: "week.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "重點科技研究學院-國際半導體學位學程", 台灣專班名稱: "113-1 國際半導體人才教育專班", 台灣專班領域: "半導體", 台灣專班學制: "碩士學位 (與本國生混班就讀)", 台灣專班授課語言: "英文", 合作企業名稱: "台灣美光記憶體股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 0, 溢領費用: 0 },
+
+            { 護照號碼: "GN123456", 英文姓名: "Alice Wonderland", 國籍: "越南", 出生年月日: "2000-01-15", 生理性別: "女", 生活津貼: 8000, 當地在學畢業學校名稱: "Vietnam National University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 1, 學校國際排名: 150, 成績單檔名: "alice_transcript.pdf", 推薦信檔名: "alice_rec.pdf", 優異證明檔名: "alice_award.pdf", 其他檢核資料檔名: null, 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "工學院-智慧製造跨域整合學程", 台灣專班名稱: "113-1 智慧製造人才專班", 台灣專班領域: "智慧製造", 台灣專班學制: "學士學位 (本國生混班就讀)", 台灣專班授課語言: "中文", 合作企業名稱: "台達電子工業股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "A234567890", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 2000, 補助_公證文件: 2500, 補助_健康檢查: 3500, 補助_單次簽證: 1000, 補助_單程來台機票: 9000, 補助_學雜費: 45000, 溢領費用: 0 },
+            { 護照號碼: "GN654321", 英文姓名: "Bob Builder", 國籍: "泰國", 出生年月日: "1999-05-20", 生理性別: "男", 生活津貼: 7500, 當地在學畢業學校名稱: "Chulalongkorn University", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 1, 學校國際排名: 200, 成績單檔名: "bob_transcript.pdf", 推薦信檔名: "bob_rec.pdf", 優異證明檔名: null, 其他檢核資料檔名: "bob_other.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "工學院-智慧製造跨域整合學程", 台灣專班名稱: "113-1 智慧製造人才專班", 台灣專班領域: "智慧製造", 台灣專班學制: "學士學位 (本國生混班就讀)", 台灣專班授課語言: "中文", 合作企業名稱: "上銀科技股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "", 學期: "113-1", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 500, 補助_公證文件: 1000, 補助_健康檢查: 2500, 補助_單次簽證: 1500, 補助_單程來台機票: 8800, 補助_學雜費: 48000, 溢領費用: 0 },
+
+
+            { 護照號碼: "GN112233", 英文姓名: "Carol Oldtimer", 國籍: "新加坡", 出生年月日: "1998-11-10", 生理性別: "女", 生活津貼: 8200, 當地在學畢業學校名稱: "National University of Singapore", 當地學校是否為推薦清單內之學校: "是", 學校當地排名: 1, 學校國際排名: 11, 成績單檔名: "carol_transcript.pdf", 推薦信檔名: "carol_rec.pdf", 優異證明檔名: null, 其他檢核資料檔名: "carol_other.pdf", 台灣開班學校名稱: "國立臺灣大學", 台灣開班學校系所: "工學院-智慧製造跨域整合學程", 台灣專班名稱: "112-2 智慧製造人才專班", 台灣專班領域: "智慧製造", 台灣專班學制: "學士學位 (本國生混班就讀)", 台灣專班授課語言: "中文", 合作企業名稱: "研華股份有限公司", 當學期入學情況: "準備註冊", 身分證字號: "S1234567Z", 學期: "112-2", 註冊狀態: "準備註冊", 未註冊原因: null, 補助_文件翻譯: 0, 補助_公證文件: 0, 補助_健康檢查: 0, 補助_單次簽證: 0, 補助_單程來台機票: 0, 補助_學雜費: 46000, 溢領費用: 0 },
+        ];
+
+        let programs = [
+            { 學校名稱: "國立臺灣大學", 系所名稱: "國際金融產業學院", 專班名稱: "112-1 國際金融人才教育專班", 領域: "金融", 學制: "碩士學位 (與本國生混班就讀)", 授課語言: "英文", 學期: "112-1", 註冊補助提交狀態: "已通過", 不註冊提交狀態: "已通過", 退回原因_註冊補助: null, 退回原因_不註冊: null, 提交時間_註冊補助: "2024-09-15 10:00", 提交時間_不註冊: "2024-09-16 11:00", 蓋章清冊檔案_補助: "112-1_Fin_Subsidy_Signed.pdf", 蓋章清冊檔案_溢領: "112-1_Fin_Overpay_Signed.pdf", isNewSemester: false },
+            { 學校名稱: "國立臺灣大學", 系所名稱: "重點科技研究學院-國際半導體學位學程", 專班名稱: "113-1 國際半導體人才教育專班", 領域: "半導體", 學制: "碩士學位 (與本國生混班就讀)", 授課語言: "英文", 學期: "113-1", 註冊補助提交狀態: "待提交", 不註冊提交狀態: "待提交", 退回原因_註冊補助: null, 退回原因_不註冊: null, 提交時間_註冊補助: null, 提交時間_不註冊: null, 蓋章清冊檔案_補助: null, 蓋章清冊檔案_溢領: null, isNewSemester: true },
+            { 學校名稱: "國立臺灣大學", 系所名稱: "工學院-智慧製造跨域整合學程", 專班名稱: "113-1 智慧製造人才專班", 領域: "智慧製造", 學制: "學士學位 (本國生混班就讀)", 授課語言: "中文", 學期: "113-1", 註冊補助提交狀態: "已退回", 不註冊提交狀態: "不適用", 退回原因_註冊補助: "資料尚未填寫完全，請再確認。", 退回原因_不註冊: null, 提交時間_註冊補助: "2025-04-17 14:00", 提交時間_不註冊: null, 蓋章清冊檔案_補助: null, 蓋章清冊檔案_溢領: null, isNewSemester: true },
+            { 學校名稱: "國立臺灣大學", 系所名稱: "工學院-智慧製造跨域整合學程", 專班名稱: "112-2 智慧製造人才專班", 領域: "智慧製造", 學制: "學士學位 (本國生混班就讀)", 授課語言: "中文", 學期: "112-2", 註冊補助提交狀態: "待提交", 不註冊提交狀態: "不適用", 退回原因_註冊補助: null, 退回原因_不註冊: null, 提交時間_註冊補助: null, 提交時間_不註冊: null, 蓋章清冊檔案_補助: null, 蓋章清冊檔案_溢領: null, isNewSemester: false }, // Old semester program
+        ];
+
+        let auditLog = [
+            { timestamp: "2025-04-18 09:15:30", user: "admin", role: "管理員", action: "審核註冊與補助", target: "113-1 智慧製造人才專班 (國立臺灣大學)", summary: "退回 (原因: 學生 Bob Builder 部分資料有誤...)" },
+            { timestamp: "2025-04-17 14:00:00", user: "school_ntu", role: "學校行政", action: "註冊與補助登錄", target: "113-1 智慧製造人才專班 (國立臺灣大學)", summary: "提交審核" },
+            { timestamp: "2025-04-16 11:05:22", user: "school_ntu", role: "學校行政", action: "註冊與補助登錄", target: "Bob Builder (GN654321)", summary: "更新 學雜費: 0 -> 48000" },
+            { timestamp: "2025-04-15 09:30:15", user: "admin", role: "管理員", action: "新增學生", target: "Alice Wonderland (GN123456)", summary: "新增學生資料 (來自學校推薦 - 國立臺灣大學)" },
+            { timestamp: "2025-04-10 10:00:00", user: "admin", role: "管理員", action: "系統管理", target: "開放時間", summary: "設定學校編輯時間 2025-04-15 09:00:00 - 2025-04-30 17:00:00" },
+            { timestamp: "2024-09-18 10:00:00", user: "admin", role: "管理員", action: "審核註冊與補助", target: "112-1 國際金融人才教育專班 (國立臺灣大學)", summary: "批准通過" },
+        ];
+
+        let systemSettings = {
+            openTimeActive: true,
+            openTimeStart: "2025-04-15T09:00",
+            openTimeEnd: "2025-04-30T17:00"
+        };
+
+        const nationalities = ["柬埔寨", "印度", "印尼", "日本", "馬來西亞", "緬甸", "菲律賓", "新加坡", "泰國", "越南"];
+        let currentReviewContext = null; let currentStudentListView_Admin = { programName: null, semester: null };
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector(`.nav-link[href="#${sectionId}"]`).classList.add('active');
+
+            if (sectionId === 'students') renderProgramListForStudentMgmt_Admin(); if (sectionId === 'registration') renderProgramList('registration');
+            if (sectionId === 'not-registered') renderProgramList('not-registered');
+            if (sectionId === 'export') setupExportOptions();
+            if (sectionId === 'system') renderSystemManagement();
+        }
+        function closeModal(modalId) { document.getElementById(modalId).style.display = 'none'; }
+        function openModal(modalId) { document.getElementById(modalId).style.display = 'block'; }
+        function getUniqueValues(data, key) { return [...new Set(data.map(item => item[key]))].sort(); }
+        function populateDropdown(selectId, options, addEmptyOption = true) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = addEmptyOption ? '<option value="">請選擇</option>' : '';
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option; opt.textContent = option; select.appendChild(opt);
+            });
+        }
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return '-';
+                return date.toLocaleString('sv-SE').replace(' ', ' ');
+            } catch (e) { return '-'; }
+        }
+        function getStatusClass(status) {
+            switch (status) {
+                case '待提交': return 'status-待提交';
+                case '待審核': return 'status-待審核';
+                case '已退回': return 'status-已退回';
+                case '已通過': return 'status-已通過'; case '不適用': return 'status-不適用';
+                default: return '';
+            }
+        }
+        function findStudent(passportId) { return students.find(s => s.護照號碼 === passportId); }
+        function findProgram(programName, semester) { return programs.find(p => p.專班名稱 === programName && p.學期 === semester); }
+        function findProgramByName(programName) { return programs.find(p => p.專班名稱 === programName) || programs.find(p => p.專班名稱.startsWith(programName.split(' ')[0])); }
+
+
+        function renderProgramListForStudentMgmt_Admin() {
+            const container = document.getElementById('program-list-container');
+            const studentView = document.getElementById('student-list-view');
+            const noProgramsMsg = document.getElementById('no-programs-found');
+            container.style.display = 'grid';
+            studentView.style.display = 'none';
+
+            if (programs.length === 0) {
+                noProgramsMsg.style.display = 'block';
+                container.innerHTML += noProgramsMsg.outerHTML;
+                return;
+            } else {
+                noProgramsMsg.style.display = 'none';
+            }
+
+            programs.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'program-card';
+                const studentCount = students.filter(s => s.台灣專班名稱 === p.專班名稱 && s.學期 === p.學期).length;
+                card.innerHTML = `
+                    <h3>${p.專班名稱} (${p.學期})</h3>
+                     <p><strong>學校:</strong> ${p.學校名稱}<br>
+                        <strong>系所:</strong> ${p.系所名稱}<br>
+                        <strong>領域:</strong> ${p.領域} | <strong>學制:</strong> ${p.學制}<br>
+                        <strong>學生數:</strong> ${studentCount}
+                     </p>
+                    <div class="action-buttons">
+                        <button onclick="viewProgramStudents_Admin('${p.專班名稱}', '${p.學期}')"><i class="fas fa-users"></i> 檢視/編輯學生</button>
+                                            </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function showProgramList_Admin() {
+            document.getElementById('program-list-container').style.display = 'grid';
+            document.getElementById('student-list-view').style.display = 'none';
+            currentStudentListView_Admin = { programName: null, semester: null };
+        }
+
+        function viewProgramStudents_Admin(programName, semester) {
+            currentStudentListView_Admin = { programName, semester };
+            document.getElementById('program-list-container').style.display = 'none';
+            const studentView = document.getElementById('student-list-view');
+            studentView.style.display = 'block';
+            document.getElementById('student-list-header').textContent = `學生列表: ${programName} (${semester})`;
+
+            const tbody = document.getElementById('student-list-table').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            const filteredStudents = students.filter(s => s.台灣專班名稱 === programName && s.學期 === semester);
+
+            if (filteredStudents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">此專班尚無學生資料。</td></tr>';
+            } else {
+                filteredStudents.forEach(student => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                          <td>${student.護照號碼}</td>
+                          <td>${student.英文姓名}</td>
+                          <td>${student.國籍}</td>
+                          <td>${student.台灣開班學校名稱}</td>
+                          <td>${student.當學期入學情況 || '未登錄'}</td>
+                          <td class="action-buttons">
+                              <button onclick="viewStudentDetails('${student.護照號碼}')" title="檢視/編輯"><i class="fas fa-edit"></i> 編輯</button>
+                              <button onclick="deleteStudent('${student.護照號碼}')" class="danger" title="刪除(示意)" disabled><i class="fas fa-trash-alt"></i> 刪除</button>
+                          </td>
+                      `;
+                    if (students.filter(s_check => s_check.護照號碼 === student.護照號碼 && (s_check.台灣專班名稱 !== programName || s_check.學期 !== semester)).length > 0) {
+                        row.classList.add('highlight');
+                        const nameCell = row.cells[1];
+                        nameCell.title = `ID 檢核: 該生曾被其他學校/專班推薦`;
+                        nameCell.innerHTML += ` <span style="color: var(--warning-text); font-weight:bold;" title="該生曾被其他學校/專班推薦">(重複ID)</span>`;
+                    }
+                });
+            }
+        }
+
+
+        function viewStudentDetails(passportId) {
+            const student = findStudent(passportId);
+            if (!student) return;
+
+            const form = document.getElementById('student-details-form');
+            form.innerHTML = '';
+            form.dataset.passportId = passportId;
+
+            const fields = [{ id: '護照號碼', label: '護照號碼', type: 'text', readonly: true }, { id: '英文姓名', label: '英文姓名', type: 'text', required: true },
+            { id: '國籍', label: '國籍', type: 'select', options: nationalities, required: true },
+            { id: '身分證字號', label: '身分證字號', type: 'text' },
+            { id: '出生年月日', label: '出生年月日', type: 'date', required: true },
+            { id: '生理性別', label: '生理性別', type: 'radio', options: ['男', '女'], required: true },
+            { id: '合作企業名稱', label: '合作企業名稱', type: 'text', required: true },
+            { id: '生活津貼', label: '生活津貼', type: 'number', min: 0, max: 10000, required: true },
+            { id: '台灣開班學校名稱', label: '台灣開班學校名稱', type: 'text', readonly: true },
+            { id: '台灣開班學校系所', label: '台灣開班學校系所', type: 'text', readonly: true },
+            { id: '台灣專班名稱', label: '台灣專班名稱', type: 'text', readonly: true },
+            { id: '學期', label: '學期', type: 'text', readonly: true },
+            { id: '台灣專班領域', label: '台灣專班領域', type: 'text', readonly: true },
+            { id: '台灣專班學制', label: '台灣專班學制', type: 'text', readonly: true },
+            { id: '台灣專班授課語言', label: '台灣專班授課語言', type: 'text', readonly: true },
+            { id: '當地在學畢業學校名稱', label: '當地在學/畢業學校名稱', type: 'text', required: true },
+            { id: '當地學校是否為推薦清單內之學校', label: '當地學校是否為推薦清單內', type: 'radio', options: ['是', '否'], required: true },
+            { id: '學校當地排名', label: '學校當地排名', type: 'number', min: 0 },
+            { id: '學校國際排名', label: '學校國際排名', type: 'number', min: 0 },
+            { id: '在校畢業成績單', label: '在校/畢業成績單', type: 'file', current: student.成績單檔名, required: true }, { id: '學校師長推薦信', label: '學校師長推薦信', type: 'file', current: student.推薦信檔名, required: true }, { id: '其他具體學業表現優異證明', label: '其他具體學業表現優異證明', type: 'file', current: student.優異證明檔名, required: true }, { id: '其他檢核資料', label: '其他檢核資料' + (student.台灣專班學制?.includes("學士學位 (本國生混班就讀)") ? ' (本專班學制為本國生混班之學士班，必須上傳)' : ''), type: 'file', current: student.其他檢核資料檔名, required: student.台灣專班學制?.includes("學士學位 (本國生混班就讀)") },
+            ];
+            document.getElementById('student-details-modal-title').textContent = `編輯學生資料: ${student.英文姓名} (${passportId})`;
+
+            fields.forEach(field => {
+                const div = document.createElement('div');
+                if (field.type === 'file') div.classList.add('full-width');
+
+                let inputHtml = '';
+                const currentValue = student[field.id] || '';
+                const isReadonly = field.readonly;
+                const isRequired = field.required;
+
+                if (field.type === 'select') {
+                    inputHtml = `<select id="detail-${field.id}" ${isReadonly ? 'disabled class="readonly"' : ''} ${isRequired ? 'required' : ''}>`;
+                    inputHtml += `<option value="" ${!currentValue ? 'selected' : ''} disabled>請選擇</option>`; field.options.forEach(opt => { inputHtml += `<option value="${opt}" ${currentValue === opt ? 'selected' : ''}>${opt}</option>`; });
+                    inputHtml += `</select>`;
+                } else if (field.type === 'radio') {
+                    inputHtml = `<div style="padding-top: 8px;">` + field.options.map(opt => `
+                         <input type="radio" name="detail-${field.id}" id="detail-${field.id}-${opt}" value="${opt}" ${currentValue === opt ? 'checked' : ''} ${isReadonly ? 'disabled' : ''} ${isRequired ? 'required' : ''}>
+                         <label for="detail-${field.id}-${opt}" style="font-weight:normal; margin-right: 15px;">${opt}</label>
+                     `).join('') + `</div>`;
+                } else if (field.type === 'file') {
+                    const actualRequired = isRequired && !field.current;
+                    inputHtml = `<div>
+                                     <span class="upload-placeholder" style="margin-right: 10px;">目前: ${field.current || '未上傳'}</span>
+                                     <input type="file" id="detail-${field.id}" accept=".pdf" ${actualRequired ? 'required' : ''}>
+                                  </div>`;
+                } else {
+                    inputHtml = `<input type="${field.type}" id="detail-${field.id}" value="${currentValue}" ${isReadonly ? 'readonly class="readonly"' : ''} ${field.min !== undefined ? `min="${field.min}"` : ''} ${field.max !== undefined ? `max="${field.max}"` : ''} ${isRequired ? 'required' : ''}>`;
+                }
+
+                div.innerHTML = `<label for="detail-${field.id}" ${isRequired ? 'class="required"' : ''}>${field.label}:</label>${inputHtml}`;
+                form.appendChild(div);
+            });
+            openModal('student-details-modal');
+        }
+
+        function saveStudentDetails() {
+            const form = document.getElementById('student-details-form');
+            if (!form.checkValidity()) {
+                alert('請檢查所有必填欄位 (*) 是否已正確填寫。');
+                form.reportValidity();
+                return;
+            }
+
+            const passportId = form.dataset.passportId;
+            const studentIndex = students.findIndex(s => s.護照號碼 === passportId);
+            if (studentIndex === -1) { alert('錯誤：找不到學生資料'); return; }
+
+            const updatedStudent = { ...students[studentIndex] };
+            let changesSummary = [];
+
+            form.querySelectorAll('input, select, textarea').forEach(element => {
+                const fieldId = element.id.replace('detail-', '');
+                if (!element.name && element.type !== 'file' && !element.id.startsWith('detail-')) return;
+                const isFile = element.type === 'file';
+                const isRadio = element.type === 'radio';
+                const fieldName = isRadio ? element.name.replace('detail-', '') : fieldId;
+                if (updatedStudent.hasOwnProperty(fieldName) || isFile) {
+                    let newValue;
+                    if (isRadio) {
+                        const checkedRadio = form.querySelector(`input[name="detail-${fieldName}"]:checked`);
+                        newValue = checkedRadio ? checkedRadio.value : updatedStudent[fieldName];
+                    } else if (isFile) {
+                        if (element.files.length > 0) {
+                            const fileMap = { '在校畢業成績單': '成績單檔名', '學校師長推薦信': '推薦信檔名', '其他具體學業表現優異證明': '優異證明檔名', '其他檢核資料': '其他檢核資料檔名' };
+                            const mappedKey = fileMap[fieldId]; if (mappedKey) {
+                                newValue = element.files[0].name;
+                                if (updatedStudent[mappedKey] !== newValue) {
+                                    changesSummary.push(`${fieldId}: ${updatedStudent[mappedKey] || '無'} -> ${newValue}`);
+                                    updatedStudent[mappedKey] = newValue;
+                                }
+                            }
+                        }
+                        return;
+                    } else if (!element.readOnly && !element.disabled) {
+                        newValue = element.value;
+                    } else {
+                        return;
+                    }
+
+                    if (!isFile && String(updatedStudent[fieldName]) !== String(newValue)) {
+                        changesSummary.push(`${fieldName}: ${updatedStudent[fieldName]} -> ${newValue}`);
+                        updatedStudent[fieldName] = newValue;
+                    }
+                }
+            });
+
+            students[studentIndex] = updatedStudent;
+            addAuditLog('admin', '管理員', '編輯學生資料', `${updatedStudent.英文姓名} (${passportId})`, changesSummary.length > 0 ? changesSummary.join('; ') : '無變更');
+            alert('學生資料已更新 (模擬)');
+            closeModal('student-details-modal');
+            if (currentStudentListView_Admin.programName === updatedStudent.台灣專班名稱 && currentStudentListView_Admin.semester === updatedStudent.學期) {
+                viewProgramStudents_Admin(updatedStudent.台灣專班名稱, updatedStudent.學期);
+            }
+        }
+
+        function openAddStudentModal() {
+            document.getElementById('add-student-form').reset();
+            document.getElementById('add-passport-check-msg').textContent = '';
+            document.getElementById('add-other-check-label').classList.remove('required');
+            document.getElementById('add-其他檢核資料').required = false;
+
+            const schools = getUniqueValues(programs, '學校名稱');
+            populateDropdown('add-student-school', schools, false);
+            document.getElementById('add-student-school').value = schools[0]; populateAddStudentPrograms();
+
+            populateDropdown('add-國籍', nationalities);
+            populateAddStudentProgramDetails();
+
+            openModal('add-student-modal');
+        }
+
+        function populateAddStudentPrograms() { /* ... Keep as is ... */ }
+        function populateAddStudentProgramDetails() { /* ... Keep as is ... */ }
+        function checkPassportIdExists(passportId, currentEditingId = null) { /* ... Keep as is ... */ }
+        function submitAddStudent() { /* ... Keep as is ... */ }
+
+
+        function populateProgramFilters(type) {
+            const schools = getUniqueValues(programs, '學校名稱');
+            const schoolSelectId = type === 'registration' ? 'reg-filter-school' : 'nr-filter-school';
+            const select = document.getElementById(schoolSelectId);
+            select.innerHTML = '<option value="">所有學校</option>';
+            schools.forEach(school => select.add(new Option(school, school)));
+            renderProgramList(type);
+        }
+
+        function filterProgramList(type) { renderProgramList(type); }
+
+        function renderProgramList(type) {
+            const tableId = type === 'registration' ? 'registration-program-table' : 'not-registered-program-table';
+            const tbody = document.getElementById(tableId).querySelector('tbody');
+            const schoolFilterId = type === 'registration' ? 'reg-filter-school' : 'nr-filter-school';
+            const statusFilterId = type === 'registration' ? 'reg-filter-status' : 'nr-filter-status';
+            const selectedSchool = document.getElementById(schoolFilterId).value;
+            const selectedStatus = document.getElementById(statusFilterId).value;
+            tbody.innerHTML = '';
+
+            const filteredPrograms = programs.filter(p =>
+                (!selectedSchool || p.學校名稱 === selectedSchool) &&
+                (!selectedStatus || p[type === 'registration' ? '註冊補助提交狀態' : '不註冊提交狀態'] === selectedStatus)
+            );
+
+            filteredPrograms.forEach(program => {
+                const statusKey = type === 'registration' ? '註冊補助提交狀態' : '不註冊提交狀態';
+                const timeKey = type === 'registration' ? '提交時間_註冊補助' : '提交時間_不註冊';
+                const status = program[statusKey];
+                const submitTime = program[timeKey];
+
+                if (status === '不適用' && selectedStatus !== '不適用' && selectedStatus !== '') return;
+
+                const isPendingReview = status === '待審核';
+                const buttonText = isPendingReview ? '審核' : '檢視';
+                const buttonIcon = isPendingReview ? 'fa-search' : 'fa-eye';
+                const viewReviewButton = `<button onclick="openReviewModal('${program.專班名稱}', '${program.學期}', '${type}')"><i class="fas ${buttonIcon}"></i> ${buttonText}</button>`;
+
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${program.學校名稱}</td>
+                    <td>${program.專班名稱} (${program.學期})</td>
+                    <td class="${getStatusClass(status)}">${status || '未處理'}</td>
+                    <td>${formatDate(submitTime)}</td>
+                    <td class="action-buttons">
+                        ${viewReviewButton}
+                        ${status === '已通過' && type === 'registration' ? `<button onclick="viewSignedPdf('${program.蓋章清冊檔案_補助}', '${program.專班名稱}', '補助')" ${!program.蓋章清冊檔案_補助 ? 'disabled' : ''} class="secondary"><i class="far fa-file-pdf"></i> 補助總表用印單</button>` : ''}
+                        ${status === '已通過' && type === 'not-registered' ? `<button onclick="viewSignedPdf('${program.蓋章清冊檔案_溢領}', '${program.專班名稱}', '溢領')" ${!program.蓋章清冊檔案_溢領 ? 'disabled' : ''} class="secondary"><i class="far fa-file-pdf"></i> 溢領總表用印單</button>` : ''}
+                    </td>
+                 `;
+            });
+            if (filteredPrograms.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px;">沒有符合條件的專班資料</td></tr>`;
+            }
+        }
+
+
+        function openReviewModal(programName, semester, type) {
+            currentReviewContext = { programName, semester, type };
+            const program = findProgram(programName, semester);
+            if (!program) { alert("錯誤：找不到專班資料"); return; }
+
+            const programStudents = students.filter(s => s.台灣專班名稱 === programName && s.學期 === semester);
+            const modalContent = document.getElementById('review-modal-content');
+            const modalInfo = document.getElementById('review-modal-info');
+            const modalTitle = document.getElementById('review-modal-title');
+            const reviewActionsSection = document.getElementById('review-actions'); const rejectReasonInput = document.getElementById('review-reject-reason');
+            const approveBtn = document.getElementById('review-approve-btn');
+            const rejectBtn = document.getElementById('review-reject-btn');
+            rejectReasonInput.value = '';
+            modalContent.innerHTML = '';
+
+            const statusKey = type === 'registration' ? '註冊補助提交狀態' : '不註冊提交狀態';
+            const reasonKey = type === 'registration' ? '退回原因_註冊補助' : '退回原因_不註冊';
+            const isPendingReview = program[statusKey] === '待審核';
+
+            modalTitle.textContent = isPendingReview ? `審核 ${programName} (${semester})` : `檢視 ${programName} (${semester})`;
+
+            modalInfo.innerHTML = `
+                 <p><strong>學校:</strong> ${program.學校名稱}</p>
+                 <p><strong>系所:</strong> ${program.系所名稱}</p>
+                 <p><strong>專班:</strong> ${program.專班名稱} (${program.學期})</p>
+                 <p><strong>學制:</strong> ${program.學制}</p>
+                 <p><strong>提交狀態:</strong> <span class="${getStatusClass(program[statusKey])}">${program[statusKey]}</span></p>
+                 ${!program.isNewSemester ? '<p class="alert alert-info" style="padding: 5px 10px; margin: 5px 0;">注意：此為舊學期班級，僅學雜費可補助。</p>' : ''}
+             `;
+            if (program[statusKey] === '已退回') {
+                modalInfo.innerHTML += `<div class="alert alert-danger">先前退回原因: ${program[reasonKey] || '無'}</div>`;
+            }
+
+
+            reviewActionsSection.style.display = isPendingReview ? 'block' : 'none';
+            approveBtn.style.display = isPendingReview ? 'inline-block' : 'none';
+            rejectBtn.style.display = isPendingReview ? 'inline-block' : 'none';
+
+
+            let tableHTML = '';
+            if (type === 'registration') {
+                tableHTML = `<div class="table-container" style="max-height: 40vh;"><table border="1" style="width:100%;"><thead><tr>
+                    <th>姓名</th><th>護照號碼</th><th>註冊狀態</th>
+                    <th>文件翻譯</th><th>公證</th><th>健檢</th><th>簽證</th><th>行政費<br>(上限1萬)</th>
+                    <th>機票<br>(上限9千)</th><th>學雜費<br>(上限5萬)</th><th>補助合計</th><th>ID重複?</th>
+                    </tr></thead><tbody>`;
+
+                programStudents.forEach(s => {
+                    const ensureNum = (val) => (typeof val === 'number' ? val : (parseInt(val, 10) || 0));
+                    const adminFeeTotal = Math.min(10000, ensureNum(s.補助_文件翻譯) + ensureNum(s.補助_公證文件) + ensureNum(s.補助_健康檢查) + ensureNum(s.補助_單次簽證));
+                    const ticketFee = Math.min(9000, ensureNum(s.補助_單程來台機票));
+                    const tuitionFee = Math.min(50000, ensureNum(s.補助_學雜費));
+                    const totalSubsidy = (s.註冊狀態 === '已註冊') ? (adminFeeTotal + ticketFee + tuitionFee) : 0;
+                    const isDuplicate = students.filter(s_check => s_check.護照號碼 === s.護照號碼 && s_check.英文姓名 !== s.英文姓名).length > 0;
+
+                    tableHTML += `<tr ${isDuplicate ? 'class="highlight"' : ''}>
+                        <td>${s.英文姓名} ${isDuplicate ? '<span style="color:var(--warning-text); font-weight:bold;" title="ID 檢核: 該生曾被其他學校/專班推薦">(重複ID)</span>' : ''}</td>
+                        <td>${s.護照號碼}</td>
+                        <td>${s.註冊狀態}</td>
+                        <td>${ensureNum(s.補助_文件翻譯)}</td>
+                        <td>${ensureNum(s.補助_公證文件)}</td>
+                        <td>${ensureNum(s.補助_健康檢查)}</td>
+                        <td>${ensureNum(s.補助_單次簽證)}</td>
+                        <td>${adminFeeTotal}</td>
+                        <td>${ticketFee}</td>
+                        <td>${tuitionFee}</td>
+                        <td>${totalSubsidy}</td>
+                        <td>${isDuplicate ? '是' : '否'}</td>
+                      </tr>`;
+                });
+                if (programStudents.length === 0) tableHTML += '<tr><td colspan="12" style="text-align: center;">此專班無學生資料</td></tr>';
+                tableHTML += `</tbody></table></div>`;
+
+            } else {
+                tableHTML = `<div class="table-container" style="max-height: 40vh;"><table border="1" style="width:100%;"><thead><tr>
+                    <th>姓名</th><th>護照號碼</th><th>註冊狀態</th><th>原因</th><th>需繳回溢領費用</th>
+                    </tr></thead><tbody>`;
+
+                const notRegisteredStudents = programStudents.filter(s => s.註冊狀態 === '不註冊' || s.註冊狀態 === '特殊不註冊');
+                notRegisteredStudents.forEach(s => {
+                    tableHTML += `<tr>
+                        <td>${s.英文姓名}</td>
+                        <td>${s.護照號碼}</td>
+                        <td>${s.註冊狀態}</td>
+                        <td style="white-space: pre-wrap; max-width: 300px;">${s.未註冊原因 || '(未填寫)'}</td>
+                        <td>${s.溢領費用 || 0}</td>
+                      </tr>`;
+                });
+                if (notRegisteredStudents.length === 0) {
+                    tableHTML += `<tr><td colspan="5" style="text-align: center;">此專班無 '不註冊' 或 '特殊不註冊' 學生</td></tr>`;
+                }
+                tableHTML += `</tbody></table></div>`;
+            }
+            modalContent.innerHTML = tableHTML; openModal('review-modal');
+        }
+
+        function processReview(action) { }
+        function viewSignedPdf(filename, programName, type) { }
+
+        function setupExportOptions() {
+            const schools = getUniqueValues(programs, '學校名稱');
+            populateDropdown('export-school', schools); toggleExportOptions();
+        }
+
+        function toggleExportOptions() {
+            const byProgram = document.getElementById('export-by-program').checked;
+            document.getElementById('export-program-selection').style.display = byProgram ? 'block' : 'none';
+            populateExportPrograms();
+        }
+
+        function populateExportPrograms() {
+            const selectedSchool = document.getElementById('export-school').value;
+            const programSelect = document.getElementById('export-program');
+            programSelect.innerHTML = '<option value="">請選擇專班</option>';
+            if (selectedSchool) {
+                const schoolPrograms = programs.filter(p => p.學校名稱 === selectedSchool);
+                const programOptions = schoolPrograms.map(p => `${p.專班名稱}|${p.學期}`);
+                programOptions.sort().forEach(optionText => {
+                    const [name, sem] = optionText.split('|');
+                    const opt = new Option(`${name} (${sem})`, optionText);
+                    programSelect.add(opt);
+                });
+            }
+        }
+
+        function simulateExport() {
+            const exportType = document.getElementById('export-type').value === 'subsidy' ? '補助' : '溢領';
+            const scope = document.querySelector('input[name="export-scope"]:checked').value;
+            const school = document.getElementById('export-school').value;
+            const programValue = document.getElementById('export-program').value;
+            const semester = document.getElementById('export-semester').value.trim();
+
+            let target = '';
+            let targetLog = '';
+            if (scope === 'school') {
+                if (!school) { alert('請選擇學校'); return; }
+                target = school;
+                targetLog = school;
+            } else {
+                if (!school) { alert('請選擇學校'); return; }
+                if (!programValue) { alert('請選擇專班'); return; }
+                const [progName, progSem] = programValue.split('|');
+                target = `${school} - ${progName} (${progSem})`;
+                targetLog = `${progName} (${progSem})`;
+            }
+            if (semester) target += ` (指定學期: ${semester})`;
+
+            let filename = `(模擬) ${targetLog.replace(/ /g, '_').replace(/[()]/g, '')}`;
+            if (semester) filename += `_${semester}`;
+            filename += `_${exportType}清冊.xlsx`;
+
+            alert(`準備匯出檔案: ${filename}\n(此為模擬操作，不會真的下載檔案)`);
+            addAuditLog('admin', '管理員', '匯出印領清冊', targetLog + (semester ? ` (指定: ${semester})` : ''), `匯出 ${exportType} 清冊`);
+        }
+
+        function renderSystemManagement() {
+            renderOpenTimeStatus();
+            renderAuditLog();
+        }
+
+        function renderOpenTimeStatus() {
+            const statusSpan = document.getElementById('open-time-status');
+            const startSpan = document.getElementById('current-start-time');
+            const endSpan = document.getElementById('current-end-time');
+            const startInput = document.getElementById('set-start-time');
+            const endInput = document.getElementById('set-end-time');
+
+            if (systemSettings.openTimeActive && systemSettings.openTimeStart && systemSettings.openTimeEnd) {
+                statusSpan.textContent = '開放中';
+                statusSpan.style.color = 'var(--green)';
+                startSpan.textContent = formatDate(systemSettings.openTimeStart) || 'N/A';
+                endSpan.textContent = formatDate(systemSettings.openTimeEnd) || 'N/A';
+                startInput.value = systemSettings.openTimeStart;
+                endInput.value = systemSettings.openTimeEnd;
+            } else {
+                statusSpan.textContent = '關閉中';
+                statusSpan.style.color = 'var(--red)';
+                startSpan.textContent = 'N/A';
+                endSpan.textContent = 'N/A';
+                startInput.value = '';
+                endInput.value = '';
+            }
+        }
+
+        function setOpenTime() {
+            const start = document.getElementById('set-start-time').value;
+            const end = document.getElementById('set-end-time').value;
+            if (!start || !end) { alert('請設定有效的開始和結束時間'); return; }
+            if (new Date(start) >= new Date(end)) { alert('結束時間必須晚於開始時間'); return; }
+
+            systemSettings.openTimeActive = true;
+            systemSettings.openTimeStart = start;
+            systemSettings.openTimeEnd = end;
+
+            addAuditLog('admin', '管理員', '系統管理', '開放時間', `設定編輯時間 ${formatDate(start)} - ${formatDate(end)}`);
+            alert('開放時間已更新');
+            renderOpenTimeStatus();
+        }
+
+        function clearOpenTime() {
+            systemSettings.openTimeActive = false;
+            systemSettings.openTimeStart = null;
+            systemSettings.openTimeEnd = null;
+            addAuditLog('admin', '管理員', '系統管理', '開放時間', '清除開放時間 (關閉編輯)');
+            alert('已清除開放時間設定，學校端編輯功能已關閉');
+            renderOpenTimeStatus();
+        }
+
+        function addAuditLog(user, role, action, target, summary) {
+            auditLog.unshift({
+                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+                user: user, role: role, action: action, target: target, summary: summary
+            });
+            if (document.getElementById('system').classList.contains('active')) { renderAuditLog(); }
+        }
+
+        function renderAuditLog() {
+            const tbody = document.getElementById('audit-log-table').querySelector('tbody');
+            const searchTerm = document.getElementById('log-search').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            const filteredLogs = auditLog.filter(log =>
+                log.user.toLowerCase().includes(searchTerm) ||
+                log.action.toLowerCase().includes(searchTerm) ||
+                log.target.toLowerCase().includes(searchTerm) ||
+                log.summary.toLowerCase().includes(searchTerm)
+            );
+            const displayLogs = filteredLogs.slice(0, 50);
+            displayLogs.forEach(log => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${log.timestamp}</td>
+                    <td>${log.user} (${log.role})</td>
+                    <td>${log.action}</td>
+                    <td>${log.target}</td>
+                    <td style="white-space: pre-wrap; max-width: 400px;">${log.summary}</td>
+                `;
+            });
+            if (filteredLogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">沒有符合條件的編輯記錄</td></tr>';
+            }
+        }
+
+        window.onload = () => {
+            populateProgramFilters('registration'); populateProgramFilters('not-registered');
+            setupExportOptions(); renderSystemManagement();
+            showSection('students');
+        };
+
+    </script>
+</body>
+
+</html>
