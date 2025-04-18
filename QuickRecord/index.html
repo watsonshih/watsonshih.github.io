@@ -19,7 +19,15 @@
         gtag('js', new Date());
         gtag('config', 'G-VJZ2K72PMZ');
     </script>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "r686l4p8t9");
+    </script>
     <script src="js/tailwindcss.3.4.16.js"></script>
+    <script src="i18n/langs.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -43,8 +51,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
         import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
-
-        import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
+        import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
 
         async function initializeFirebase() {
             const firebaseConfig = {
@@ -64,15 +71,12 @@
                     provider: new ReCaptchaV3Provider('6Lc4BRwrAAAAAIBUTWfQ2qXUM1USKJ5UonT-99bf'),
                     isTokenAutoRefreshEnabled: true
                 });
+
+                await getToken(appCheck);
+
                 const database = getDatabase(app);
                 return database;
             } catch (error) {
-                console.error("Firebase initialization or App Check failed:", error);
-                if (error.code && error.code.includes('appCheck')) {
-                    showAlertModal('reCAPTCHAfailed');
-                } else {
-                    showAlertModal('firebaseConnectError');
-                }
                 throw error;
             }
         }
@@ -86,7 +90,6 @@
         window.fbUpdate = update;
         window.fbChild = child;
         window.fbOnValue = onValue;
-
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
@@ -227,7 +230,6 @@
             pointer-events: none;
         }
     </style>
-    <script src="i18n/langs.js"></script>
 </head>
 
 <body class="bg-dark-100">
@@ -503,7 +505,7 @@
 
         <div id="checkOutPage" class="hidden page-transition">
             <div id="sessionLinkContainerCheckOut" class="mb-4 mx-auto hidden">
-                <div id="sessionLinkDisplayCheckIn" class="session-link-display rounded-lg text-gray-200"
+                <div id="sessionLinkDisplayCheckOut" class="session-link-display rounded-lg text-gray-200"
                     data-lang-key="sessionLinkInfo">已啟用雲端同步，點此複製連結以共用、恢復本次點名階段。</div>
             </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -918,21 +920,21 @@
 
         function parseWithCurrentEncoding() {
             if (!currentFileContent) return;
-            try {
-                const decoder = new TextDecoder(currentEncoding);
-                const content = decoder.decode(currentFileContent);
-
-                if ((content.match(/�/g) || []).length > 5 && currentEncoding === 'big5') {
-                    console.warn("Detected possible encoding issue with Big5. Retrying with UTF-8...");
-                    currentEncoding = 'utf-8';
-                    return parseWithCurrentEncoding();
+            const encodings = ['big5', 'utf-8'];
+            for (const enc of encodings) {
+                try {
+                    const content = new TextDecoder(enc).decode(currentFileContent);
+                    const errors = (content.match(/�/g) || []).length;
+                    if (errors <= 5) {
+                        currentEncoding = enc;
+                        return parseCSVContent(content);
+                    }
+                    console.warn(`Encoding ${enc} yielded ${errors} replacement chars.`);
+                } catch (e) {
+                    console.warn(`Failed to decode with ${enc}:`, e);
                 }
-
-                parseCSVContent(content);
-            } catch (error) {
-                console.error(`${currentEncoding} 解碼失敗:`, error);
-                alert(`無法使用 ${currentEncoding} 解析檔案 / Cannot parse file with ${currentEncoding}`);
             }
+            showAlertModal('fileEncodingError');
         }
 
         document.getElementById('toggleEncoding').addEventListener('click', function () {
@@ -1862,15 +1864,17 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            initializeLanguage();
             try {
                 db = await window.firebaseInitPromise;
-                if (db && enableFirebaseSyncCheckbox) {
-                    enableFirebaseSyncCheckbox.disabled = false;
-                } else if (!db) {
-                    if (enableFirebaseSyncCheckbox) enableFirebaseSyncCheckbox.disabled = true;
-                }
+                enableFirebaseSyncCheckbox.disabled = !db;
             } catch (error) {
-                if (enableFirebaseSyncCheckbox) enableFirebaseSyncCheckbox.disabled = true;
+                if (error.code && error.code.includes('appCheck')) {
+                    showAlertModal('reCAPTCHAfailed');
+                } else {
+                    showAlertModal('firebaseConnectError');
+                }
+                enableFirebaseSyncCheckbox.disabled = true;
             }
 
             if (typeof jsQR !== 'function') {
@@ -1879,8 +1883,6 @@
             if (typeof Papa !== 'object' || typeof Papa.parse !== 'function') {
                 alert('CSV parsing library failed to load. Please check your internet connection and refresh.');
             }
-
-            initializeLanguage();
 
             const urlParams = new URLSearchParams(window.location.search);
             const sessionIdFromUrl = urlParams.get('session');
@@ -1897,9 +1899,14 @@
                 }
                 showPage(mainPage);
             }
+
             hideLoadingOverlay();
         });
     </script>
+
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+        data-id="watsonshih" data-description="Support me on Buy me a boba tea!" data-message="賞茶 - 不限金額多元支付，感謝"
+        data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 </body>
 
 </html>
