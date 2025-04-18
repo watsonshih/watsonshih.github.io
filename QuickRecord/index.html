@@ -1073,6 +1073,7 @@
             initializeCheckInPage(eventName);
             showPage(checkInPage);
             startCheckInCamera();
+            requestFullscreen();
             showStatusIndicator('normal');
         });
 
@@ -1130,6 +1131,16 @@
             updateCheckOutDisplay(lastCheckedOutParticipant || { name: '-', id: '-', note: '-', checkOutTime: '-' });
         }
 
+        function requestFullscreen() {
+            const element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
 
         function startCheckInCamera() {
             const video = document.getElementById('checkInVideo');
@@ -1906,7 +1917,7 @@
 
     <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
         data-id="watsonshih" data-description="Support me on Buy me a boba tea!" data-message="賞茶 - 不限金額多元支付，感謝"
-        data-color="#5F7FFF" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+        data-color="#555555" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
 </body>
 
 </html>
