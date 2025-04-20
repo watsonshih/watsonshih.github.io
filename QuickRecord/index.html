@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" data-lang-key="pageKeywords" content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson">
-    <meta name="description" data-lang-key="pageDescription" content="透過掃描 QR Code，讓您的活動簽到簽退更快速！">
+    <meta name="keywords"
+        content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson, event check-in, QR Code scanner, attendance system">
+    <meta name="description"
+        content="透過掃描 QR Code，讓您的活動簽到簽退更快速! Streamline your event check-in/out process with QR Code scanning!">
     <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
     <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
     <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
@@ -238,17 +240,20 @@
     <audio id="errorAudio" src="bgm/error.mp3" preload="auto"></audio>
 
     <div id="loadingOverlay" class="hidden">
-        <span data-lang-key="loadingSession">正在載入點名狀態...</span>
+        <span data-lang-key="loadingSession">正在載入，請稍候...</span>
     </div>
 
     <nav class="bg-dark-50 border-b border-dark-300">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <h1 class="text-xl font-semibold text-gray-100">QuickRecord</h1>
+                    <a href="https://watsonshih.github.io/QuickRecord/" target="_blank" class="flex items-center">
+                        <img src="https://watsonshih.github.io/QuickRecord/pic/icon.png" alt="QuickRecord"
+                            class="h-8 w-8 mr-2">
+                        <h1 class="text-xl font-semibold text-gray-100">QuickRecord</h1>
+                    </a>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span id="currentTime" class="text-sm text-gray-400"></span>
                     <button id="langSwitchBtn"
                         class="text-sm text-blue-400 hover:text-blue-300 transition duration-150 ease-in-out px-2 py-2 leading-none border border-blue-400/50 rounded">
                         EN
@@ -607,12 +612,28 @@
                 </div>
             </div>
         </div>
-        <p class="items-center text-slate-600 mt-6 text-center">
-            <a href="https://watsonshih.github.io/" class="hover:text-blue-600" target="_blank"
-                data-lang-key="copyRight">
-                © Watson
-            </a>
-        </p>
+        <footer class="p-6">
+            <div class="text-center">
+                <div class="flex flex-col justify-center space-y-4 sm:flex-row sm:space-x-5 sm:space-y-0">
+                    <a href="https://watsonshih.github.io/QuickRecord/README.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerGuide">
+                        使用指南
+                    </a>
+                    <a href="https://watsonshih.github.io/QuickRecord/user.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerParticipant">
+                        參與者頁面
+                    </a>
+                    <a href="https://watsonshih.github.io/QuickRecord/generator.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerGenerator">
+                        通行碼郵件產生器
+                    </a>
+                </div>
+                <p class="mt-4 text-gray-400">
+                    <a href="https://watsonshih.github.io/" class="hover:text-blue-400 transition-colors"
+                        target="_blank" data-lang-key="copyRight">© Watson</a>
+                </p>
+            </div>
+        </footer>
     </main>
 
     <script src="js/jsQR.min.js"></script>

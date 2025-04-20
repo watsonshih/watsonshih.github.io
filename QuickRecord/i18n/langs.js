@@ -105,6 +105,9 @@ const languages = {
         firebaseNotReady: "雲端同步服務無法使用。",
         leaveDuringCheckPrompt: "您確定要關閉頁面嗎？未同步的資料將會遺失。",
         reCAPTCHAfailed: "無法驗證，請檢查 reCAPTCHA，或在不使用雲端功能情況下繼續。",
+        footerParticipant: '參與者頁面',
+        footerGenerator: '通行碼郵件產生器',
+        footerGuide: '使用指南',
     },
     'en': {
         newCheckIn: 'Start New Check-in',
@@ -212,5 +215,8 @@ const languages = {
         firebaseNotReady: "Cloud sync service is not available.",
         leaveDuringCheckPrompt: "Are you sure you want to close the page? Unsynced data will be lost.",
         reCAPTCHAfailed: "Verification failed. Please check reCAPTCHA, or continue without cloud features.",
+        footerParticipant: 'Participant Page',
+        footerGenerator: 'QR Email Generator',
+        footerGuide: 'User Guide',
     }
 };
