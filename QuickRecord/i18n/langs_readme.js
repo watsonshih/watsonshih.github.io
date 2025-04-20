@@ -169,7 +169,7 @@ const languages = {
         section10_2: '使用風險自負：您使用本服務的風險由您自行承擔。對於因使用或無法使用本服務而導致的任何直接、間接、偶然或衍生的損害 (包括但不限於資料遺失、紀錄錯誤、系統無法使用、資訊不準確等)，服務建立者概不負責。',
         section10_3: '資料處理與責任：',
         section10_3a: '參與者資料主要在您的瀏覽器本機處理。',
-        section10_3b: '若您選擇啟用「雲端同步」功能，資料將會暫時儲存在 Firebase 雲端伺服器上。如前所述，此雲端資料是不穩定的，可能隨時被清除，恕不另行通知。',
+        section10_3b: '若您選擇啟用「雲端同步」功能，資料將會暫時儲存在雲端資料庫上。如前所述，此雲端資料是不穩定的，可能隨時被清除，恕不另行通知。',
         section10_3c: '您有最終責任在活動結束後，立即下載並妥善備份您的活動紀錄檔。服務建立者不對任何雲端資料的遺失或清除負責。',
         section10_4: '使用者責任：您有責任確保您輸入資料 (如 CSV 檔案內容、參與者資訊) 的準確性，並根據說明文件正確使用本系統。因資料輸入錯誤或不當使用系統所產生的問題，服務建立者概不負責。',
         section10_5: '條款變更：服務建立者保留隨時修改這些條款的權利，恕不另行通知。在條款變更後繼續使用本服務，即表示您接受修改後的條款。',
@@ -193,11 +193,11 @@ const languages = {
         navSection4: '4. 簽到階段',
         navSection5: '5. 簽退階段',
         navSection6: '6. 下載紀錄',
-        navSection7: '7. 輔助工具',
-        navSection8: '8. 其他功能',
-        navSection9: '9. 成功秘訣',
-        navSection10: '10. 服務條款',
-        navSection11: '11. 開源授權'
+        navSection7: '輔助工具',
+        navSection8: '其他功能',
+        navSection9: '成功秘訣',
+        navSection10: '服務條款',
+        navSection11: '開源授權'
     },
     'en': {
         // 主要標題與介紹
@@ -369,7 +369,7 @@ const languages = {
         section10_2: 'Use at Your Own Risk: You use this service at your own risk. The service creator is not responsible for any direct, indirect, incidental, or consequential damages (including but not limited to data loss, record errors, system unavailability, information inaccuracy, etc.) resulting from the use or inability to use this service.',
         section10_3: 'Data Processing and Responsibility:',
         section10_3a: 'Participant data is primarily processed locally in your browser.',
-        section10_3b: 'If you choose to enable the \'Cloud Sync\' feature, data will be temporarily stored on Firebase cloud servers. As mentioned earlier, this cloud data is unstable and may be cleared at any time without notice.',
+        section10_3b: 'If you choose to enable the \'Cloud Sync\' feature, data will be temporarily stored on cloud servers. As mentioned earlier, this cloud data is unstable and may be cleared at any time without notice.',
         section10_3c: 'You have the ultimate responsibility to immediately download and properly back up your event record files after the event ends. The service creator is not responsible for any loss or clearing of cloud data.',
         section10_4: 'User Responsibility: You are responsible for ensuring the accuracy of the data you enter (such as CSV file content, participant information) and for using this system correctly according to the documentation. The service creator is not responsible for problems caused by incorrect data input or improper use of the system.',
         section10_5: 'Terms Changes: The service creator reserves the right to modify these terms at any time without notice. Continuing to use this service after the terms have been changed indicates your acceptance of the modified terms.',
@@ -393,10 +393,10 @@ const languages = {
         navSection4: '4. Check-in',
         navSection5: '5. Check-out',
         navSection6: '6. Download Records',
-        navSection7: '7. Tools',
-        navSection8: '8. Other Features',
-        navSection9: '9. Tips',
-        navSection10: '10. Terms',
-        navSection11: '11. License'
+        navSection7: 'Tools',
+        navSection8: 'Other Features',
+        navSection9: 'Tips',
+        navSection10: 'Terms',
+        navSection11: 'License'
     }
 };
