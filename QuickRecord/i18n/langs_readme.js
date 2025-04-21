@@ -122,13 +122,13 @@ const languages = {
         section6_2f: 'CheckOutTime: 簽退時間 (格式：YYYY-MM-DD HH:MM:SS)',
 
         // 7. 輔助工具
-        section7: '7. 輔助工具 (選用)',
-        section7_1: '7.1. 參與者 QR Code 產生頁面',
+        section7: '輔助工具 (選用)',
+        section7_1: '參與者 QR Code 產生頁面',
         section7_1a: '網址：<a href="https://watsonshih.github.io/QuickRecord/user.html" class="text-blue-400 hover:text-blue-300">https://watsonshih.github.io/QuickRecord/user.html</a>',
         section7_1b: '用途：讓參與者自行輸入其「姓名」和「ID」，產生專屬的 QR Code，用於現場簽到退掃描。',
         section7_1c: '重要：參與者輸入的「姓名」和「ID」必須與您名單上或預期掃描到的資料完全一致 (包含大小寫)。',
         section7_1d: '連結帶入參數：如果您熟悉網址參數的使用，可以將參與者的姓名和 ID 直接帶入網址中，讓他們點擊連結後自動填入資料。您可以預先產生包含參與者資訊的連結，讓他們點開即顯示 QR Code，無需手動輸入。<br>格式為：https://watsonshih.github.io/QuickRecord/user.html?name=<span class="code">姓名</span>&id=<span class="code">ID</span>。',
-        section7_2: '7.2. 通行碼郵件寄送程式產生器',
+        section7_2: '通行碼郵件寄送程式產生器',
         section7_2a: '網址：<a href="https://watsonshih.github.io/QuickRecord/generator.html" class="text-blue-400 hover:text-blue-300">https://watsonshih.github.io/QuickRecord/generator.html</a>',
         section7_2b: '用途：產生一段 Google Apps Script 程式碼，用於自動寄送個人化的活動通知信給參與者，信件中會包含他們專屬的 QR Code 產生頁面連結 (已帶入姓名和 ID 參數)。',
         section7_2c: '使用流程：',
@@ -147,14 +147,14 @@ const languages = {
         section7_2d1: 'Gmail 有每日寄送郵件數量限制 (免費帳號通常為 100 封/天)，大量寄送請注意。',
         section7_2d2: '請確保 Google Sheet 中的 Name 和 ID 與參與者名單 CSV 資料一致。',
 
-        // 8. 其他功能
-        section8: '8. 其他功能',
+        // 其他功能
+        section8: '其他功能',
         section8_1: '語言切換：網頁右上角提供 EN / 中 按鈕，可切換介面語言。',
         section8_2: '目前時間：網頁右上角會顯示目前系統時間。',
         section8_3: '狀態指示燈：簽到/簽退頁面頂部有一條細長的指示燈，有白色呼吸效果表示正在掃描，並會根據掃描狀態變色 (綠色成功、黃色警告、紅色錯誤)。',
 
-        // 9. 成功秘訣
-        section9: '9. 成功秘訣',
+        // 成功秘訣
+        section9: '成功秘訣',
         section9_1: '網路穩定：若使用雲端同步，請確保網路連線穩定。',
         section9_2: '光線充足：確保掃描環境光線充足，有利於 QR Code 辨識。',
         section9_3: 'QR Code 清晰：提醒參與者確保其 QR Code 顯示清晰、無遮擋、需調亮螢幕亮度。',
@@ -162,8 +162,8 @@ const languages = {
         section9_5: '事前測試：建議在正式活動前，使用幾個測試資料進行完整流程的測試。',
         section9_6: '及時下載：活動結束後，請務必下載紀錄檔備份。',
 
-        // 10. 服務條款與免責聲明
-        section10: '10. 服務條款與免責聲明',
+        // 服務條款與免責聲明
+        section10: '服務條款與免責聲明',
         section10Intro: '當您使用 QuickRecord 服務時，即表示您同意以下條款與條件：',
         section10_1: '服務性質「按現狀」提供：QuickRecord 是一項免費提供的工具，按「現狀」和「現有」基礎提供，不包含任何明示或暗示的保證。我們不保證服務將完全不中斷、完全無錯誤或能滿足您的所有特定需求。',
         section10_2: '使用風險自負：您使用本服務的風險由您自行承擔。對於因使用或無法使用本服務而導致的任何直接、間接、偶然或衍生的損害 (包括但不限於資料遺失、紀錄錯誤、系統無法使用、資訊不準確等)，服務建立者概不負責。',
@@ -174,8 +174,8 @@ const languages = {
         section10_4: '使用者責任：您有責任確保您輸入資料 (如 CSV 檔案內容、參與者資訊) 的準確性，並根據說明文件正確使用本系統。因資料輸入錯誤或不當使用系統所產生的問題，服務建立者概不負責。',
         section10_5: '條款變更：服務建立者保留隨時修改這些條款的權利，恕不另行通知。在條款變更後繼續使用本服務，即表示您接受修改後的條款。',
 
-        // 11. 開源授權
-        section11: '11. 開源授權',
+        // 開源授權
+        section11: '開源授權',
         section11Text: 'QuickRecord 是一個開源專案，原始碼託管於 GitHub，並採用 <strong>Apache License 2.0</strong> 進行授權。',
 
         // 頁尾
