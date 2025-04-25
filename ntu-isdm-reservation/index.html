@@ -415,7 +415,6 @@
 
             <div class="bg-dark-50 rounded-lg border border-dark-300 p-4 overflow-x-auto" style="min-height: 600px;">
                 <div id="calendarContainer" class="min-w-max">
-                    <!-- 行事曆將在這裡動態生成 -->
                 </div>
             </div>
         </main>
@@ -451,20 +450,12 @@
             measurementId: "G-8JRMJR7CYZ"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const db = getDatabase(app);
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // 初始化 App Check with reCAPTCHA v3
-        const appCheck = initializeAppCheck(app, {
-            provider: new ReCaptchaV3Provider('6Lf-iCQrAAAAADsoR5V4Fkqk41wWOA_rAM5VZtyG'),
-            isTokenAutoRefreshEnabled: true
-        });
-
-        // 暴露 Firebase methods 到全局
         window.firebase = {
             db,
             auth,
@@ -480,9 +471,7 @@
             signInWithPopup,
             signOut,
             onAuthStateChanged,
-            GoogleAuthProvider,
-            appCheck,
-            getToken
+            GoogleAuthProvider
         };
 
         document.dispatchEvent(new Event('firebaseReady'));
@@ -511,8 +500,6 @@
             loadingOverlay.classList.add('hidden');
         }
 
-
-        // 確認對話框
         function showConfirmModal(message) {
             return new Promise((resolve) => {
                 const modal = document.getElementById('confirmModal');
@@ -558,7 +545,6 @@
             });
         }
 
-        // 提示對話框
         function showAlertModal(message) {
             return new Promise((resolve) => {
                 const modal = document.getElementById('alertModal');
@@ -596,7 +582,6 @@
             });
         }
 
-        // 預約表單 Modal 功能
         const reservationModal = document.getElementById('reservationModal');
         const reservationBox = document.getElementById('reservationBox');
         const reservationForm = document.getElementById('reservationForm');
@@ -607,13 +592,10 @@
         function showReservationModal(mode = 'new', reservationId = null) {
             editingReservationId = reservationId;
 
-            // 更新標題
             reservationTitle.textContent = mode === 'new' ? '新增預約' : '編輯預約';
 
-            // 顯示/隱藏刪除按鈕
             deleteReservationBtn.classList.toggle('hidden', mode === 'new');
 
-            // 如果是編輯模式，填充表單數據
             if (mode === 'edit' && reservationId) {
                 const reservation = reservations.find(r => r.id === reservationId);
                 if (reservation) {
@@ -621,7 +603,6 @@
                     document.getElementById('serverSelect').value = reservation.serverId;
                     document.getElementById('reservationCreator').value = reservation.creatorId || '';
 
-                    // 日期和時間處理
                     const startDate = new Date(reservation.startTime);
                     document.getElementById('reservationDate').value = formatDateForInput(startDate);
                     document.getElementById('startTime').value = formatTimeForSelect(startDate);
@@ -631,22 +612,17 @@
 
                     document.getElementById('notes').value = reservation.notes || '';
 
-                    // 檢查是否為當前用戶建立的預約
                     const canDelete = reservation.creatorId === currentUser.uid;
                     deleteReservationBtn.classList.toggle('hidden', !canDelete);
                 }
             } else {
-                // 新建預約，清空表單
                 reservationForm.reset();
 
-                // 設置當前用戶為建立者
                 document.getElementById('reservationCreator').value = currentUser.uid;
 
-                // 預設日期為當前所選日期
                 const today = new Date();
                 document.getElementById('reservationDate').value = formatDateForInput(today);
 
-                // 預設時間為當前時間的下一個整小時
                 const nextHour = new Date();
                 nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
                 const nextTwoHours = new Date(nextHour);
@@ -656,7 +632,6 @@
                 document.getElementById('endTime').value = formatTimeForSelect(nextTwoHours);
             }
 
-            // 顯示 Modal
             reservationModal.classList.remove('hidden');
 
             requestAnimationFrame(() => {
@@ -677,7 +652,6 @@
             }, 300);
         }
 
-        // 詳情 Modal 功能
         const detailModal = document.getElementById('detailModal');
         const detailBox = document.getElementById('detailBox');
         const closeDetailBtn = document.getElementById('closeDetailModal');
@@ -689,7 +663,6 @@
 
             viewingReservationId = reservationId;
 
-            // 填充詳情
             document.getElementById('detailUserName').textContent = reservation.userName;
 
             const server = servers.find(s => s.id === reservation.serverId);
@@ -702,18 +675,15 @@
             document.getElementById('detailEnd').textContent = formatDateTime(endDate);
             document.getElementById('detailNotes').textContent = reservation.notes || '';
 
-            // 顯示建立者資訊 (如果有)
             if (reservation.creatorName) {
                 document.getElementById('detailCreator').textContent = reservation.creatorName;
             } else {
                 document.getElementById('detailCreator').textContent = '未知';
             }
 
-            // 檢查是否為當前用戶建立的預約，決定是否可以編輯
             const canEdit = reservation.creatorId === currentUser.uid;
             editReservationBtn.style.display = canEdit ? 'block' : 'none';
 
-            // 顯示 Modal
             detailModal.classList.remove('hidden');
 
             requestAnimationFrame(() => {
@@ -734,7 +704,6 @@
             }, 300);
         }
 
-        // Server管理 Modal 功能
         const serverModal = document.getElementById('serverModal');
         const serverBox = document.getElementById('serverBox');
         const closeServerBtn = document.getElementById('closeServerModal');
@@ -743,10 +712,8 @@
         const serverList = document.getElementById('serverList');
 
         function showServerModal() {
-            // 更新Server列表
             renderServerList();
 
-            // 顯示 Modal
             serverModal.classList.remove('hidden');
 
             requestAnimationFrame(() => {
@@ -793,7 +760,6 @@
             });
         }
 
-        // 日期和時間格式化函數
         function formatDate(date) {
             return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
         }
@@ -810,7 +776,6 @@
             return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
         }
 
-        // 生成時間選擇器選項
         function populateTimeSelects() {
             const startTimeSelect = document.getElementById('startTime');
             const endTimeSelect = document.getElementById('endTime');
@@ -818,7 +783,6 @@
             startTimeSelect.innerHTML = '';
             endTimeSelect.innerHTML = '';
 
-            // 每30分鐘一個選項 (00:00 - 23:30)
             for (let hour = 0; hour < 24; hour++) {
                 for (let minute = 0; minute < 60; minute += 30) {
                     const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
@@ -836,7 +800,6 @@
             }
         }
 
-        // 更新Server選擇下拉框
         function updateServerSelect() {
             const serverSelect = document.getElementById('serverSelect');
             serverSelect.innerHTML = '';
@@ -849,12 +812,10 @@
             });
         }
 
-        // 行事曆渲染
         function renderCalendar() {
             const calendarContainer = document.getElementById('calendarContainer');
             calendarContainer.innerHTML = '';
 
-            // 如果沒有Server，顯示提示並返回
             if (servers.length === 0) {
                 calendarContainer.innerHTML = `
                     <div class="py-8 text-center text-gray-400">
@@ -864,7 +825,6 @@
                 return;
             }
 
-            // 獲取本週日期範圍
             const weekDates = [];
             for (let i = 0; i < 7; i++) {
                 const date = new Date(currentWeekStart);
@@ -872,25 +832,20 @@
                 weekDates.push(date);
             }
 
-            // 更新日期範圍顯示
             updateDateRangeDisplay(weekDates);
 
-            // 創建表格
             const table = document.createElement('table');
             table.className = 'w-full border-collapse border-dark-300';
 
-            // 表頭 - 星期
             const thead = document.createElement('thead');
             let headerRow = document.createElement('tr');
             headerRow.className = 'bg-dark-200';
 
-            // 時間列標題
             let timeHeader = document.createElement('th');
             timeHeader.className = 'calendar-header border border-dark-300 p-2 text-left';
             timeHeader.textContent = '';
             headerRow.appendChild(timeHeader);
 
-            // 星期標題
             const dayNames = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
             weekDates.forEach((date, index) => {
                 const th = document.createElement('th');
@@ -914,36 +869,29 @@
             thead.appendChild(headerRow);
             table.appendChild(thead);
 
-            // 表格主體 - 時間和Server
             const tbody = document.createElement('tbody');
 
-            // 為每個Server創建行
             servers.forEach(server => {
                 const serverRow = document.createElement('tr');
                 serverRow.className = 'border-t border-dark-300';
 
-                // Server名稱列
                 const serverNameCell = document.createElement('td');
                 serverNameCell.className = 'calendar-header border border-dark-300 p-2 font-medium text-gray-200';
                 serverNameCell.textContent = server.name;
                 serverRow.appendChild(serverNameCell);
 
-                // 每天的預約單元格
                 weekDates.forEach(date => {
                     const cell = document.createElement('td');
                     cell.className = 'calendar-cell border border-dark-300 p-1 align-top';
 
-                    // 獲取當天該Server的預約
                     const dayReservations = getReservationsForDay(server.id, date);
 
-                    // 添加預約徽章
                     dayReservations.forEach(reservation => {
                         const badge = document.createElement('div');
                         badge.className = 'reservation-badge';
                         badge.textContent = `${getTimeText(new Date(reservation.startTime))} - ${getTimeText(new Date(reservation.endTime))} ${reservation.userName}`;
                         badge.setAttribute('data-reservation-id', reservation.id);
 
-                        // 點擊顯示詳情
                         badge.addEventListener('click', () => {
                             showDetailModal(reservation.id);
                         });
@@ -951,15 +899,11 @@
                         cell.appendChild(badge);
                     });
 
-                    // 點擊空白處新增預約
                     cell.addEventListener('click', (e) => {
-                        // 如果點擊的是預約徽章，不處理
                         if (e.target.classList.contains('reservation-badge')) return;
 
-                        // 先重置表單，再設置特定欄位
                         resetReservationForm();
 
-                        // 顯示預約 Modal
                         showReservationModal('new');
 
                         document.getElementById('serverSelect').value = server.id;
@@ -1014,13 +958,11 @@
             document.getElementById('currentDateRange').textContent = dateRangeText;
         }
 
-        // 重置預約表單
         function resetReservationForm() {
             reservationForm.reset();
             document.getElementById('reservationId').value = '';
             document.getElementById('reservationCreator').value = currentUser.uid;
 
-            // 設置默認日期和時間
             const today = new Date();
             document.getElementById('reservationDate').value = formatDateForInput(today);
 
@@ -1033,7 +975,6 @@
             document.getElementById('endTime').value = formatTimeForSelect(nextTwoHours);
         }
 
-        // Firebase 操作
         function loadServers() {
             const serversRef = window.firebase.ref(window.firebase.db, 'servers');
 
@@ -1076,7 +1017,6 @@
         }
 
         function addServer(name) {
-            // 檢查Server名稱是否已存在
             if (servers.some(server => server.name === name)) {
                 showAlertModal('Server 名稱已存在');
                 return Promise.reject(new Error('Server name already exists'));
@@ -1109,7 +1049,6 @@
 
             const serverRef = window.firebase.ref(window.firebase.db, `servers/${serverId}`);
 
-            // 同時刪除相關的預約
             const relatedReservations = reservations.filter(r => r.serverId === serverId);
 
             const deletePromises = [window.firebase.remove(serverRef)];
@@ -1137,19 +1076,16 @@
             let reservationRef;
 
             if (editingReservationId) {
-                // 檢查是否有權限更新 (僅建立者可更新)
                 const existingReservation = reservations.find(r => r.id === editingReservationId);
                 if (existingReservation && existingReservation.creatorId !== currentUser.uid) {
                     showAlertModal('您沒有權限編輯此預約');
                     return Promise.reject(new Error('No permission to edit'));
                 }
 
-                // 更新現有預約
                 reservationRef = window.firebase.ref(window.firebase.db, `reservations/${editingReservationId}`);
 
                 return window.firebase.update(reservationRef, reservationData)
                     .then(() => {
-                        // 更新本地數據
                         const index = reservations.findIndex(r => r.id === editingReservationId);
                         if (index !== -1) {
                             reservations[index] = {
@@ -1166,13 +1102,11 @@
                         console.error("更新預約錯誤:", error);
                     });
             } else {
-                // 創建新預約
                 const reservationsRef = window.firebase.ref(window.firebase.db, 'reservations');
                 reservationRef = window.firebase.push(reservationsRef);
 
                 return window.firebase.set(reservationRef, reservationData)
                     .then(() => {
-                        // 添加到本地數據
                         reservations.push({
                             id: reservationRef.key,
                             ...reservationData
@@ -1191,7 +1125,6 @@
         async function deleteReservation(reservationId) {
             const reservation = reservations.find(r => r.id === reservationId);
 
-            // 檢查權限
             if (reservation && reservation.creatorId !== currentUser.uid) {
                 showAlertModal('您沒有權限刪除此預約');
                 return;
@@ -1204,7 +1137,6 @@
 
             window.firebase.remove(reservationRef)
                 .then(() => {
-                    // 從本地數據中移除
                     reservations = reservations.filter(r => r.id !== reservationId);
 
                     hideReservationModal();
@@ -1217,7 +1149,6 @@
                 });
         }
 
-        // 檢查預約時間是否重疊
         function isOverlapping(serverId, startTime, endTime, excludeReservationId = null) {
             return reservations.some(reservation => {
                 if (excludeReservationId && reservation.id === excludeReservationId) {
@@ -1235,9 +1166,7 @@
             });
         }
 
-        // 認證相關功能
         function setupAuthListeners() {
-            // 登入按鈕
             const googleLoginBtn = document.getElementById('googleLoginBtn');
             googleLoginBtn.addEventListener('click', () => {
                 showLoadingOverlay();
@@ -1263,7 +1192,6 @@
                     });
             });
 
-            // 登出按鈕
             const logoutBtn = document.getElementById('logoutBtn');
             logoutBtn.addEventListener('click', () => {
                 window.firebase.signOut(window.firebase.auth)
@@ -1274,16 +1202,13 @@
                     });
             });
 
-            // 監聽認證狀態
             window.firebase.onAuthStateChanged(window.firebase.auth, (user) => {
                 hideLoadingOverlay();
 
                 if (user) {
-                    // 使用者已登入
                     currentUser = user;
                     showUserInterface();
                 } else {
-                    // 使用者已登出
                     currentUser = null;
                     showLoginInterface();
                 }
@@ -1291,18 +1216,15 @@
         }
 
         function showUserInterface() {
-            // 顯示使用者資訊
             const userProfile = document.getElementById('userProfile');
             userProfile.innerHTML = `
                 <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" title="${currentUser.email}">
                 <span class="hidden sm:inline-block text-sm">${currentUser.displayName}</span>
             `;
 
-            // 切換界面
             loginContainer.style.display = 'none';
             mainContent.style.display = 'block';
 
-            // 載入資料
             showLoadingOverlay();
             Promise.all([loadServers(), loadReservations()])
                 .then(() => {
@@ -1316,17 +1238,14 @@
         }
 
         function showLoginInterface() {
-            // 隱藏主界面
             loginContainer.style.display = 'flex';
             mainContent.style.display = 'none';
         }
 
-        // 事件監聽器
         document.addEventListener('firebaseReady', () => {
             setupAuthListeners();
             populateTimeSelects();
 
-            // 週切換按鈕
             document.getElementById('prevWeekBtn').addEventListener('click', () => {
                 currentWeekStart.setDate(currentWeekStart.getDate() - 7);
                 renderCalendar();
@@ -1340,29 +1259,24 @@
             document.getElementById('todayBtn').addEventListener('click', () => {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
-                // 調整到本週一
                 currentWeekStart = new Date(today);
                 currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
                 renderCalendar();
             });
 
-            // Server管理按鈕
             document.getElementById('manageServersBtn').addEventListener('click', () => {
                 showServerModal();
             });
 
-            // 新增預約按鈕
             document.getElementById('newReservationBtn').addEventListener('click', () => {
                 resetReservationForm();
                 showReservationModal('new');
             });
 
-            // 關閉Server管理 Modal
             closeServerBtn.addEventListener('click', () => {
                 hideServerModal();
             });
 
-            // 新增Server按鈕
             addServerBtn.addEventListener('click', () => {
                 const serverName = serverNameInput.value.trim();
                 if (!serverName) {
@@ -1375,26 +1289,22 @@
                 });
             });
 
-            // Enter鍵提交Server名稱
             serverNameInput.addEventListener('keyup', (e) => {
                 if (e.key === 'Enter') {
                     addServerBtn.click();
                 }
             });
 
-            // 關閉預約 Modal
             cancelReservationBtn.addEventListener('click', () => {
                 hideReservationModal();
             });
 
-            // 刪除預約按鈕
             deleteReservationBtn.addEventListener('click', () => {
                 if (editingReservationId) {
                     deleteReservation(editingReservationId);
                 }
             });
 
-            // 提交預約表單
             reservationForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
@@ -1406,23 +1316,19 @@
                 const notes = document.getElementById('notes').value.trim();
                 const creatorId = document.getElementById('reservationCreator').value;
 
-                // 創建日期對象
                 const startDateTime = new Date(`${reservationDate}T${startTime}`);
                 const endDateTime = new Date(`${reservationDate}T${endTime}`);
 
-                // 驗證結束時間是否晚於開始時間
                 if (endDateTime <= startDateTime) {
                     showAlertModal('結束時間必須晚於開始時間');
                     return;
                 }
 
-                // 檢查時間是否重疊
                 if (isOverlapping(serverId, startDateTime.getTime(), endDateTime.getTime(), editingReservationId)) {
                     showAlertModal('該時段已有預約，請選擇其他時段');
                     return;
                 }
 
-                // 準備預約數據
                 const reservationData = {
                     userName,
                     serverId,
@@ -1436,16 +1342,13 @@
                     updatedAt: new Date().toISOString()
                 };
 
-                // 保存到 Firebase
                 saveReservation(reservationData);
             });
 
-            // 關閉詳情 Modal
             closeDetailBtn.addEventListener('click', () => {
                 hideDetailModal();
             });
 
-            // 編輯預約按鈕
             editReservationBtn.addEventListener('click', () => {
                 if (viewingReservationId) {
                     hideDetailModal();
@@ -1453,7 +1356,6 @@
                 }
             });
 
-            // 監聽 Firebase 資料變化（僅當用戶已登入時）
             function setupRealtimeListeners() {
                 if (!currentUser) return;
 
