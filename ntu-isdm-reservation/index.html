@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>伺服器預約系統 - Server Reservation System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#171717',
+                            100: '#1E1E1E',
+                            200: '#2D2D2D',
+                            300: '#404040',
+                            400: '#525252',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
+
+        * {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .page-transition {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .page-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .page-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            height: 0.5em;
+            background-color: rgba(209, 213, 219, 0.5);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-indicator.visible {
+            opacity: 1;
+        }
+
+        .status-indicator.breathing {
+            animation: breathing 2s ease-in-out infinite;
+        }
+
+        .status-indicator.success {
+            background-color: rgb(34, 197, 94);
+            animation: none;
+        }
+
+        .status-indicator.warning {
+            background-color: rgb(234, 179, 8);
+            animation: none;
+        }
+
+        .status-indicator.error {
+            background-color: rgb(239, 68, 68);
+            animation: none;
+        }
+
+        @keyframes breathing {
+
+            0%,
+            100% {
+                background-color: rgba(209, 213, 219, 0.2);
+            }
+
+            50% {
+                background-color: rgba(209, 213, 219, 1);
+            }
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.2em;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .calendar-cell {
+            min-height: 60px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calendar-cell:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .calendar-cell.reserved {
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .calendar-header {
+            min-width: 120px;
+        }
+
+        .time-slot {
+            height: 60px;
+        }
+
+        .reservation-badge {
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            margin: 2px 0;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .reservation-badge:hover {
+            background-color: rgba(59, 130, 246, 0.3);
+        }
+
+        #loginContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
+
+        #mainContent {
+            display: none;
+        }
+
+        .google-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background-color: white;
+            color: #444;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .google-login-btn:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body class="bg-dark-100 text-gray-200">
+    <audio id="successAudio" src="https://watsonshih.github.io/QuickRecord/bgm/success.mp3" preload="auto"></audio>
+    <audio id="warningAudio" src="https://watsonshih.github.io/QuickRecord/bgm/warning.mp3" preload="auto"></audio>
+    <audio id="errorAudio" src="https://watsonshih.github.io/QuickRecord/bgm/error.mp3" preload="auto"></audio>
+
+    <div id="loadingOverlay">
+        <span>正在載入，請稍候...</span>
+    </div>
+
+    <!-- 登入畫面 -->
+    <div id="loginContainer" class="page-transition">
+        <img src="https://watsonshih.github.io/QuickRecord/pic/icon.png" alt="ServerReservation" class="h-20 w-20 mb-4">
+        <h1 class="text-2xl font-semibold text-gray-100 mb-6">伺服器預約系統</h1>
+        <p class="text-gray-400 mb-8 max-w-md">請使用Google帳號登入以存取伺服器預約系統。您需要有授權才能查看和管理預約。</p>
+        <button id="googleLoginBtn" class="google-login-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#EA4335"
+                    d="M5.26620003,9.76452941 C6.19878754,6.93863203 8.85444915,4.90909091 12,4.90909091 C13.6909091,4.90909091 15.2181818,5.50909091 16.4181818,6.49090909 L19.9090909,3 C17.7818182,1.14545455 15.0545455,0 12,0 C7.27006974,0 3.1977497,2.69829785 1.23999023,6.65002441 L5.26620003,9.76452941 Z" />
+                <path fill="#34A853"
+                    d="M16.0407269,18.0125889 C14.9509167,18.7163016 13.5660892,19.0909091 12,19.0909091 C8.86648613,19.0909091 6.21911939,17.076871 5.27698177,14.2678769 L1.23746264,17.3349879 C3.19279051,21.2970142 7.26500293,24 12,24 C14.9328362,24 17.7353462,22.9573905 19.834192,20.9995801 L16.0407269,18.0125889 Z" />
+                <path fill="#4A90E2"
+                    d="M19.834192,20.9995801 C22.0291676,18.9520994 23.4545455,15.903663 23.4545455,12 C23.4545455,11.2909091 23.3454545,10.5272727 23.1818182,9.81818182 L12,9.81818182 L12,14.4545455 L18.4363636,14.4545455 C18.1187732,16.013626 17.2662994,17.2212117 16.0407269,18.0125889 L19.834192,20.9995801 Z" />
+                <path fill="#FBBC05"
+                    d="M5.27698177,14.2678769 C5.03832634,13.556323 4.90909091,12.7937589 4.90909091,12 C4.90909091,11.2182781 5.03443647,10.4668121 5.26620003,9.76452941 L1.23999023,6.65002441 C0.43658717,8.26043162 0,10.0753848 0,12 C0,13.9195484 0.444780743,15.7301709 1.23746264,17.3349879 L5.27698177,14.2678769 Z" />
+            </svg>
+            使用Google帳號登入
+        </button>
+    </div>
+
+    <!-- 主內容區域 -->
+    <div id="mainContent">
+        <nav class="bg-dark-50 border-b border-dark-300">
+            <div class="mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="#" class="flex items-center">
+                            <img src="https://watsonshih.github.io/QuickRecord/pic/icon.png" alt="ServerReservation"
+                                class="h-8 w-8 mr-2">
+                            <h1 class="text-xl font-semibold text-gray-100">伺服器預約系統</h1>
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div id="userProfile" class="user-profile">
+                            <!-- 用戶頭像和名稱將在這裡動態生成 -->
+                        </div>
+                        <button id="logoutBtn"
+                            class="text-sm text-blue-400 hover:text-blue-300 transition duration-150 ease-in-out px-3 py-2 leading-none border border-blue-400/50 rounded">
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div id="statusIndicator" class="status-indicator"></div>
+
+        <!-- 確認框 Modal -->
+        <div id="confirmModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="confirmBox">
+                <div id="confirmMessage" class="text-sm mb-6"></div>
+                <div class="flex justify-end gap-3">
+                    <button id="cancelBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">取消</button>
+                    <button id="confirmBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">確認</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示框 Modal -->
+        <div id="alertModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-all duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="alertBox">
+                <div id="alertMessage" class="text-sm mb-6"></div>
+                <div class="flex justify-end">
+                    <button id="alertOkBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">確認</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 預約表單 Modal -->
+        <div id="reservationModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="reservationBox">
+                <h3 class="text-lg font-semibold mb-4" id="reservationTitle">新增預約</h3>
+                <form id="reservationForm" class="space-y-4">
+                    <input type="hidden" id="reservationId" value="">
+                    <input type="hidden" id="reservationCreator" value="">
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-gray-300 mb-1">使用人姓名 <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="userName" name="userName" required
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="serverSelect" class="block text-sm font-medium text-gray-300 mb-1">選擇伺服器 <span
+                                class="text-red-500">*</span></label>
+                        <select id="serverSelect" name="serverSelect" required
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="startDate" class="block text-sm font-medium text-gray-300 mb-1">開始日期 <span
+                                    class="text-red-500">*</span></label>
+                            <input type="date" id="startDate" name="startDate" required
+                                class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="startTime" class="block text-sm font-medium text-gray-300 mb-1">開始時間 <span
+                                    class="text-red-500">*</span></label>
+                            <select id="startTime" name="startTime" required
+                                class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="endDate" class="block text-sm font-medium text-gray-300 mb-1">結束日期 <span
+                                    class="text-red-500">*</span></label>
+                            <input type="date" id="endDate" name="endDate" required
+                                class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="endTime" class="block text-sm font-medium text-gray-300 mb-1">結束時間 <span
+                                    class="text-red-500">*</span></label>
+                            <select id="endTime" name="endTime" required
+                                class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-gray-300 mb-1">備註</label>
+                        <textarea id="notes" name="notes" rows="3"
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelReservation"
+                            class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">取消</button>
+                        <button type="submit" id="saveReservation"
+                            class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">保存</button>
+                        <button type="button" id="deleteReservation"
+                            class="px-4 py-2 bg-red-600 rounded hover:bg-red-700 hidden">刪除</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 伺服器管理 Modal -->
+        <div id="serverModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="serverBox">
+                <h3 class="text-lg font-semibold mb-4">伺服器管理</h3>
+                <div class="mb-4">
+                    <label for="serverName" class="block text-sm font-medium text-gray-300 mb-1">伺服器名稱</label>
+                    <div class="flex">
+                        <input type="text" id="serverName"
+                            class="flex-1 bg-dark-200 border border-dark-300 rounded-l-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="addServer" class="bg-blue-600 hover:bg-blue-700 rounded-r-md px-4">
+                            新增
+                        </button>
+                    </div>
+                </div>
+                <div class="max-h-80 overflow-y-auto">
+                    <ul id="serverList" class="divide-y divide-dark-300">
+                        <!-- 伺服器列表會在這裡動態生成 -->
+                    </ul>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 mt-4 border-t border-dark-300">
+                    <button id="closeServerModal" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">完成</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 預約詳情 Modal -->
+        <div id="detailModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="detailBox">
+                <h3 class="text-lg font-semibold mb-4">預約詳情</h3>
+                <dl class="divide-y divide-dark-300">
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">使用人</dt>
+                        <dd id="detailUserName" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">伺服器</dt>
+                        <dd id="detailServer" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">開始時間</dt>
+                        <dd id="detailStart" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">結束時間</dt>
+                        <dd id="detailEnd" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3">
+                        <dt class="text-gray-400 mb-1">備註</dt>
+                        <dd id="detailNotes" class="font-medium text-gray-200 mt-1 text-sm">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">建立者</dt>
+                        <dd id="detailCreator" class="font-medium text-gray-200">-</dd>
+                    </div>
+                </dl>
+                <div class="flex justify-end space-x-3 pt-4 mt-2">
+                    <button id="editReservation" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">編輯</button>
+                    <button id="closeDetailModal" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">關閉</button>
+                </div>
+            </div>
+        </div>
+
+        <main class="mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="bg-dark-50 rounded-lg border border-dark-300 p-4 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex space-x-2 items-center">
+                        <button id="prevWeekBtn" class="text-blue-400 hover:text-blue-300 p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <h2 id="currentDateRange" class="text-lg font-medium text-gray-100">2025年4月21日 - 4月27日</h2>
+                        <button id="nextWeekBtn" class="text-blue-400 hover:text-blue-300 p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="todayBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition">
+                            今天
+                        </button>
+                        <button id="manageServersBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition">
+                            管理伺服器
+                        </button>
+                        <button id="newReservationBtn"
+                            class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded transition">
+                            新增預約
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-50 rounded-lg border border-dark-300 p-4 overflow-x-auto" style="min-height: 600px;">
+                <div id="calendarContainer" class="min-w-max">
+                    <!-- 行事曆將在這裡動態生成 -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="py-6 px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-gray-400">
+                <p class="text-sm">&copy; 2025 伺服器預約系統</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getDatabase, ref, set, get, remove, child, update, push, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0d8TOznWih96YvABibKpLmCnbkIvzJZA",
+            authDomain: "ntu-isdm-reservation01-92914.firebaseapp.com",
+            databaseURL: "https://ntu-isdm-reservation01-92914-default-rtdb.firebaseio.com",
+            projectId: "ntu-isdm-reservation01-92914",
+            storageBucket: "ntu-isdm-reservation01-92914.firebasestorage.app",
+            messagingSenderId: "336071577111",
+            appId: "1:336071577111:web:a47cca77155e18ac5f9652",
+            measurementId: "G-8JRMJR7CYZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // 暴露 Firebase methods 到全局
+        window.firebase = {
+            db,
+            auth,
+            provider,
+            ref,
+            set,
+            get,
+            remove,
+            child,
+            update,
+            push,
+            onValue,
+            signInWithPopup,
+            signOut,
+            onAuthStateChanged,
+            GoogleAuthProvider
+        };
+
+        document.dispatchEvent(new Event('firebaseReady'));
+    </script>
+
+    <script>
+        // 全局變數
+        let currentWeekStart = new Date();
+        currentWeekStart.setHours(0, 0, 0, 0);
+        // 調整到週一
+        currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
+
+        let servers = [];
+        let reservations = [];
+        let editingReservationId = null;
+        let viewingReservationId = null;
+        let currentUser = null;
+
+        // 載入畫面相關
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContent = document.getElementById('mainContent');
+
+        function showLoadingOverlay() {
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoadingOverlay() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        // 狀態指示器
+        function showStatusIndicator(type = 'normal') {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.classList.remove('success', 'warning', 'error', 'breathing');
+            indicator.classList.add('visible');
+
+            if (type === 'normal') {
+                indicator.classList.add('breathing');
+            } else {
+                indicator.classList.add(type);
+
+                const audio = document.getElementById(`${type}Audio`);
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(err => console.warn('Audio error:', err));
+                }
+
+                setTimeout(() => {
+                    indicator.classList.remove(type);
+                    indicator.classList.add('breathing');
+                }, 2000);
+            }
+        }
+
+        function hideStatusIndicator() {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.classList.remove('visible', 'success', 'warning', 'error', 'breathing');
+        }
+
+        // 確認對話框
+        function showConfirmModal(message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmModal');
+                const box = document.getElementById('confirmBox');
+                const msg = document.getElementById('confirmMessage');
+                const confirmBtn = document.getElementById('confirmBtn');
+                const cancelBtn = document.getElementById('cancelBtn');
+
+                msg.textContent = message;
+                modal.classList.remove('hidden');
+
+                requestAnimationFrame(() => {
+                    modal.classList.add('opacity-100');
+                    box.classList.add('opacity-100', 'scale-100');
+                    box.classList.remove('scale-95');
+                });
+
+                const cleanup = () => {
+                    modal.classList.remove('opacity-100');
+                    box.classList.remove('opacity-100', 'scale-100');
+                    box.classList.add('scale-95');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+
+                    confirmBtn.removeEventListener('click', onConfirm);
+                    cancelBtn.removeEventListener('click', onCancel);
+                };
+
+                const onConfirm = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                const onCancel = () => {
+                    cleanup();
+                    resolve(false);
+                };
+
+                confirmBtn.addEventListener('click', onConfirm);
+                cancelBtn.addEventListener('click', onCancel);
+            });
+        }
+
+        // 提示對話框
+        function showAlertModal(message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('alertModal');
+                const box = document.getElementById('alertBox');
+                const msg = document.getElementById('alertMessage');
+                const okBtn = document.getElementById('alertOkBtn');
+
+                msg.textContent = message;
+                modal.classList.remove('hidden');
+
+                requestAnimationFrame(() => {
+                    modal.classList.add('opacity-100');
+                    box.classList.add('opacity-100', 'scale-100');
+                    box.classList.remove('scale-95');
+                });
+
+                const cleanup = () => {
+                    modal.classList.remove('opacity-100');
+                    box.classList.remove('opacity-100', 'scale-100');
+                    box.classList.add('scale-95');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+
+                    okBtn.removeEventListener('click', onOk);
+                };
+
+                const onOk = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                okBtn.addEventListener('click', onOk);
+            });
+        }
+
+        // 預約表單 Modal 功能
+        const reservationModal = document.getElementById('reservationModal');
+        const reservationBox = document.getElementById('reservationBox');
+        const reservationForm = document.getElementById('reservationForm');
+        const cancelReservationBtn = document.getElementById('cancelReservation');
+        const deleteReservationBtn = document.getElementById('deleteReservation');
+        const reservationTitle = document.getElementById('reservationTitle');
+
+        function showReservationModal(mode = 'new', reservationId = null) {
+            editingReservationId = reservationId;
+
+            // 更新標題
+            reservationTitle.textContent = mode === 'new' ? '新增預約' : '編輯預約';
+
+            // 顯示/隱藏刪除按鈕
+            deleteReservationBtn.classList.toggle('hidden', mode === 'new');
+
+            // 如果是編輯模式，填充表單數據
+            if (mode === 'edit' && reservationId) {
+                const reservation = reservations.find(r => r.id === reservationId);
+                if (reservation) {
+                    document.getElementById('userName').value = reservation.userName;
+                    document.getElementById('serverSelect').value = reservation.serverId;
+                    document.getElementById('reservationCreator').value = reservation.creatorId || '';
+
+                    // 日期和時間處理
+                    const startDate = new Date(reservation.startTime);
+                    const endDate = new Date(reservation.endTime);
+
+                    document.getElementById('startDate').value = formatDateForInput(startDate);
+                    document.getElementById('endDate').value = formatDateForInput(endDate);
+
+                    document.getElementById('startTime').value = formatTimeForSelect(startDate);
+                    document.getElementById('endTime').value = formatTimeForSelect(endDate);
+
+                    document.getElementById('notes').value = reservation.notes || '';
+
+                    // 檢查是否為當前用戶建立的預約
+                    const canDelete = reservation.creatorId === currentUser.uid;
+                    deleteReservationBtn.classList.toggle('hidden', !canDelete);
+                }
+            } else {
+                // 新建預約，清空表單
+                reservationForm.reset();
+
+                // 設置當前用戶為建立者
+                document.getElementById('reservationCreator').value = currentUser.uid;
+
+                // 預設日期為當前所選週的日期
+                const today = new Date();
+                document.getElementById('startDate').value = formatDateForInput(today);
+                document.getElementById('endDate').value = formatDateForInput(today);
+
+                // 預設時間為當前時間的下一個整小時
+                const nextHour = new Date();
+                nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+                const nextTwoHours = new Date(nextHour);
+                nextTwoHours.setHours(nextTwoHours.getHours() + 1);
+
+                document.getElementById('startTime').value = formatTimeForSelect(nextHour);
+                document.getElementById('endTime').value = formatTimeForSelect(nextTwoHours);
+            }
+
+            // 顯示 Modal
+            reservationModal.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                reservationModal.classList.add('opacity-100');
+                reservationBox.classList.add('opacity-100', 'scale-100');
+                reservationBox.classList.remove('scale-95');
+            });
+        }
+
+        function hideReservationModal() {
+            reservationModal.classList.remove('opacity-100');
+            reservationBox.classList.remove('opacity-100', 'scale-100');
+            reservationBox.classList.add('scale-95');
+
+            setTimeout(() => {
+                reservationModal.classList.add('hidden');
+                editingReservationId = null;
+            }, 300);
+        }
+
+        // 詳情 Modal 功能
+        const detailModal = document.getElementById('detailModal');
+        const detailBox = document.getElementById('detailBox');
+        const closeDetailBtn = document.getElementById('closeDetailModal');
+        const editReservationBtn = document.getElementById('editReservation');
+
+        function showDetailModal(reservationId) {
+            const reservation = reservations.find(r => r.id === reservationId);
+            if (!reservation) return;
+
+            viewingReservationId = reservationId;
+
+            // 填充詳情
+            document.getElementById('detailUserName').textContent = reservation.userName;
+
+            const server = servers.find(s => s.id === reservation.serverId);
+            document.getElementById('detailServer').textContent = server ? server.name : '-';
+
+            const startDate = new Date(reservation.startTime);
+            const endDate = new Date(reservation.endTime);
+
+            document.getElementById('detailStart').textContent = formatDateTime(startDate);
+            document.getElementById('detailEnd').textContent = formatDateTime(endDate);
+            document.getElementById('detailNotes').textContent = reservation.notes || '-';
+
+            // 顯示建立者資訊 (如果有)
+            if (reservation.creatorName) {
+                document.getElementById('detailCreator').textContent = reservation.creatorName;
+            } else {
+                document.getElementById('detailCreator').textContent = '未知';
+            }
+
+            // 檢查是否為當前用戶建立的預約，決定是否可以編輯
+            const canEdit = reservation.creatorId === currentUser.uid;
+            editReservationBtn.style.display = canEdit ? 'block' : 'none';
+
+            // 顯示 Modal
+            detailModal.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                detailModal.classList.add('opacity-100');
+                detailBox.classList.add('opacity-100', 'scale-100');
+                detailBox.classList.remove('scale-95');
+            });
+        }
+
+        function hideDetailModal() {
+            detailModal.classList.remove('opacity-100');
+            detailBox.classList.remove('opacity-100', 'scale-100');
+            detailBox.classList.add('scale-95');
+
+            setTimeout(() => {
+                detailModal.classList.add('hidden');
+                viewingReservationId = null;
+            }, 300);
+        }
+
+        // 伺服器管理 Modal 功能
+        const serverModal = document.getElementById('serverModal');
+        const serverBox = document.getElementById('serverBox');
+        const closeServerBtn = document.getElementById('closeServerModal');
+        const addServerBtn = document.getElementById('addServer');
+        const serverNameInput = document.getElementById('serverName');
+        const serverList = document.getElementById('serverList');
+
+        function showServerModal() {
+            // 更新伺服器列表
+            renderServerList();
+
+            // 顯示 Modal
+            serverModal.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                serverModal.classList.add('opacity-100');
+                serverBox.classList.add('opacity-100', 'scale-100');
+                serverBox.classList.remove('scale-95');
+            });
+        }
+
+        function hideServerModal() {
+            serverModal.classList.remove('opacity-100');
+            serverBox.classList.remove('opacity-100', 'scale-100');
+            serverBox.classList.add('scale-95');
+
+            setTimeout(() => {
+                serverModal.classList.add('hidden');
+                serverNameInput.value = '';
+            }, 300);
+        }
+
+        function renderServerList() {
+            serverList.innerHTML = '';
+
+            if (servers.length === 0) {
+                serverList.innerHTML = `<li class="py-3 text-gray-400 text-center">尚無伺服器</li>`;
+                return;
+            }
+
+            servers.forEach(server => {
+                const li = document.createElement('li');
+                li.className = 'py-3 flex justify-between items-center';
+                li.innerHTML = `
+                    <span class="text-gray-200">${server.name}</span>
+                    <button class="text-red-400 hover:text-red-300" data-server-id="${server.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                `;
+
+                li.querySelector('button').addEventListener('click', () => deleteServer(server.id));
+
+                serverList.appendChild(li);
+            });
+        }
+
+        // 日期和時間格式化函數
+        function formatDate(date) {
+            return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+
+        function formatDateForInput(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function formatTimeForSelect(date) {
+            return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function formatDateTime(date) {
+            return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        // 生成時間選擇器選項
+        function populateTimeSelects() {
+            const startTimeSelect = document.getElementById('startTime');
+            const endTimeSelect = document.getElementById('endTime');
+
+            startTimeSelect.innerHTML = '';
+            endTimeSelect.innerHTML = '';
+
+            // 每30分鐘一個選項 (00:00 - 23:30)
+            for (let hour = 0; hour < 24; hour++) {
+                for (let minute = 0; minute < 60; minute += 30) {
+                    const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+
+                    const startOption = document.createElement('option');
+                    startOption.value = time;
+                    startOption.textContent = time;
+                    startTimeSelect.appendChild(startOption);
+
+                    const endOption = document.createElement('option');
+                    endOption.value = time;
+                    endOption.textContent = time;
+                    endTimeSelect.appendChild(endOption);
+                }
+            }
+        }
+
+        // 更新伺服器選擇下拉框
+        function updateServerSelect() {
+            const serverSelect = document.getElementById('serverSelect');
+            serverSelect.innerHTML = '';
+
+            servers.forEach(server => {
+                const option = document.createElement('option');
+                option.value = server.id;
+                option.textContent = server.name;
+                serverSelect.appendChild(option);
+            });
+        }
+
+        // 行事曆渲染
+        function renderCalendar() {
+            const calendarContainer = document.getElementById('calendarContainer');
+            calendarContainer.innerHTML = '';
+
+            // 如果沒有伺服器，顯示提示並返回
+            if (servers.length === 0) {
+                calendarContainer.innerHTML = `
+                    <div class="py-8 text-center text-gray-400">
+                        尚未添加任何伺服器，請先點擊「管理伺服器」按鈕添加伺服器。
+                    </div>
+                `;
+                return;
+            }
+
+            // 獲取本週日期範圍
+            const weekDates = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(currentWeekStart);
+                date.setDate(date.getDate() + i);
+                weekDates.push(date);
+            }
+
+            // 更新日期範圍顯示
+            updateDateRangeDisplay(weekDates);
+
+            // 創建表格
+            const table = document.createElement('table');
+            table.className = 'w-full border-collapse border-dark-300';
+
+            // 表頭 - 星期
+            const thead = document.createElement('thead');
+            let headerRow = document.createElement('tr');
+            headerRow.className = 'bg-dark-200';
+
+            // 時間列標題
+            let timeHeader = document.createElement('th');
+            timeHeader.className = 'calendar-header border border-dark-300 p-2 text-left';
+            timeHeader.textContent = '';
+            headerRow.appendChild(timeHeader);
+
+            // 星期標題
+            const dayNames = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+            weekDates.forEach((date, index) => {
+                const th = document.createElement('th');
+                th.className = 'border border-dark-300 p-2 text-center';
+
+                const isToday = isSameDay(date, new Date());
+
+                const dayLabel = document.createElement('div');
+                dayLabel.className = 'text-sm mb-1 ' + (isToday ? 'text-blue-400' : 'text-gray-400');
+                dayLabel.textContent = dayNames[index];
+
+                const dateLabel = document.createElement('div');
+                dateLabel.className = isToday ? 'text-blue-400 font-semibold' : 'text-gray-200';
+                dateLabel.textContent = `${date.getMonth() + 1}/${date.getDate()}`;
+
+                th.appendChild(dayLabel);
+                th.appendChild(dateLabel);
+                headerRow.appendChild(th);
+            });
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 表格主體 - 時間和伺服器
+            const tbody = document.createElement('tbody');
+
+            // 為每個伺服器創建行
+            servers.forEach(server => {
+                const serverRow = document.createElement('tr');
+                serverRow.className = 'border-t border-dark-300';
+
+                // 伺服器名稱列
+                const serverNameCell = document.createElement('td');
+                serverNameCell.className = 'calendar-header border border-dark-300 p-2 font-medium text-gray-200';
+                serverNameCell.textContent = server.name;
+                serverRow.appendChild(serverNameCell);
+
+                // 每天的預約單元格
+                weekDates.forEach(date => {
+                    const cell = document.createElement('td');
+                    cell.className = 'calendar-cell border border-dark-300 p-1 align-top';
+
+                    // 獲取當天該伺服器的預約
+                    const dayReservations = getReservationsForDay(server.id, date);
+
+                    // 添加預約徽章
+                    dayReservations.forEach(reservation => {
+                        const badge = document.createElement('div');
+                        badge.className = 'reservation-badge';
+                        badge.textContent = `${getTimeText(new Date(reservation.startTime))} - ${getTimeText(new Date(reservation.endTime))} ${reservation.userName}`;
+                        badge.setAttribute('data-reservation-id', reservation.id);
+
+                        // 點擊顯示詳情
+                        badge.addEventListener('click', () => {
+                            showDetailModal(reservation.id);
+                        });
+
+                        cell.appendChild(badge);
+                    });
+
+                    // 點擊空白處新增預約
+                    cell.addEventListener('click', (e) => {
+                        // 如果點擊的是預約徽章，不處理
+                        if (e.target.classList.contains('reservation-badge')) return;
+
+                        // 設置預約的默認日期為點擊的日期
+                        resetReservationForm();
+                        document.getElementById('serverSelect').value = server.id;
+                        document.getElementById('startDate').value = formatDateForInput(date);
+                        document.getElementById('endDate').value = formatDateForInput(date);
+
+                        showReservationModal('new');
+                    });
+
+                    serverRow.appendChild(cell);
+                });
+
+                tbody.appendChild(serverRow);
+            });
+
+            table.appendChild(tbody);
+            calendarContainer.appendChild(table);
+        }
+
+        function getTimeText(date) {
+            return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function getReservationsForDay(serverId, date) {
+            return reservations.filter(reservation => {
+                const startTime = new Date(reservation.startTime);
+                const endTime = new Date(reservation.endTime);
+
+                return reservation.serverId === serverId &&
+                    (isSameDay(startTime, date) || isSameDay(endTime, date) ||
+                        (startTime < date && endTime > date));
+            });
+        }
+
+        function isSameDay(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                date1.getMonth() === date2.getMonth() &&
+                date1.getDate() === date2.getDate();
+        }
+
+        function updateDateRangeDisplay(weekDates) {
+            const startDate = weekDates[0];
+            const endDate = weekDates[6];
+
+            let dateRangeText;
+            if (startDate.getMonth() === endDate.getMonth()) {
+                dateRangeText = `${startDate.getFullYear()}年${startDate.getMonth() + 1}月${startDate.getDate()}日 - ${endDate.getDate()}日`;
+            } else {
+                dateRangeText = `${startDate.getFullYear()}年${startDate.getMonth() + 1}月${startDate.getDate()}日 - ${endDate.getMonth() + 1}月${endDate.getDate()}日`;
+            }
+
+            document.getElementById('currentDateRange').textContent = dateRangeText;
+        }
+
+        // 重置預約表單
+        function resetReservationForm() {
+            reservationForm.reset();
+            document.getElementById('reservationId').value = '';
+            document.getElementById('reservationCreator').value = currentUser.uid;
+
+            // 設置默認日期和時間
+            const today = new Date();
+            document.getElementById('startDate').value = formatDateForInput(today);
+            document.getElementById('endDate').value = formatDateForInput(today);
+
+            const nextHour = new Date();
+            nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+            const nextTwoHours = new Date(nextHour);
+            nextTwoHours.setHours(nextTwoHours.getHours() + 1);
+
+            document.getElementById('startTime').value = formatTimeForSelect(nextHour);
+            document.getElementById('endTime').value = formatTimeForSelect(nextTwoHours);
+        }
+
+        // Firebase 操作
+        function loadServers() {
+            const serversRef = window.firebase.ref(window.firebase.db, 'servers');
+
+            return window.firebase.get(serversRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        servers = Object.keys(data).map(key => ({
+                            id: key,
+                            name: data[key].name
+                        }));
+                    } else {
+                        servers = [];
+                    }
+                    updateServerSelect();
+                })
+                .catch((error) => {
+                    console.error("讀取伺服器資料錯誤:", error);
+                });
+        }
+
+        function loadReservations() {
+            const reservationsRef = window.firebase.ref(window.firebase.db, 'reservations');
+
+            return window.firebase.get(reservationsRef)
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        reservations = Object.keys(data).map(key => ({
+                            id: key,
+                            ...data[key]
+                        }));
+                    } else {
+                        reservations = [];
+                    }
+                })
+                .catch((error) => {
+                    console.error("讀取預約資料錯誤:", error);
+                });
+        }
+
+        function addServer(name) {
+            // 檢查伺服器名稱是否已存在
+            if (servers.some(server => server.name === name)) {
+                showAlertModal('伺服器名稱已存在');
+                return Promise.reject(new Error('Server name already exists'));
+            }
+
+            const serversRef = window.firebase.ref(window.firebase.db, 'servers');
+            const newServerRef = window.firebase.push(serversRef);
+
+            return window.firebase.set(newServerRef, {
+                name: name,
+                createdBy: currentUser.uid,
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                servers.push({
+                    id: newServerRef.key,
+                    name: name
+                });
+                updateServerSelect();
+                renderServerList();
+                renderCalendar();
+                showStatusIndicator('success');
+                showAlertModal('伺服器新增成功');
+            }).catch(error => {
+                console.error("新增伺服器錯誤:", error);
+                showStatusIndicator('error');
+            });
+        }
+
+        async function deleteServer(serverId) {
+            const confirmed = await showConfirmModal('確定要刪除此伺服器嗎？相關的預約也將被刪除。');
+            if (!confirmed) return;
+
+            const serverRef = window.firebase.ref(window.firebase.db, `servers/${serverId}`);
+
+            // 同時刪除相關的預約
+            const relatedReservations = reservations.filter(r => r.serverId === serverId);
+
+            const deletePromises = [window.firebase.remove(serverRef)];
+
+            relatedReservations.forEach(reservation => {
+                const reservationRef = window.firebase.ref(window.firebase.db, `reservations/${reservation.id}`);
+                deletePromises.push(window.firebase.remove(reservationRef));
+            });
+
+            Promise.all(deletePromises)
+                .then(() => {
+                    servers = servers.filter(server => server.id !== serverId);
+                    reservations = reservations.filter(r => r.serverId !== serverId);
+                    updateServerSelect();
+                    renderServerList();
+                    renderCalendar();
+                    showStatusIndicator('success');
+                    showAlertModal('伺服器刪除成功');
+                })
+                .catch(error => {
+                    console.error("刪除伺服器錯誤:", error);
+                    showStatusIndicator('error');
+                });
+        }
+
+        function saveReservation(reservationData) {
+            let reservationRef;
+
+            if (editingReservationId) {
+                // 檢查是否有權限更新 (僅建立者可更新)
+                const existingReservation = reservations.find(r => r.id === editingReservationId);
+                if (existingReservation && existingReservation.creatorId !== currentUser.uid) {
+                    showAlertModal('您沒有權限編輯此預約');
+                    return Promise.reject(new Error('No permission to edit'));
+                }
+
+                // 更新現有預約
+                reservationRef = window.firebase.ref(window.firebase.db, `reservations/${editingReservationId}`);
+
+                return window.firebase.update(reservationRef, reservationData)
+                    .then(() => {
+                        // 更新本地數據
+                        const index = reservations.findIndex(r => r.id === editingReservationId);
+                        if (index !== -1) {
+                            reservations[index] = {
+                                ...reservations[index],
+                                ...reservationData
+                            };
+                        }
+
+                        renderCalendar();
+                        hideReservationModal();
+                        showStatusIndicator('success');
+                        showAlertModal('預約更新成功');
+                    })
+                    .catch(error => {
+                        console.error("更新預約錯誤:", error);
+                        showStatusIndicator('error');
+                    });
+            } else {
+                // 創建新預約
+                const reservationsRef = window.firebase.ref(window.firebase.db, 'reservations');
+                reservationRef = window.firebase.push(reservationsRef);
+
+                return window.firebase.set(reservationRef, reservationData)
+                    .then(() => {
+                        // 添加到本地數據
+                        reservations.push({
+                            id: reservationRef.key,
+                            ...reservationData
+                        });
+
+                        renderCalendar();
+                        hideReservationModal();
+                        showStatusIndicator('success');
+                        showAlertModal('預約新增成功');
+                    })
+                    .catch(error => {
+                        console.error("新增預約錯誤:", error);
+                        showStatusIndicator('error');
+                    });
+            }
+        }
+
+        async function deleteReservation(reservationId) {
+            const reservation = reservations.find(r => r.id === reservationId);
+
+            // 檢查權限
+            if (reservation && reservation.creatorId !== currentUser.uid) {
+                showAlertModal('您沒有權限刪除此預約');
+                return;
+            }
+
+            const confirmed = await showConfirmModal('確定要刪除此預約嗎？');
+            if (!confirmed) return;
+
+            const reservationRef = window.firebase.ref(window.firebase.db, `reservations/${reservationId}`);
+
+            window.firebase.remove(reservationRef)
+                .then(() => {
+                    // 從本地數據中移除
+                    reservations = reservations.filter(r => r.id !== reservationId);
+
+                    hideReservationModal();
+                    hideDetailModal();
+                    renderCalendar();
+                    showStatusIndicator('success');
+                    showAlertModal('預約刪除成功');
+                })
+                .catch(error => {
+                    console.error("刪除預約錯誤:", error);
+                    showStatusIndicator('error');
+                });
+        }
+
+        // 檢查預約時間是否重疊
+        function isOverlapping(serverId, startTime, endTime, excludeReservationId = null) {
+            return reservations.some(reservation => {
+                if (excludeReservationId && reservation.id === excludeReservationId) {
+                    return false;
+                }
+
+                if (reservation.serverId !== serverId) {
+                    return false;
+                }
+
+                const reservationStart = new Date(reservation.startTime).getTime();
+                const reservationEnd = new Date(reservation.endTime).getTime();
+
+                return (startTime < reservationEnd && endTime > reservationStart);
+            });
+        }
+
+        // 認證相關功能
+        function setupAuthListeners() {
+            // 登入按鈕
+            const googleLoginBtn = document.getElementById('googleLoginBtn');
+            googleLoginBtn.addEventListener('click', () => {
+                showLoadingOverlay();
+                window.firebase.signInWithPopup(window.firebase.auth, window.firebase.provider)
+                    .catch(error => {
+                        console.error('登入錯誤:', error);
+                        hideLoadingOverlay();
+                        showAlertModal('登入失敗: ' + error.message);
+                    });
+            });
+
+            // 登出按鈕
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', () => {
+                window.firebase.signOut(window.firebase.auth)
+                    .then(() => {
+                        showStatusIndicator('success');
+                    })
+                    .catch(error => {
+                        console.error('登出錯誤:', error);
+                        showStatusIndicator('error');
+                    });
+            });
+
+            // 監聽認證狀態
+            window.firebase.onAuthStateChanged(window.firebase.auth, (user) => {
+                hideLoadingOverlay();
+
+                if (user) {
+                    // 使用者已登入
+                    currentUser = user;
+                    showUserInterface();
+                } else {
+                    // 使用者已登出
+                    currentUser = null;
+                    showLoginInterface();
+                }
+            });
+        }
+
+        function showUserInterface() {
+            // 顯示使用者資訊
+            const userProfile = document.getElementById('userProfile');
+            userProfile.innerHTML = `
+                <img src="${currentUser.photoURL}" alt="${currentUser.displayName}" title="${currentUser.email}">
+                <span class="hidden sm:inline-block text-sm">${currentUser.displayName}</span>
+            `;
+
+            // 切換界面
+            loginContainer.style.display = 'none';
+            mainContent.style.display = 'block';
+
+            // 載入資料
+            showLoadingOverlay();
+            Promise.all([loadServers(), loadReservations()])
+                .then(() => {
+                    renderCalendar();
+                    hideLoadingOverlay();
+                    showStatusIndicator('success');
+                })
+                .catch(error => {
+                    console.error("初始化錯誤:", error);
+                    hideLoadingOverlay();
+                    showStatusIndicator('error');
+                });
+        }
+
+        function showLoginInterface() {
+            // 隱藏主界面
+            loginContainer.style.display = 'flex';
+            mainContent.style.display = 'none';
+        }
+
+        // 事件監聽器
+        document.addEventListener('firebaseReady', () => {
+            setupAuthListeners();
+            populateTimeSelects();
+
+            // 週切換按鈕
+            document.getElementById('prevWeekBtn').addEventListener('click', () => {
+                currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+                renderCalendar();
+            });
+
+            document.getElementById('nextWeekBtn').addEventListener('click', () => {
+                currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+                renderCalendar();
+            });
+
+            document.getElementById('todayBtn').addEventListener('click', () => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                // 調整到本週一
+                currentWeekStart = new Date(today);
+                currentWeekStart.setDate(currentWeekStart.getDate() - (currentWeekStart.getDay() || 7) + 1);
+                renderCalendar();
+            });
+
+            // 伺服器管理按鈕
+            document.getElementById('manageServersBtn').addEventListener('click', () => {
+                showServerModal();
+            });
+
+            // 新增預約按鈕
+            document.getElementById('newReservationBtn').addEventListener('click', () => {
+                resetReservationForm();
+                showReservationModal('new');
+            });
+
+            // 關閉伺服器管理 Modal
+            closeServerBtn.addEventListener('click', () => {
+                hideServerModal();
+            });
+
+            // 新增伺服器按鈕
+            addServerBtn.addEventListener('click', () => {
+                const serverName = serverNameInput.value.trim();
+                if (!serverName) {
+                    showAlertModal('請輸入伺服器名稱');
+                    return;
+                }
+
+                addServer(serverName).then(() => {
+                    serverNameInput.value = '';
+                });
+            });
+
+            // Enter鍵提交伺服器名稱
+            serverNameInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    addServerBtn.click();
+                }
+            });
+
+            // 關閉預約 Modal
+            cancelReservationBtn.addEventListener('click', () => {
+                hideReservationModal();
+            });
+
+            // 刪除預約按鈕
+            deleteReservationBtn.addEventListener('click', () => {
+                if (editingReservationId) {
+                    deleteReservation(editingReservationId);
+                }
+            });
+
+            // 提交預約表單
+            reservationForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const userName = document.getElementById('userName').value.trim();
+                const serverId = document.getElementById('serverSelect').value;
+                const startDate = document.getElementById('startDate').value;
+                const startTime = document.getElementById('startTime').value;
+                const endDate = document.getElementById('endDate').value;
+                const endTime = document.getElementById('endTime').value;
+                const notes = document.getElementById('notes').value.trim();
+                const creatorId = document.getElementById('reservationCreator').value;
+
+                // 創建日期對象
+                const startDateTime = new Date(`${startDate}T${startTime}`);
+                const endDateTime = new Date(`${endDate}T${endTime}`);
+
+                // 驗證結束時間是否晚於開始時間
+                if (endDateTime <= startDateTime) {
+                    showAlertModal('結束時間必須晚於開始時間');
+                    return;
+                }
+
+                // 檢查時間是否重疊
+                if (isOverlapping(serverId, startDateTime.getTime(), endDateTime.getTime(), editingReservationId)) {
+                    showAlertModal('該時段已有預約，請選擇其他時段');
+                    return;
+                }
+
+                // 準備預約數據
+                const reservationData = {
+                    userName,
+                    serverId,
+                    startTime: startDateTime.toISOString(),
+                    endTime: endDateTime.toISOString(),
+                    notes,
+                    creatorId: creatorId || currentUser.uid,
+                    creatorName: currentUser.displayName,
+                    creatorEmail: currentUser.email,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+
+                // 保存到 Firebase
+                saveReservation(reservationData);
+            });
+
+            // 關閉詳情 Modal
+            closeDetailBtn.addEventListener('click', () => {
+                hideDetailModal();
+            });
+
+            // 編輯預約按鈕
+            editReservationBtn.addEventListener('click', () => {
+                if (viewingReservationId) {
+                    hideDetailModal();
+                    showReservationModal('edit', viewingReservationId);
+                }
+            });
+
+            // 監聽 Firebase 資料變化（僅當用戶已登入時）
+            function setupRealtimeListeners() {
+                if (!currentUser) return;
+
+                const serversRef = window.firebase.ref(window.firebase.db, 'servers');
+                window.firebase.onValue(serversRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        servers = Object.keys(data).map(key => ({
+                            id: key,
+                            name: data[key].name
+                        }));
+                    } else {
+                        servers = [];
+                    }
+                    updateServerSelect();
+                    renderCalendar();
+                });
+
+                const reservationsRef = window.firebase.ref(window.firebase.db, 'reservations');
+                window.firebase.onValue(reservationsRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        reservations = Object.keys(data).map(key => ({
+                            id: key,
+                            ...data[key]
+                        }));
+                    } else {
+                        reservations = [];
+                    }
+                    renderCalendar();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
