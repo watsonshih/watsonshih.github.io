@@ -402,7 +402,7 @@
                             今天
                         </button>
                         <button id="manageServersBtn"
-                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition">
+                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition hidden">
                             管理 Server
                         </button>
                         <button id="newReservationBtn"
@@ -437,7 +437,6 @@
         import { getDatabase, ref, set, get, remove, child, update, push, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD0d8TOznWih96YvABibKpLmCnbkIvzJZA",
