@@ -171,6 +171,32 @@
             border-radius: 50%;
             object-fit: cover;
         }
+
+        @keyframes blink {
+            0% {
+                background-color: rgba(59, 130, 246, 0.2);
+            }
+
+            50% {
+                background-color: rgba(59, 130, 246, 0.5);
+            }
+
+            100% {
+                background-color: rgba(59, 130, 246, 0.2);
+            }
+        }
+
+        .current-reservation {
+            animation: blink 2s infinite;
+            border: 1px solid rgba(59, 130, 246, 0.7) !important;
+            font-weight: 600;
+        }
+
+        .past-reservation {
+            background-color: rgba(100, 100, 100, 0.2);
+            border: 1px solid rgba(100, 100, 100, 0.4);
+            color: rgba(150, 150, 150, 0.7);
+        }
     </style>
 </head>
 

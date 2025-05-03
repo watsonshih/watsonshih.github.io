@@ -281,56 +281,95 @@ const cancelReservationBtn = document.getElementById('cancelReservation');
 const deleteReservationBtn = document.getElementById('deleteReservation');
 const reservationTitle = document.getElementById('reservationTitle');
 
+function isPastReservation(startTime) {
+    const now = new Date().getTime();
+    return new Date(startTime).getTime() < now;
+}
+
 function showReservationModal(mode = 'new', reservationId = null) {
     editingReservationId = reservationId;
-
-    reservationTitle.textContent = mode === 'new' ? '新增預約' : '編輯預約';
-
-    deleteReservationBtn.classList.toggle('hidden', mode === 'new');
 
     if (mode === 'edit' && reservationId) {
         const reservation = reservations.find(r => r.id === reservationId);
         if (reservation) {
-            document.getElementById('userName').value = reservation.userName;
-            document.getElementById('serverSelect').value = reservation.serverId;
-            document.getElementById('reservationCreator').value = reservation.creatorId || '';
-
-            const startDate = new Date(reservation.startTime);
-            document.getElementById('reservationDate').value = formatDateForInput(startDate);
-            document.getElementById('startTime').value = formatTimeForSelect(startDate);
-
-            const endDate = new Date(reservation.endTime);
-            document.getElementById('endTime').value = formatTimeForSelect(endDate);
-
-            document.getElementById('notes').value = reservation.notes || '';
-
-            const canDelete = reservation.creatorId === currentUser.uid;
-            deleteReservationBtn.classList.toggle('hidden', !canDelete);
-
+            const isPast = isPastReservation(reservation.startTime);
             checkUserRole().then(isAdmin => {
-                const canDelete = reservation.creatorId === currentUser.uid || isAdmin;
+                if (isPast && !isAdmin) {
+                    showAlertModal('預約時間已過');
+                    return;
+                }
+
+                document.getElementById('userName').value = reservation.userName;
+                document.getElementById('serverSelect').value = reservation.serverId;
+                document.getElementById('reservationCreator').value = reservation.creatorId || '';
+
+                const startDate = new Date(reservation.startTime);
+                document.getElementById('reservationDate').value = formatDateForInput(startDate);
+                document.getElementById('startTime').value = formatTimeForSelect(startDate);
+
+                const endDate = new Date(reservation.endTime);
+                document.getElementById('endTime').value = formatTimeForSelect(endDate);
+
+                document.getElementById('notes').value = reservation.notes || '';
+
+                const canDelete = reservation.creatorId === currentUser.uid;
                 deleteReservationBtn.classList.toggle('hidden', !canDelete);
+
+                checkUserRole().then(isAdmin => {
+                    const canDelete = reservation.creatorId === currentUser.uid || isAdmin;
+                    deleteReservationBtn.classList.toggle('hidden', !canDelete);
+                });
+
+                reservationTitle.textContent = mode === 'new' ? '新增預約' : '編輯預約';
+                deleteReservationBtn.classList.toggle('hidden', mode === 'new');
+
+                reservationModal.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    reservationModal.classList.add('opacity-100');
+                    reservationBox.classList.add('opacity-100', 'scale-100');
+                    reservationBox.classList.remove('scale-95');
+                });
             });
+            return;
         }
     } else {
-        reservationForm.reset();
+        const reservationDate = document.getElementById('reservationDate').value;
+        const startTime = document.getElementById('startTime').value;
+        const startDateTime = new Date(`${reservationDate}T${startTime}`);
 
-        document.getElementById('reservationCreator').value = currentUser.uid;
-
-        const today = new Date();
-        document.getElementById('reservationDate').value = formatDateForInput(today);
-
-        const nextHour = new Date();
-        nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
-        const nextTwoHours = new Date(nextHour);
-        nextTwoHours.setHours(nextTwoHours.getHours() + 1);
-
-        document.getElementById('startTime').value = formatTimeForSelect(nextHour);
-        document.getElementById('endTime').value = formatTimeForSelect(nextTwoHours);
+        if (isPastReservation(startDateTime)) {
+            checkUserRole().then(isAdmin => {
+                if (!isAdmin) {
+                    showAlertModal('預約時間已過');
+                    return;
+                }
+                setupNewReservationForm();
+            });
+            return;
+        }
+        setupNewReservationForm();
     }
+}
+
+function setupNewReservationForm() {
+    reservationForm.reset();
+    document.getElementById('reservationCreator').value = currentUser.uid;
+
+    const today = new Date();
+    document.getElementById('reservationDate').value = formatDateForInput(today);
+
+    const nextHour = new Date();
+    nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+    const nextTwoHours = new Date(nextHour);
+    nextTwoHours.setHours(nextTwoHours.getHours() + 1);
+
+    document.getElementById('startTime').value = formatTimeForSelect(nextHour);
+    document.getElementById('endTime').value = formatTimeForSelect(nextTwoHours);
+
+    reservationTitle.textContent = '新增預約';
+    deleteReservationBtn.classList.add('hidden');
 
     reservationModal.classList.remove('hidden');
-
     requestAnimationFrame(() => {
         reservationModal.classList.add('opacity-100');
         reservationBox.classList.add('opacity-100', 'scale-100');
@@ -378,8 +417,10 @@ function showDetailModal(reservationId) {
         document.getElementById('detailCreator').textContent = '未知';
     }
 
+    const isPast = isPastReservation(reservation.startTime);
+
     checkUserRole().then(isAdmin => {
-        const canEdit = reservation.creatorId === currentUser.uid || isAdmin;
+        const canEdit = (reservation.creatorId === currentUser.uid || isAdmin) && (!isPast || isAdmin);
         editReservationBtn.style.display = canEdit ? 'block' : 'none';
     });
 
@@ -511,6 +552,20 @@ function updateServerSelect() {
     });
 }
 
+function getReservationStatus(reservation) {
+    const now = new Date().getTime();
+    const startTime = new Date(reservation.startTime).getTime();
+    const endTime = new Date(reservation.endTime).getTime();
+
+    if (now < startTime) {
+        return 'future';
+    } else if (now > endTime) {
+        return 'past';
+    } else {
+        return 'current';
+    }
+}
+
 function renderCalendar() {
     const calendarContainer = document.getElementById('calendarContainer');
     calendarContainer.innerHTML = '';
@@ -585,11 +640,26 @@ function renderCalendar() {
 
             const dayReservations = getReservationsForDay(server.id, date);
 
+            dayReservations.sort((a, b) => {
+                const aStartTime = new Date(a.startTime).getTime();
+                const bStartTime = new Date(b.startTime).getTime();
+                return aStartTime - bStartTime;
+            });
+
             dayReservations.forEach(reservation => {
                 const badge = document.createElement('div');
+                const status = getReservationStatus(reservation);
+
                 badge.className = 'reservation-badge';
+                if (status === 'current') {
+                    badge.classList.add('current-reservation');
+                } else if (status === 'past') {
+                    badge.classList.add('past-reservation');
+                }
+
                 badge.textContent = `${getTimeText(new Date(reservation.startTime))} - ${getTimeText(new Date(reservation.endTime))} ${reservation.userName}`;
                 badge.setAttribute('data-reservation-id', reservation.id);
+                badge.setAttribute('data-reservation-status', status);
 
                 badge.addEventListener('click', () => {
                     showDetailModal(reservation.id);
@@ -601,15 +671,26 @@ function renderCalendar() {
             cell.addEventListener('click', (e) => {
                 if (e.target.classList.contains('reservation-badge')) return;
 
-                resetReservationForm();
+                const clickedDate = new Date(date);
+                const isPast = clickedDate < new Date();
 
-                showReservationModal('new');
-
-                document.getElementById('serverSelect').value = server.id;
-
-                const formattedDate = formatDateForInput(new Date(date));
-                document.getElementById('reservationDate').value = formattedDate;
-
+                if (isPast) {
+                    checkUserRole().then(isAdmin => {
+                        if (!isAdmin) {
+                            showAlertModal('預約時間已過');
+                            return;
+                        }
+                        resetReservationForm();
+                        showReservationModal('new');
+                        document.getElementById('serverSelect').value = server.id;
+                        document.getElementById('reservationDate').value = formatDateForInput(clickedDate);
+                    });
+                } else {
+                    resetReservationForm();
+                    showReservationModal('new');
+                    document.getElementById('serverSelect').value = server.id;
+                    document.getElementById('reservationDate').value = formatDateForInput(clickedDate);
+                }
             });
 
             serverRow.appendChild(cell);
@@ -774,51 +855,61 @@ async function deleteServer(serverId) {
 function saveReservation(reservationData) {
     let reservationRef;
 
-    if (editingReservationId) {
-        const existingReservation = reservations.find(r => r.id === editingReservationId);
-        if (existingReservation && existingReservation.creatorId !== currentUser.uid) {
-            showAlertModal('您沒有權限編輯此預約');
-            return Promise.reject(new Error('No permission to edit'));
+    const startDateTime = new Date(reservationData.startTime);
+    const isPast = isPastReservation(startDateTime);
+
+    return checkUserRole().then(isAdmin => {
+        if (isPast && !isAdmin) {
+            showAlertModal('您沒有權限新增或編輯過去的預約');
+            return Promise.reject(new Error('No permission for past reservations'));
         }
 
-        reservationRef = window.firebase.ref(window.firebase.db, `reservations/${editingReservationId}`);
+        if (editingReservationId) {
+            const existingReservation = reservations.find(r => r.id === editingReservationId);
+            if (existingReservation && existingReservation.creatorId !== currentUser.uid && !isAdmin) {
+                showAlertModal('您沒有權限編輯此預約');
+                return Promise.reject(new Error('No permission to edit'));
+            }
 
-        return window.firebase.update(reservationRef, reservationData)
-            .then(() => {
-                const index = reservations.findIndex(r => r.id === editingReservationId);
-                if (index !== -1) {
-                    reservations[index] = {
-                        ...reservations[index],
-                        ...reservationData
-                    };
-                }
+            reservationRef = window.firebase.ref(window.firebase.db, `reservations/${editingReservationId}`);
 
-                renderCalendar();
-                hideReservationModal();
-                showAlertModal('預約更新成功');
-            })
-            .catch(error => {
-                console.error("更新預約錯誤:", error);
-            });
-    } else {
-        const reservationsRef = window.firebase.ref(window.firebase.db, 'reservations');
-        reservationRef = window.firebase.push(reservationsRef);
+            return window.firebase.update(reservationRef, reservationData)
+                .then(() => {
+                    const index = reservations.findIndex(r => r.id === editingReservationId);
+                    if (index !== -1) {
+                        reservations[index] = {
+                            ...reservations[index],
+                            ...reservationData
+                        };
+                    }
 
-        return window.firebase.set(reservationRef, reservationData)
-            .then(() => {
-                reservations.push({
-                    id: reservationRef.key,
-                    ...reservationData
+                    renderCalendar();
+                    hideReservationModal();
+                    showAlertModal('預約更新成功');
+                })
+                .catch(error => {
+                    console.error("更新預約錯誤:", error);
                 });
+        } else {
+            const reservationsRef = window.firebase.ref(window.firebase.db, 'reservations');
+            reservationRef = window.firebase.push(reservationsRef);
 
-                renderCalendar();
-                hideReservationModal();
-                showAlertModal('預約新增成功');
-            })
-            .catch(error => {
-                console.error("新增預約錯誤:", error);
-            });
-    }
+            return window.firebase.set(reservationRef, reservationData)
+                .then(() => {
+                    reservations.push({
+                        id: reservationRef.key,
+                        ...reservationData
+                    });
+
+                    renderCalendar();
+                    hideReservationModal();
+                    showAlertModal('預約新增成功');
+                })
+                .catch(error => {
+                    console.error("新增預約錯誤:", error);
+                });
+        }
+    });
 }
 
 async function deleteReservation(reservationId) {
@@ -1049,25 +1140,40 @@ document.addEventListener('firebaseReady', () => {
             return;
         }
 
-        if (isOverlapping(serverId, startDateTime.getTime(), endDateTime.getTime(), editingReservationId)) {
-            showAlertModal('該時段已有預約，請選擇其他時段');
-            return;
+        const isPast = isPastReservation(startDateTime);
+        if (isPast) {
+            checkUserRole().then(isAdmin => {
+                if (!isAdmin) {
+                    showAlertModal('您沒有權限新增或編輯過去的預約');
+                    return;
+                }
+                continueSubmitReservation();
+            });
+        } else {
+            continueSubmitReservation();
         }
 
-        const reservationData = {
-            userName,
-            serverId,
-            startTime: startDateTime.toISOString(),
-            endTime: endDateTime.toISOString(),
-            notes,
-            creatorId: creatorId || currentUser.uid,
-            creatorName: currentUser.displayName,
-            creatorEmail: currentUser.email,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-        };
+        function continueSubmitReservation() {
+            if (isOverlapping(serverId, startDateTime.getTime(), endDateTime.getTime(), editingReservationId)) {
+                showAlertModal('該時段已有預約，請選擇其他時段');
+                return;
+            }
 
-        saveReservation(reservationData);
+            const reservationData = {
+                userName,
+                serverId,
+                startTime: startDateTime.toISOString(),
+                endTime: endDateTime.toISOString(),
+                notes,
+                creatorId: creatorId || currentUser.uid,
+                creatorName: currentUser.displayName,
+                creatorEmail: currentUser.email,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            saveReservation(reservationData);
+        }
     });
 
     closeDetailBtn.addEventListener('click', () => {
