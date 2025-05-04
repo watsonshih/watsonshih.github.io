@@ -672,7 +672,7 @@ function renderCalendar() {
                 if (e.target.classList.contains('reservation-badge')) return;
 
                 const clickedDate = new Date(date);
-                const isPast = clickedDate < new Date();
+                const isPast = clickedDate < new Date() - 24 * 60 * 60 * 1000;
 
                 if (isPast) {
                     checkUserRole().then(isAdmin => {
