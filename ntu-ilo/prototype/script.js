@@ -831,9 +831,9 @@ function viewStudentDetails(studentId, readOnly = false) {
                 <input type="radio" id="genderMale_${student.id}" name="gender" value="男" ${student.gender === '男' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} required> <label for="genderMale_${student.id}">男</label>
                 <input type="radio" id="genderFemale_${student.id}" name="gender" value="女" ${student.gender === '女' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} required> <label for="genderFemale_${student.id}">女</label>
             </div>
-            <div class="form-group"><label class="required-field-label">企業不錄取:</label>
-                <input type="radio" id="corpNo_${student.id}" name="corporateNonHire" value="否" ${student.corporateNonHire === '否' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpNo_${student.id}">否</label>
-                <input type="radio" id="corpYes_${student.id}" name="corporateNonHire" value="是" ${student.corporateNonHire === '是' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpYes_${student.id}">是</label>
+            <div class="form-group"><label class="required-field-label">企業錄取:</label>
+                <input type="radio" id="corpNo_${student.id}" name="corporateNonHire" value="是" ${student.corporateNonHire === '否' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpNo_${student.id}">否</label>
+                <input type="radio" id="corpYes_${student.id}" name="corporateNonHire" value="否" ${student.corporateNonHire === '是' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpYes_${student.id}">是</label>
                 <!-- Note will be added by JS -->
             </div>
             <div class="form-group" id="corporateNameGroup_${student.id}" style="${student.corporateNonHire === '否' ? '' : 'display:none;'}">
@@ -940,7 +940,7 @@ window.toggleCorporateName = function (value, studentIdOrPrefix) {
         if (!existingNote && noteContainer) {
             const noteSpan = document.createElement('span');
             noteSpan.className = 'notes status-rejected corp-non-hire-note';
-            noteSpan.textContent = ' (選擇「是」將無法註冊)';
+            noteSpan.textContent = ' (選擇「否」將無法註冊)';
             const yesLabel = noteContainer.querySelector(`label[for='${corpYesRadio.id}']`);
             if (yesLabel) {
                 yesLabel.parentNode.insertBefore(noteSpan, yesLabel.nextSibling);
@@ -976,7 +976,7 @@ function saveStudentDetails(schoolName, programName) {
     }
     const newCorpNonHireStatus = form.querySelector('input[name="corporateNonHire"]:checked').value;
     if (newCorpNonHireStatus === '否' && !form.corporateName.value) {
-        showModal("錯誤", "選擇「企業不錄取」為「否」時，必須填寫合作企業名稱。", false, true, null, null, "確定");
+        showModal("錯誤", "選擇「企業錄取」為「是」時，必須填寫合作企業名稱。", false, true, null, null, "確定");
         form.corporateName.focus();
         return;
     }
@@ -1112,14 +1112,14 @@ window.renderNewStudentFormForProgram = function (programName) {
                 <input type="radio" id="new_genderMale" name="gender" value="男" required onblur="preCheckStudent(this.form)"> <label for="new_genderMale">男</label>
                 <input type="radio" id="new_genderFemale" name="gender" value="女" required> <label for="new_genderFemale">女</label>
             </div>
-            <div class="form-group"><label class="required-field-label">企業不錄取:</label>
-                <input type="radio" id="new_corpNo" name="corporateNonHire" value="否" onchange="toggleCorporateName(this.value, 'newStudent')" checked required> <label for="new_corpNo">否</label>
-                <input type="radio" id="new_corpYes" name="corporateNonHire" value="是" onchange="toggleCorporateName(this.value, 'newStudent')" required> <label for="new_corpYes">是</label>
+            <div class="form-group"><label class="required-field-label">企業錄取:</label>
+                <input type="radio" id="new_corpNo" name="corporateNonHire" value="是" onchange="toggleCorporateName(this.value, 'newStudent')" checked required> <label for="new_corpNo">否</label>
+                <input type="radio" id="new_corpYes" name="corporateNonHire" value="否" onchange="toggleCorporateName(this.value, 'newStudent')" required> <label for="new_corpYes">是</label>
             </div>
             <div class="form-group" id="corporateNameGroup_newStudent" style="display:block;">
                 <label class="required-field-label">合作企業名稱:</label><input type="text" name="corporateName" required>
             </div>
-             <div class="form-group"><label class="required-field-label">生活津貼 (最高10k):</label><input type="number" name="livingAllowance" max="10000" min="0" required></div>
+             <div class="form-group"><label class="required-field-label">生活津貼 (至少10k):</label><input type="number" name="livingAllowance" min="10000" min="0" required></div>
             <div class="form-group"><label class="required-field-label">當地學校:</label>
                  <input type="text" name="localSchoolName" required list="localSchoolList_new">
                  <datalist id="localSchoolList_new">
@@ -1204,7 +1204,7 @@ function submitNewStudentData(event) {
     }
     const corpNonHireStatus = form.querySelector('input[name="corporateNonHire"]:checked').value;
     if (corpNonHireStatus === '否' && !form.corporateName.value) {
-        showModal("錯誤", "選擇「企業不錄取」為「否」時，必須填寫合作企業名稱。", false, true, null, null, "確定");
+        showModal("錯誤", "選擇「企業錄取」為「是」時，必須填寫合作企業名稱。", false, true, null, null, "確定");
         form.corporateName.focus();
         return;
     }
@@ -1381,7 +1381,7 @@ window.adminApproveProgramBatch = function (schoolName, programName, targetSemes
     } else if (approvalStatus === 'not_subsidized') {
         const hasCorpNonHireYes = programStudentsToReview.some(s => s.corporateNonHire === '是');
         if (hasCorpNonHireYes) {
-            alert("批次操作失敗：此專班包含「企業不錄取」為「是」的學生，無法整批標記為「當年未獲補助」。請個別操作。");
+            alert("批次操作失敗：此專班包含「企業錄取」為「否」的學生，無法整批標記為「當年未獲補助」。請個別操作。");
             return;
         }
         const confirmNoSubsidy = confirm(`確定要將 ${schoolName} - ${programName} (${targetSemester}) 的 ${programStudentsToReview.length} 位待審核學生全部標記為「當年未獲補助」嗎？`);
@@ -1948,7 +1948,6 @@ function renderReviewSubsidiesPage(container, type = 'subsidy') {
                     <td>${p.semester}</td>
                     <td>
                         <button onclick="viewProgramSubsidyDetails('${p.schoolName}', '${p.programName}', '${p.semester}', '${type}')">檢視/審核</button>
-                        <button class="secondary" onclick="adminDownloadProgramData('${p.schoolName}', '${p.programName}', '${p.semester}', '${type}')">下載學校用印資料 (假設學校通過審核並回傳)</button>
                     </td>
                  </tr>`;
     });
