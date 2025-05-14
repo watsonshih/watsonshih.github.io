@@ -832,8 +832,8 @@ function viewStudentDetails(studentId, readOnly = false) {
                 <input type="radio" id="genderFemale_${student.id}" name="gender" value="女" ${student.gender === '女' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} required> <label for="genderFemale_${student.id}">女</label>
             </div>
             <div class="form-group"><label class="required-field-label">企業錄取:</label>
-                <input type="radio" id="corpNo_${student.id}" name="corporateNonHire" value="是" ${student.corporateNonHire === '否' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpNo_${student.id}">否</label>
-                <input type="radio" id="corpYes_${student.id}" name="corporateNonHire" value="否" ${student.corporateNonHire === '是' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpYes_${student.id}">是</label>
+                <input type="radio" id="corpNo_${student.id}" name="corporateNonHire" value="否" ${student.corporateNonHire === '否' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpNo_${student.id}">是</label>
+                <input type="radio" id="corpYes_${student.id}" name="corporateNonHire" value="是" ${student.corporateNonHire === '是' ? 'checked' : ''} ${effectiveReadOnly ? 'disabled' : ''} onchange="toggleCorporateName(this.value, '${student.id}')" required> <label for="corpYes_${student.id}">否</label>
                 <!-- Note will be added by JS -->
             </div>
             <div class="form-group" id="corporateNameGroup_${student.id}" style="${student.corporateNonHire === '否' ? '' : 'display:none;'}">
@@ -1113,8 +1113,8 @@ window.renderNewStudentFormForProgram = function (programName) {
                 <input type="radio" id="new_genderFemale" name="gender" value="女" required> <label for="new_genderFemale">女</label>
             </div>
             <div class="form-group"><label class="required-field-label">企業錄取:</label>
-                <input type="radio" id="new_corpNo" name="corporateNonHire" value="是" onchange="toggleCorporateName(this.value, 'newStudent')" checked required> <label for="new_corpNo">否</label>
-                <input type="radio" id="new_corpYes" name="corporateNonHire" value="否" onchange="toggleCorporateName(this.value, 'newStudent')" required> <label for="new_corpYes">是</label>
+                <input type="radio" id="new_corpNo" name="corporateNonHire" value="否" onchange="toggleCorporateName(this.value, 'newStudent')" checked required> <label for="new_corpNo">是</label>
+                <input type="radio" id="new_corpYes" name="corporateNonHire" value="是" onchange="toggleCorporateName(this.value, 'newStudent')" required> <label for="new_corpYes">否</label>
             </div>
             <div class="form-group" id="corporateNameGroup_newStudent" style="display:block;">
                 <label class="required-field-label">合作企業名稱:</label><input type="text" name="corporateName" required>
