@@ -51,7 +51,7 @@ let students = [
     // --- NTU 113-2 半導體國際專班 (Current Semester: 113-2, Initial: 113-2) ---
     {
         id: 'S001', engName: 'CHAN SOKHA', nationality: '柬埔寨', schoolName: '國立臺灣大學', programName: '113-2 半導體國際專班',
-        passportNo: 'P12345678', dob: '2000-01-15', gender: '女', corporateNonHire: '否', corporateName: 'Example Tech', livingAllowance: 8000,
+        passportNo: 'P12345678', dob: '2000-01-15', gender: '女', corporateNonHire: '否', corporateName: 'Example Tech', livingAllowance: 18000,
         localSchoolName: 'Royal University of Phnom Penh', localSchoolRecommended: '是', transcriptFile: 'S001_transcript.pdf',
         recommendationFile: 'S001_recommend.pdf', academicProofFile: 'S001_proof.pdf',
         status: '準備註冊', // Overall status
@@ -84,7 +84,7 @@ let students = [
     },
     {
         id: 'S007', engName: 'MARIA GARCIA', nationality: '菲律賓', schoolName: '國立臺灣大學', programName: '113-2 半導體國際專班',
-        passportNo: 'P77788899', dob: '2001-08-22', gender: '女', corporateNonHire: '否', corporateName: 'Innovate Solutions', livingAllowance: 9500,
+        passportNo: 'P77788899', dob: '2001-08-22', gender: '女', corporateNonHire: '否', corporateName: 'Innovate Solutions', livingAllowance: 19500,
         localSchoolName: 'University of the Philippines', localSchoolRecommended: '是', transcriptFile: 'S007_transcript.pdf',
         recommendationFile: 'S007_recommend.pdf', academicProofFile: 'S007_proof.pdf',
         status: '準備註冊', // Overall status
@@ -117,7 +117,7 @@ let students = [
     },
     {
         id: 'S008', engName: 'LI WEI', nationality: '新加坡', schoolName: '國立臺灣大學', programName: '113-2 半導體國際專班',
-        passportNo: 'S11223344', dob: '2002-02-14', gender: '男', corporateNonHire: '否', corporateName: 'SG Analytics', livingAllowance: 9000,
+        passportNo: 'S11223344', dob: '2002-02-14', gender: '男', corporateNonHire: '否', corporateName: 'SG Analytics', livingAllowance: 10000,
         localSchoolName: 'National University of Singapore', localSchoolRecommended: '是', transcriptFile: 'S008_transcript.pdf',
         recommendationFile: 'S008_recommend.pdf', academicProofFile: 'S008_proof.pdf',
         status: '準備註冊', // Overall status
@@ -151,7 +151,7 @@ let students = [
     },
     { // Corporate Non-Hire = YES example, for AIoT in 113-2
         id: 'S009', engName: 'AHMAD BIN ISMAIL', nationality: '馬來西亞', schoolName: '國立臺灣大學', programName: '113-2 半導體國際專班',
-        passportNo: 'M55667788', dob: '2000-11-01', gender: '男', corporateNonHire: '是', corporateName: '', livingAllowance: 8500,
+        passportNo: 'M55667788', dob: '2000-11-01', gender: '男', corporateNonHire: '是', corporateName: '', livingAllowance: 11000,
         localSchoolName: 'University of Malaya', localSchoolRecommended: '是', transcriptFile: 'S009_transcript.pdf',
         recommendationFile: 'S009_recommend.pdf', academicProofFile: 'S009_proof.pdf', status: '準備註冊',
         submittedBySchool: true, adminApproved: null, // Assume admin approved recommendation
@@ -173,7 +173,7 @@ let students = [
     },
     { // Recommendation was rejected for 113-2 entry
         id: 'S012', engName: 'ANNA IVANOVA', nationality: '印度', schoolName: '國立臺灣大學', programName: '112-2 智慧製造專班',
-        passportNo: 'I99887766', dob: '2001-06-30', gender: '女', corporateNonHire: '否', corporateName: 'Future Systems', livingAllowance: 7000,
+        passportNo: 'I99887766', dob: '2001-06-30', gender: '女', corporateNonHire: '否', corporateName: 'Future Systems', livingAllowance: 10000,
         localSchoolName: 'Delhi University', localSchoolRecommended: '否', transcriptFile: 'S012_transcript.pdf',
         recommendationFile: 'S012_recommend.pdf', academicProofFile: 'S012_proof.pdf', status: '已退回 (推薦)',
         submittedBySchool: false, adminApproved: false, adminRejectReason: '成績未達標',
@@ -185,7 +185,7 @@ let students = [
     // --- NTHU 112-1 綠色能源專班 (Current Semester: 113-2, Initial: 112-1) ---
     {
         id: 'S003', engName: 'NGUYEN VAN AN', nationality: '越南', schoolName: '國立清華大學', programName: '112-1 綠色能源專班',
-        passportNo: 'P34567890', dob: '2001-03-10', gender: '男', corporateNonHire: '否', corporateName: 'Vina Energy', livingAllowance: 9000,
+        passportNo: 'P34567890', dob: '2001-03-10', gender: '男', corporateNonHire: '否', corporateName: 'Vina Energy', livingAllowance: 19000,
         localSchoolName: 'Hanoi University of Science and Technology', localSchoolRecommended: '是', transcriptFile: 'S003_transcript.pdf',
         recommendationFile: 'S003_recommend.pdf', academicProofFile: 'S003_proof.pdf', status: '不註冊', adminApproved: true,
         semesters: {
@@ -197,7 +197,7 @@ let students = [
     },
     { // Duplicate student, submitted for review for 113-2
         id: 'S006', engName: 'CHAN SOKHA', nationality: '柬埔寨', schoolName: '國立清華大學', programName: '112-1 綠色能源專班',
-        passportNo: 'P98765432', dob: '2000-01-15', gender: '女', corporateNonHire: '否', corporateName: 'Green Power Inc.', livingAllowance: 8500,
+        passportNo: 'P98765432', dob: '2000-01-15', gender: '女', corporateNonHire: '否', corporateName: 'Green Power Inc.', livingAllowance: 18500,
         localSchoolName: 'Another University', localSchoolRecommended: '否', transcriptFile: 'S006_transcript.pdf',
         recommendationFile: 'S006_recommend.pdf', academicProofFile: 'S006_proof.pdf', status: '準備註冊',
         submittedBySchool: true, adminApproved: null, adminRejectReason: '',
@@ -207,7 +207,7 @@ let students = [
     },
     { // Needs non-registration entry (不註冊) for 113-2
         id: 'S010', engName: 'SITI NURHALIZA', nationality: '印尼', schoolName: '國立清華大學', programName: '112-1 綠色能源專班',
-        passportNo: 'P66554433', dob: '2002-07-18', gender: '女', corporateNonHire: '否', corporateName: 'Eco Solutions', livingAllowance: 9200,
+        passportNo: 'P66554433', dob: '2002-07-18', gender: '女', corporateNonHire: '否', corporateName: 'Eco Solutions', livingAllowance: 19200,
         localSchoolName: 'Bandung Institute of Technology', localSchoolRecommended: '是', transcriptFile: 'S010_transcript.pdf',
         recommendationFile: 'S010_recommend.pdf', academicProofFile: 'S010_proof.pdf', status: '不註冊', adminApproved: true,
         semesters: {
@@ -220,7 +220,7 @@ let students = [
     },
     { // Needs non-registration entry (特殊不註冊), submitted by school, pending admin review for 113-2
         id: 'S011', engName: 'KENJI SUZUKI', nationality: '日本', schoolName: '國立清華大學', programName: '112-1 綠色能源專班',
-        passportNo: 'J11223344', dob: '1999-09-09', gender: '男', corporateNonHire: '否', corporateName: 'Solar Japan', livingAllowance: 9800,
+        passportNo: 'J11223344', dob: '1999-09-09', gender: '男', corporateNonHire: '否', corporateName: 'Solar Japan', livingAllowance: 19800,
         localSchoolName: 'Kyoto University', localSchoolRecommended: '是', transcriptFile: 'S011_transcript.pdf',
         recommendationFile: 'S011_recommend.pdf', academicProofFile: 'S011_proof.pdf', status: '特殊不註冊', adminApproved: true,
         semesters: {
@@ -282,7 +282,7 @@ let students = [
     // --- NTHU 111-1 數據科學專班 (Ended after 112-1) ---
     {
         id: 'S005', engName: 'RAJESH KUMAR', nationality: '印度', schoolName: '國立清華大學', programName: '111-1 數據科學專班',
-        passportNo: 'P56789012', dob: '2000-07-01', gender: '男', corporateNonHire: '否', corporateName: 'Data Insights', livingAllowance: 7500,
+        passportNo: 'P56789012', dob: '2000-07-01', gender: '男', corporateNonHire: '否', corporateName: 'Data Insights', livingAllowance: 17500,
         localSchoolName: 'IIT Bombay', localSchoolRecommended: '是', transcriptFile: 'S005_transcript.pdf',
         recommendationFile: 'S005_recommend.pdf', academicProofFile: 'S005_proof.pdf', status: '已畢業',
         adminApproved: true,
@@ -839,7 +839,7 @@ function viewStudentDetails(studentId, readOnly = false) {
             <div class="form-group" id="corporateNameGroup_${student.id}" style="${student.corporateNonHire === '否' ? '' : 'display:none;'}">
                 <label class="required-field-label">合作企業名稱:</label><input type="text" name="corporateName" value="${student.corporateName || ''}" ${effectiveReadOnly ? 'readonly' : ''}>
             </div>
-             <div class="form-group"><label class="required-field-label">生活津貼 (最高10k):</label><input type="number" name="livingAllowance" value="${student.livingAllowance || 0}" max="10000" min="0" ${effectiveReadOnly ? 'readonly' : ''} required></div>
+             <div class="form-group"><label class="required-field-label">生活津貼 (至少10k):</label><input type="number" name="livingAllowance" value="${student.livingAllowance || 0}" min="10000" ${effectiveReadOnly ? 'readonly' : ''} required></div>
             <div class="form-group"><label class="required-field-label">當地學校:</label>
                 <input type="text" name="localSchoolName" value="${student.localSchoolName || ''}" ${effectiveReadOnly ? 'readonly' : ''} required list="localSchoolList">
                 <datalist id="localSchoolList">
@@ -1119,7 +1119,7 @@ window.renderNewStudentFormForProgram = function (programName) {
             <div class="form-group" id="corporateNameGroup_newStudent" style="display:block;">
                 <label class="required-field-label">合作企業名稱:</label><input type="text" name="corporateName" required>
             </div>
-             <div class="form-group"><label class="required-field-label">生活津貼 (至少10k):</label><input type="number" name="livingAllowance" min="10000" min="0" required></div>
+             <div class="form-group"><label class="required-field-label">生活津貼 (至少10k):</label><input type="number" name="livingAllowance" min="10000" required></div>
             <div class="form-group"><label class="required-field-label">當地學校:</label>
                  <input type="text" name="localSchoolName" required list="localSchoolList_new">
                  <datalist id="localSchoolList_new">
