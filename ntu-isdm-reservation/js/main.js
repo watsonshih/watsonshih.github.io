@@ -142,7 +142,7 @@ async function addUser(email, role) {
 
 async function changeUserRole(emailKey, currentRole) {
     const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    const confirmed = await showConfirmModal(`卻定要更改使用者身分成${newRole === 'admin' ? '管理員' : '普通使用者'}吗？`);
+    const confirmed = await showConfirmModal(`確定要更改使用者身分成${newRole === 'admin' ? '管理員' : '普通使用者'}吗？`);
     if (!confirmed) return;
 
     const userRef = window.firebase.ref(window.firebase.db, `allowedUsers/${emailKey}/role`);
@@ -1024,6 +1024,7 @@ function showUserInterface() {
             document.getElementById('manageUsersBtn').classList.toggle('hidden', !isAdmin);
 
             renderCalendar();
+            setupRealtimeListeners();
             hideLoadingOverlay();
         })
         .catch(error => {

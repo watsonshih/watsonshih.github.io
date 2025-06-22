@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台南東區四大建案互動式分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .tab-active {
+            background-color: #475569;
+            /* slate-600 */
+            color: #ffffff;
+            border-color: #475569;
+            /* slate-600 */
+        }
+
+        .tab-inactive {
+            background-color: #ffffff;
+            color: #475569;
+            /* slate-600 */
+            border-color: #e2e8f0;
+            /* slate-200 */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 45vh;
+            max-height: 500px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+
+<body class="text-slate-700">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">台南東區四大指標建案</h1>
+            <p class="mt-2 text-lg text-slate-500">互動式比較分析儀表板</p>
+        </header>
+
+        <nav id="nav-tabs" class="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 md:gap-4 mb-8">
+            <button data-tab="comparison"
+                class="w-full text-sm md:text-base font-semibold py-2 px-4 rounded-lg border transition-colors duration-300 tab-active">綜合比較</button>
+            <button data-tab="yansen"
+                class="w-full text-sm md:text-base font-semibold py-2 px-4 rounded-lg border transition-colors duration-300 tab-inactive">研森</button>
+            <button data-tab="dongdu"
+                class="w-full text-sm md:text-base font-semibold py-2 px-4 rounded-lg border transition-colors duration-300 tab-inactive">東都綠學</button>
+            <button data-tab="songdan"
+                class="w-full text-sm md:text-base font-semibold py-2 px-4 rounded-lg border transition-colors duration-300 tab-inactive">松丹達麗</button>
+            <button data-tab="hongfu"
+                class="w-full text-sm md:text-base font-semibold py-2 px-4 rounded-lg border transition-colors duration-300 tab-inactive">宏福悅</button>
+        </nav>
+
+        <main id="tab-content">
+            <!-- Comparison Section -->
+            <section id="comparison" class="space-y-12">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-1 text-slate-800">核心數據對比</h2>
+                    <p class="text-slate-500 mb-6">
+                        此圖表整合了各建案的「真三房平均成交單價」與「投資代理指標」。價格反映了市場價值，而投資指標則暗示了社區的買方結構（指標越高，投資/非自住比例可能越高）。兩者結合有助於判斷建案的市場定位與風險屬性。
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-800">綜合比較矩陣</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="p-3 font-semibold text-slate-600">建案</th>
+                                    <th class="p-3 font-semibold text-slate-600">地點</th>
+                                    <th class="p-3 font-semibold text-slate-600">價格定位</th>
+                                    <th class="p-3 font-semibold text-slate-600">核心優勢</th>
+                                    <th class="p-3 font-semibold text-slate-600">核心劣勢</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparison-table-body" class="divide-y divide-slate-200">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-800">買方速配建議</h2>
+                    <p class="text-slate-500 mb-6">根據您的購屋目標與風險偏好，這裡提供四種不同類型的買方建議，幫助您快速找到與您需求最匹配的建案。</p>
+                    <div id="recommendations" class="grid md:grid-cols-2 gap-6">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Individual Project Sections will be injected here by JS -->
+        </main>
+    </div>
+
+    <script>
+        const projectData = {
+            yansen: {
+                name: "研森",
+                developer: "清景麟",
+                location: "東區 / 南台南站副都心",
+                pricePoint: "中高階",
+                avgPrice: 47.4,
+                investmentIndex: 1.0,
+                pros: [
+                    "位於南台南站副都心，長期增值潛力強",
+                    "公設極其豐富，提供飯店式居住體驗",
+                    "鄰近崇德、崇明成熟商圈",
+                    "部分戶別面公園，享永久棟距與景觀"
+                ],
+                cons: [
+                    "鄰近台南機場，有飛機起降噪音",
+                    "公設比高達35%，影響室內實際坪效",
+                    "重劃區生活機能仍需時間發展成熟",
+                    "部分戶別有格局疑慮 (如壓樑)"
+                ],
+                marketAnalysis: "買方結構為自住與投資者參半。自住客看重東區門牌與豐富公設，投資者則看好重劃區的長期潛力。此案呈現「以今天的價格，投資明天的價值」的特性，適合具備長遠眼光的買家。",
+                recommendation: {
+                    title: "給看好基礎建設、進行長期投資的置產族",
+                    text: "研森提供了一個進入南台南站副都心的均衡選擇。它擁有良好的公設與增值潛力，但投資者必須有耐心，願意長期持有，等待重劃區發展成熟以實現資本利得。"
+                }
+            },
+            dongdu: {
+                name: "東都綠學",
+                developer: "理銘/昌益",
+                location: "仁德區 / 近東區生活圈",
+                pricePoint: "中價位、高性價比",
+                avgPrice: 34.7,
+                investmentIndex: 2.8,
+                pros: [
+                    "價格具競爭力，入場門檻相對較低",
+                    "正對仁和國小，具「校園第一排」優勢",
+                    "鄰近86快速道路，聯外交通便捷",
+                    "建商具知名度，格局規劃務實"
+                ],
+                cons: [
+                    "行政區為仁德區，非正東區門牌",
+                    "投資客比例偏高，社區組成可能較複雜",
+                    "周邊商業機能仍待發展",
+                    "車位規劃不足，並非戶戶皆有車位"
+                ],
+                marketAnalysis: "市場動態明顯偏向投資導向，開案時的搶購潮與大量的租售物件證明了這點。買方以尋求價差的投資客與重視預算的家庭為主。未來社區租戶比例可能偏高。",
+                recommendation: {
+                    title: "給重視性價比、以子女教育為優先的家庭",
+                    text: "東都綠學提供了難以抗拒的方案。其緊鄰仁和國小的地理位置，加上遠低於東區的價格，使其成為預算有限家庭的理想選擇。但買家需接受其仁德區門牌與未來較高的租戶比例。"
+                }
+            },
+            songdan: {
+                name: "松丹達麗",
+                developer: "達麗建設",
+                location: "東區 / 南台南站副都心",
+                pricePoint: "中高階",
+                avgPrice: 42.5,
+                investmentIndex: 3.4,
+                pros: [
+                    "公設達18項，營造渡假村般的居住體驗",
+                    "位處崇明國小、國中雙語明星學區",
+                    "三房單位均為邊間，享三面採光",
+                    "上市建商，品牌信譽與保障較高"
+                ],
+                cons: [
+                    "緊鄰台南航空站，飛機噪音影響顯著",
+                    "社區總戶數多(近600戶)，出入可能較複雜",
+                    "管理費較高(約80元/坪)，長期持有成本高",
+                    "社區內部分棟別之間棟距較近"
+                ],
+                marketAnalysis: "市場資訊顯示投資/置產比例高，租賃市場極為活躍，與建商宣稱自住為主有所出入。目標客群應為追求生活品質、重視學區且對噪音不敏感的富裕家庭。此案是「噪音換取生活品質」的典型權衡。",
+                recommendation: {
+                    title: "給追求頂級生活品味、且對噪音不敏感的富裕家庭",
+                    text: "松丹達麗是首選。它擁有無可比擬的渡假村式公設、頂尖的崇明學區以及優質的格局規劃。唯一的代價是必須接受機場噪音。"
+                }
+            },
+            hongfu: {
+                name: "宏福悅",
+                developer: "志竤/宏福",
+                location: "東區 / 仁和成熟生活圈",
+                pricePoint: "高階",
+                avgPrice: 46.6,
+                investmentIndex: 0,
+                pros: [
+                    "位於東區成熟核心區，生活機能完善",
+                    "母集團財力雄厚，爛尾樓風險極低",
+                    "高規格建材規劃，申請智慧建築標章",
+                    "市場初期反應熱烈，在地客佔比高"
+                ],
+                cons: [
+                    "建商在台為首案，缺乏本地營建實績參考",
+                    "完工期長達近7年(2031年)，資金鎖定久",
+                    "部分戶別可能面鐵皮屋，景觀較差",
+                    "區域最高價位，入場門檻高"
+                ],
+                marketAnalysis: "市場動態明確指向以自住客為主。高價位、成熟地段與超長工期，自然過濾了短期投資客。目標客群為追求地段保值、資金充裕的在地換屋族。此案是「品牌溢價 vs. 首案風險」的抉擇。",
+                recommendation: {
+                    title: "給規避風險、追求地段保值與即時便利的買家",
+                    text: "宏福悅是最穩健的選擇。其位於成熟核心區的優勢，排除了所有對未來機能的猜測。買家付出的代價是最高的價格與極長的等待時間，但換來的是最確定的資產價值。"
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('[data-tab]');
+            const tabContent = document.getElementById('tab-content');
+            const mainContentArea = document.getElementById('tab-content');
+
+            const projectKeys = Object.keys(projectData);
+
+            function createProjectSection(key) {
+                const data = projectData[key];
+                const section = document.createElement('section');
+                section.id = key;
+                section.className = 'hidden space-y-8';
+
+                section.innerHTML = `
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">${data.name}</h2>
+                <p class="text-slate-500">${data.developer} | ${data.location}</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-emerald-600 flex items-center">
+                        <span class="text-2xl mr-2">👍</span>
+                        核心優勢
+                    </h3>
+                    <ul class="space-y-3 list-inside text-slate-600">
+                        ${data.pros.map(pro => `<li class="flex items-start"><span class="text-emerald-500 mr-2 mt-1">◆</span><span>${pro}</span></li>`).join('')}
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h3 class="text-xl font-bold mb-4 text-rose-600 flex items-center">
+                        <span class="text-2xl mr-2">👎</span>
+                        核心劣勢
+                    </h3>
+                    <ul class="space-y-3 list-inside text-slate-600">
+                        ${data.cons.map(con => `<li class="flex items-start"><span class="text-rose-500 mr-2 mt-1">◆</span><span>${con}</span></li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-bold mb-4 text-slate-800">市場概況：自住 vs 投資</h3>
+                <p class="text-slate-600 leading-relaxed">${data.marketAnalysis}</p>
+            </div>
+        `;
+                return section;
+            }
+
+            projectKeys.forEach(key => {
+                mainContentArea.appendChild(createProjectSection(key));
+            });
+
+            const tableBody = document.getElementById('comparison-table-body');
+            projectKeys.forEach(key => {
+                const data = projectData[key];
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-50';
+                row.innerHTML = `
+            <td class="p-3 font-medium">${data.name}</td>
+            <td class="p-3">${data.location}</td>
+            <td class="p-3">${data.pricePoint}</td>
+            <td class="p-3 text-sm">${data.pros[0]}</td>
+            <td class="p-3 text-sm">${data.cons[0]}</td>
+        `;
+                tableBody.appendChild(row);
+            });
+
+            const recommendationsContainer = document.getElementById('recommendations');
+            projectKeys.forEach(key => {
+                const data = projectData[key];
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 p-6 rounded-lg border border-slate-200';
+                card.innerHTML = `
+            <h3 class="font-bold text-lg text-amber-700 mb-2">${data.recommendation.title}</h3>
+            <p class="text-slate-600">${data.recommendation.text}</p>
+        `;
+                recommendationsContainer.appendChild(card);
+            });
+
+            function switchTab(tabId) {
+                tabs.forEach(tab => {
+                    const isTargetTab = tab.dataset.tab === tabId;
+                    tab.classList.toggle('tab-active', isTargetTab);
+                    tab.classList.toggle('tab-inactive', !isTargetTab);
+                });
+
+                Array.from(tabContent.children).forEach(content => {
+                    content.classList.toggle('hidden', content.id !== tabId);
+                });
+            }
+
+            document.getElementById('nav-tabs').addEventListener('click', (e) => {
+                if (e.target.matches('button[data-tab]')) {
+                    switchTab(e.target.dataset.tab);
+                }
+            });
+
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: projectKeys.map(k => projectData[k].name),
+                    datasets: [
+                        {
+                            label: '真三房平均成交單價 (萬/坪)',
+                            data: projectKeys.map(k => projectData[k].avgPrice),
+                            backgroundColor: 'rgba(71, 85, 105, 0.7)', // slate-600
+                            borderColor: 'rgba(71, 85, 105, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'yPrice',
+                            order: 2
+                        },
+                        {
+                            label: '投資代理指標 (%)',
+                            data: projectKeys.map(k => projectData[k].investmentIndex),
+                            backgroundColor: 'rgba(217, 119, 6, 0.7)', // amber-600
+                            borderColor: 'rgba(217, 119, 6, 1)',
+                            borderWidth: 1,
+                            yAxisID: 'yIndex',
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: '建案價格 vs. 投資熱度',
+                            font: { size: 16 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        if (context.dataset.yAxisID === 'yIndex') {
+                                            label += `${context.parsed.y.toFixed(1)}%`
+                                            if (context.label === '東都綠學' || context.label === '松丹達麗') {
+                                                label += ' (以上)';
+                                            }
+                                        } else {
+                                            label += `約 ${context.parsed.y.toFixed(1)} 萬/坪`;
+                                        }
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }
+                        },
+                        yPrice: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '平均成交單價 (萬/坪)',
+                                color: '#475569'
+                            },
+                            grid: {
+                                drawOnChartArea: true,
+                                color: '#e2e8f0'
+                            },
+                            ticks: {
+                                color: '#475569'
+                            }
+                        },
+                        yIndex: {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '投資代理指標 (%)',
+                                color: '#d97706'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                color: '#d97706',
+                                callback: function (value) {
+                                    return value + '%';
+                                }
+                            },
+                            suggestedMin: 0
+                        }
+                    }
+                }
+            });
+
+            switchTab('comparison');
+        });
+    </script>
+
+</body>
+
+</html>
