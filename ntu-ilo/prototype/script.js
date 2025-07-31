@@ -299,9 +299,9 @@ let students = [
 
 // Simulated open times with start/end dates
 let openTimes = {
-    recommendStudents: { start: '2025-04-01', end: '2025-05-30' },
-    registerSubsidy: { start: '2025-04-10', end: '2025-05-30' }, // Also covers non-registration
-    chineseSurvey: { start: '2025-04-15', end: '2025-05-30' }
+    recommendStudents: { start: '2025-04-01', end: '2025-09-30' },
+    registerSubsidy: { start: '2025-04-10', end: '2025-09-30' }, // Also covers non-registration
+    chineseSurvey: { start: '2025-04-15', end: '2025-09-30' }
 };
 
 // --- UTILITY FUNCTIONS ---
