@@ -55,6 +55,30 @@
         .qr-shadow {
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
+
+        /* 防止瀏覽器對 QR Code Canvas 進行顏色轉換 */
+        .qr-canvas {
+            filter: none !important;
+            -webkit-filter: none !important;
+            color-scheme: light !important;
+            forced-color-adjust: none !important;
+        }
+
+        /* 防止黑色模式影響 QR Code 容器 */
+        .qr-container {
+            color-scheme: light !important;
+            forced-color-adjust: none !important;
+            background: white !important;
+        }
+
+        /* 針對 Canvas 元素的特殊保護 */
+        canvas.qr-code {
+            filter: none !important;
+            -webkit-filter: none !important;
+            color-scheme: light !important;
+            forced-color-adjust: none !important;
+            background-color: white !important;
+        }
     </style>
     <script src="i18n/langs.js"></script>
 </head>
@@ -122,8 +146,8 @@
                     請出示以供系統掃描
                 </p>
 
-                <div class="bg-white p-4 rounded-lg qr-shadow inline-block mb-6">
-                    <div id="qrCode"></div>
+                <div class="bg-white p-4 rounded-lg qr-shadow qr-container inline-block mb-6">
+                    <div id="qrCode" class="qr-canvas"></div>
                 </div>
 
                 <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
@@ -310,15 +334,46 @@
                     return;
                 }
 
-                new QRCode(qrCodeContainer, {
+                const tempContainer = document.createElement('div');
+                tempContainer.style.display = 'none';
+                document.body.appendChild(tempContainer);
+
+                const qr = new QRCode(tempContainer, {
                     text: qrData,
-                    width: 250,
-                    height: 250,
+                    width: 240,
+                    height: 240,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.H,
-                    margin: 2
+                    margin: 0
                 });
+
+                setTimeout(() => {
+                    const qrCanvas = tempContainer.querySelector('canvas');
+                    if (qrCanvas) {
+                        const finalCanvas = document.createElement('canvas');
+                        const padding = 10;
+                        const finalSize = 250;
+                        finalCanvas.width = finalSize;
+                        finalCanvas.height = finalSize;
+                        finalCanvas.className = 'qr-code';
+                        
+                        const ctx = finalCanvas.getContext('2d');
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, finalSize, finalSize);
+                        
+                        const qrSize = finalSize - (padding * 2);
+                        ctx.drawImage(qrCanvas, padding, padding, qrSize, qrSize);
+                        
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(1, 1, finalSize-2, finalSize-2);
+                        
+                        qrCodeContainer.appendChild(finalCanvas);
+                    }
+                    
+                    document.body.removeChild(tempContainer);
+                }, 100);
 
                 userNameDisplay.textContent = name;
                 userIDDisplay.textContent = id;
