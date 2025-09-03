@@ -1778,10 +1778,39 @@
             }
         });
 
+        // Firebase key 清理函數：將特殊字元轉換為安全字元
+        function sanitizeFirebaseKey(key) {
+            if (!key) return key;
+            return key
+                .replace(/\./g, '_DOT_')
+                .replace(/#/g, '_HASH_')
+                .replace(/\$/g, '_DOLLAR_')
+                .replace(/\//g, '_SLASH_')
+                .replace(/\[/g, '_LBRACKET_')
+                .replace(/\]/g, '_RBRACKET_')
+                .replace(/@/g, '_AT_');
+        }
+
+        // 從 Firebase key 還原原始字元
+        function unsanitizeFirebaseKey(key) {
+            if (!key) return key;
+            return key
+                .replace(/_DOT_/g, '.')
+                .replace(/_HASH_/g, '#')
+                .replace(/_DOLLAR_/g, '$')
+                .replace(/_SLASH_/g, '/')
+                .replace(/_LBRACKET_/g, '[')
+                .replace(/_RBRACKET_/g, ']')
+                .replace(/_AT_/g, '@');
+        }
+
         async function saveSessionToFirebase() {
             if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
             const participantsData = {};
-            participants.forEach(p => participantsData[p.id] = { ...p });
+            participants.forEach(p => {
+                const safeKey = sanitizeFirebaseKey(p.id);
+                participantsData[safeKey] = { ...p };
+            });
             const sessionData = {
                 eventName: document.getElementById('eventName').value.trim(),
                 settings: {
@@ -1804,16 +1833,22 @@
 
         async function saveSingleParticipantToFirebase(participant) {
             if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
-            const pRef = window.fbChild(sessionRef, `participants/${participant.id}`);
+            const safeKey = sanitizeFirebaseKey(participant.id);
+            const pRef = window.fbChild(sessionRef, `participants/${safeKey}`);
             const data = {
                 name: participant.name,
+                id: participant.id, // 保留原始 ID 用於顯示
                 note: participant.note || '',
                 checkInTime: participant.checkInTime || '',
                 checkOutTime: participant.checkOutTime || '',
                 inCSV: participant.inCSV !== undefined ? participant.inCSV : false
             };
-            await window.fbUpdate(pRef, data);
-            await window.fbUpdate(sessionRef, { lastUpdated: window.fbServerTimestamp() });
+            try {
+                await window.fbUpdate(pRef, data);
+                await window.fbUpdate(sessionRef, { lastUpdated: window.fbServerTimestamp() });
+            } catch (error) {
+                console.error("Error saving participant to Firebase:", error);
+            }
         }
 
         async function loadSessionFromFirebase(sessionId) {
@@ -1829,7 +1864,15 @@
                     document.getElementById('showCount').checked = data.settings?.showCount ?? true;
                     document.getElementById('showFullName').checked = data.settings?.showFullName ?? true;
                     document.getElementById('showFullID').checked = data.settings?.showFullID ?? true;
-                    participants = Object.values(data.participants || {});
+                    
+                    // 從 Firebase 載入參與者資料並還原原始 ID
+                    participants = Object.values(data.participants || {}).map(p => ({
+                        ...p,
+                        id: p.id || unsanitizeFirebaseKey(Object.keys(data.participants || {}).find(key => 
+                            (data.participants[key].id === p.id) || 
+                            (unsanitizeFirebaseKey(key) === p.id)
+                        )) // 確保 ID 正確還原
+                    }));
                     expectedParticipantsCount = participants.length;
 
                     checkInRecords = participants
@@ -1864,7 +1907,14 @@
                     window.fbOnValue(sessionRef, snapshot => {
                         if (!snapshot.exists()) return;
                         const data = snapshot.val();
-                        participants = Object.values(data.participants || {});
+                        // 從 Firebase 載入參與者資料並還原原始 ID
+                        participants = Object.values(data.participants || {}).map(p => ({
+                            ...p,
+                            id: p.id || unsanitizeFirebaseKey(Object.keys(data.participants || {}).find(key => 
+                                (data.participants[key].id === p.id) || 
+                                (unsanitizeFirebaseKey(key) === p.id)
+                            )) // 確保 ID 正確還原
+                        }));
                         expectedParticipantsCount = participants.length;
                         checkInRecords = participants
                             .filter(p => p.checkInTime)
