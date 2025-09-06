@@ -1778,7 +1778,6 @@
             }
         });
 
-        // Firebase key 清理函數：將特殊字元轉換為安全字元
         function sanitizeFirebaseKey(key) {
             if (!key) return key;
             return key
@@ -1791,7 +1790,6 @@
                 .replace(/@/g, '_AT_');
         }
 
-        // 從 Firebase key 還原原始字元
         function unsanitizeFirebaseKey(key) {
             if (!key) return key;
             return key
@@ -1907,13 +1905,12 @@
                     window.fbOnValue(sessionRef, snapshot => {
                         if (!snapshot.exists()) return;
                         const data = snapshot.val();
-                        // 從 Firebase 載入參與者資料並還原原始 ID
                         participants = Object.values(data.participants || {}).map(p => ({
                             ...p,
                             id: p.id || unsanitizeFirebaseKey(Object.keys(data.participants || {}).find(key => 
                                 (data.participants[key].id === p.id) || 
                                 (unsanitizeFirebaseKey(key) === p.id)
-                            )) // 確保 ID 正確還原
+                            ))
                         }));
                         expectedParticipantsCount = participants.length;
                         checkInRecords = participants
