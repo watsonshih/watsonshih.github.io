@@ -157,8 +157,8 @@ function updateMonthEvents(year, month) {
 
     if (monthEvents.length === 0) {
         eventsHTML = currentLang === 'zh' ?
-            '<div class="no-events">本月無重要事件</div>' :
-            '<div class="no-events">No important events this month</div>';
+            '<div class="no-events">無重要事件</div>' :
+            '<div class="no-events">No important events</div>';
     } else {
         monthEvents.forEach(event => {
             const title = currentLang === 'zh' ? event.title_zh : event.title_en;
