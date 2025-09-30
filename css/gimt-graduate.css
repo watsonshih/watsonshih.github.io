@@ -664,7 +664,7 @@
 
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     .hero-subtitle {
@@ -737,6 +737,10 @@
         font-size: 0.7rem;
         padding: 3px 10px;
     }
+
+    .weekday {
+        font-size: 10px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -745,7 +749,7 @@
     }
 
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .hero-subtitle {
