@@ -74,7 +74,7 @@ function updateCalendar() {
     const monthTitleEn = document.getElementById('current-month-en');
 
     if (monthTitleZh) {
-        monthTitleZh.textContent = `${year}年${monthNames_zh[month]}`;
+        monthTitleZh.textContent = `${year}年 ${monthNames_zh[month]}`;
     }
     if (monthTitleEn) {
         monthTitleEn.textContent = `${monthNames_en[month]} ${year}`;
@@ -447,8 +447,8 @@ function submitForm(formId, isEnglish = false) {
     window.open(url, '_blank', 'noopener');
 
     const message = isEnglish ?
-        'Form data has been prepared and opened in a new window. Please complete the submission there.' :
-        '表單資料已準備完成並在新視窗中開啟，請在該視窗完成送出。';
+        'Form data has been prepared and opened in a new window. Please check the submission there.' :
+        '表單資料已準備完成並在新視窗中開啟，請確認已經送出。';
 
     alert(message);
 }
