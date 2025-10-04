@@ -204,9 +204,11 @@ function calculateTotal() {
         photoPrice = 350;
     } else if (photoPlan.includes('$300')) {
         photoPrice = 300;
+    } else if (photoPlan.includes('$0')) {
+        photoPrice = 0;
     }
 
-    if (gownPrice > 0 && photoPrice > 0) {
+    if (gownPrice > 0 && photoPlan) {
         const total = gownPrice + photoPrice + deposit;
         if (deposit > 0) {
             totalPriceElement.textContent = `NT$ ${total.toLocaleString()} (含押金$${deposit})`;
@@ -246,9 +248,11 @@ function calculateTotalEn() {
         photoPrice = 350;
     } else if (photoPlan.includes('NT$300')) {
         photoPrice = 300;
+    } else if (photoPlan.includes('NT$0')) {
+        photoPrice = 0;
     }
 
-    if (gownPrice > 0 && photoPrice > 0) {
+    if (gownPrice > 0 && photoPlan) {
         const total = gownPrice + photoPrice + deposit;
         if (deposit > 0) {
             totalPriceElement.textContent = `NT$ ${total.toLocaleString()} (incl. $${deposit} deposit)`;
@@ -433,6 +437,7 @@ function submitForm(formId, isEnglish = false) {
     if (photoPlan.includes('550')) photoPrice = 550;
     else if (photoPlan.includes('350')) photoPrice = 350;
     else if (photoPlan.includes('300')) photoPrice = 300;
+    else if (photoPlan.includes('0')) photoPrice = 0;
 
     const totalAmount = gownPrice + photoPrice + deposit;
     if (deposit > 0) {
