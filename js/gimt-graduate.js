@@ -6,11 +6,10 @@ const events = {
     '2025-10': [
         { date: 5, title_zh: '畢業照拍攝方案登記截止', title_en: 'Photography Registration Deadline', type: 'urgent' },
         { date: 20, title_zh: '畢業服租借/購買登記截止', title_en: 'Gown Registration Deadline', type: 'urgent' },
-        { date: 25, title_zh: '繳費截止日', title_en: 'Payment Deadline', type: 'important' },
-        { date: 27, title_zh: '學位照拍攝週開始', title_en: 'Portrait Session Begins', type: 'normal' }
+        { date: 25, title_zh: '繳費截止日', title_en: 'Payment Deadline', type: 'important' }
     ],
     '2025-11': [
-        { date: 7, title_zh: '學位照拍攝週結束', title_en: 'Portrait Session Ends', type: 'normal' },
+        { date: 4, title_zh: '學位照拍攝 (15:30-16:30)', title_en: 'Portrait Session (15:30-16:30)', type: 'normal' },
         { date: 20, title_zh: '畢業服尺寸更換日', title_en: 'Gown Size Exchange Day', type: 'normal' },
         { date: 21, title_zh: '畢業服尺寸更換日', title_en: 'Gown Size Exchange Day', type: 'normal' }
     ],
