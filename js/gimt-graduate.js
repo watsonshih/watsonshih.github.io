@@ -9,7 +9,7 @@ const events = {
         { date: 25, title_zh: '繳費截止日', title_en: 'Payment Deadline', type: 'important' }
     ],
     '2025-11': [
-        { date: 4, title_zh: '學位照拍攝 (15:30-16:30)', title_en: 'Portrait Session (15:30-16:30)', type: 'normal' },
+        { date: 4, title_zh: '學位照拍攝 (15:30-16:30，T4 廣場)', title_en: 'Portrait Session (15:30-16:30, T4 Plaza)', type: 'normal' },
         { date: 20, title_zh: '畢業服尺寸更換日', title_en: 'Gown Size Exchange Day', type: 'normal' },
         { date: 21, title_zh: '畢業服尺寸更換日', title_en: 'Gown Size Exchange Day', type: 'normal' }
     ],
