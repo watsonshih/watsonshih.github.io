@@ -9,12 +9,12 @@ const events = {
         { date: 25, title_zh: '繳費截止日', title_en: 'Payment Deadline', type: 'important' }
     ],
     '2025-11': [
-        { date: 4, title_zh: '學位照拍攝 (15:30-16:30，T4 廣場)', title_en: 'Portrait Session (15:30-16:30, T4 Plaza)', type: 'normal' },
+        { date: 4, title_zh: '學位照拍攝 (15:30-16:30，T4 廣場)', title_en: 'Portrait Session (15:30-16:30, T4 Plaza)', type: 'highlight' },
         { date: 20, title_zh: '畢業服尺寸更換日', title_en: 'Gown Size Exchange Day', type: 'normal' },
         { date: 21, title_zh: '畢業服尺寸更換日', title_en: 'Gown Size Exchange Day', type: 'normal' }
     ],
     '2025-12': [
-        { date: 5, title_zh: '團體照拍攝日', title_en: 'Group Photo Session', type: 'highlight' }
+        { date: 4, title_zh: '團體照拍攝日 (14:20-15:10，大門)', title_en: 'Group Photo Session (14:20-15:10, Main Gate)', type: 'highlight' }
     ],
     '2026-05': [
         { date: 23, title_zh: '發放實體照片', title_en: 'Physical Photo Distribution', type: 'normal' }
