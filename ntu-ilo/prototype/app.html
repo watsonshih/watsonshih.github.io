@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILO 學生就學狀態追蹤系統 (模擬 二版)</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>學生就學狀態追蹤系統 (模擬用 二版)</h1>
+        <div class="user-info">
+            <span id="currentUser"></span> - <span id="currentRole"></span>
+            <button id="logoutButton">登出</button>
+        </div>
+    </header>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar">
+        </nav>
+        <main class="content" id="contentArea">
+        </main>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 id="modalTitle">提示</h3>
+            <div id="modalBody">
+                <p>訊息</p>
+            </div>
+            <div id="modalFooter">
+                <button id="modalConfirmBtn">確認</button>
+                <button id="modalCancelBtn">取消</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js?V=20251119"></script>
+</body>
+
+</html>

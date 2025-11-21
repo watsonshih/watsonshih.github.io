@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark" data-lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords"
+        content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson, event check-in, QR Code scanner, attendance system">
+    <meta name="description"
+        content="透過掃描 QR Code，讓您的活動簽到簽退更快速！Streamline your event check-in/out process with QR Code scanning!">
+    <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
+    <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <meta itemprop="image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <meta property="og:image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <title>QuickRecord 使用指南 | User Guide</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "r686l4p8t9");
+    </script>
+    <script src="js/tailwindcss.3.4.16.js"></script>
+    <script src="i18n/langs_readme.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#171717',
+                            100: '#1E1E1E',
+                            200: '#2D2D2D',
+                            300: '#404040',
+                            400: '#525252',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
+
+        * {
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+            word-break: break-word;
+            scroll-behavior: smooth;
+        }
+
+        a {
+            word-break: break-all;
+        }
+
+        span.code {
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 5px;
+            padding: 5px 10px;
+            line-height: 3;
+            border-radius: 8px;
+            color: #FFF;
+        }
+
+        html[data-lang="en"] * {
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+        }
+
+        .page-transition {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+
+        .feature-icon {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 9999px;
+            padding: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .nav-scroller {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: #171717;
+            border-bottom: 1px solid #404040;
+            padding: 0.5rem 0;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .nav-scroller::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav-scroller::-webkit-scrollbar-track {
+            background: #2D2D2D;
+        }
+
+        .nav-scroller::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            padding: 0.5rem 0.75rem;
+            color: #9CA3AF;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-link.active {
+            color: white;
+            background-color: rgba(59, 130, 246, 0.2);
+            font-weight: 500;
+        }
+
+        .section-content {
+            scroll-margin-top: 4rem;
+        }
+    </style>
+</head>
+
+<body class="bg-dark-100 text-gray-300">
+    <nav class="bg-dark-50 border-b border-dark-300">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="https://watsonshih.github.io/QuickRecord/" target="_blank" class="flex items-center">
+                        <img src="https://watsonshih.github.io/QuickRecord/pic/icon.png" alt="QuickRecord"
+                            class="h-8 w-8 mr-2">
+                        <h1 class="text-xl font-semibold text-gray-100">QuickRecord</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="langSwitchBtn"
+                        class="text-sm text-blue-400 hover:text-blue-300 transition duration-150 ease-in-out px-2 py-2 leading-none border border-blue-400/50 rounded">
+                        EN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="nav-scroller">
+        <div class="container px-4 mx-auto flex space-x-2 overflow-x-auto sm:justify-center">
+            <a href="#intro" class="nav-link" data-lang-key="navIntro">簡介</a>
+            <a href="#quickStart" class="nav-link" data-lang-key="navQuickStart">快速上手</a>
+            <a href="#section1" class="nav-link" data-lang-key="navSection1">1. 準備名單</a>
+            <a href="#section2" class="nav-link" data-lang-key="navSection2">2. 開始簽到流程</a>
+            <a href="#section3" class="nav-link" data-lang-key="navSection3">3. 設定資訊</a>
+            <a href="#section4" class="nav-link" data-lang-key="navSection4">4. 簽到階段</a>
+            <a href="#section5" class="nav-link" data-lang-key="navSection5">5. 簽退階段</a>
+            <a href="#section6" class="nav-link" data-lang-key="navSection6">6. 下載紀錄</a>
+            <a href="#section7" class="nav-link" data-lang-key="navSection7">輔助工具</a>
+            <a href="#section8" class="nav-link" data-lang-key="navSection8">其他功能</a>
+            <a href="#section9" class="nav-link" data-lang-key="navSection9">成功秘訣</a>
+            <a href="#section10" class="nav-link" data-lang-key="navSection10">服務條款</a>
+            <a href="#section11" class="nav-link" data-lang-key="navSection11">開源授權</a>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-10 max-w-5xl">
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8" id="intro">
+            <h1 class="text-3xl font-bold text-gray-100 mb-4" data-lang-key="mainTitle">QuickRecord - 快速簽到退系統使用說明</h1>
+            <p class="mb-6" data-lang-key="introDescription">QuickRecord
+                是一個簡單易用的活動簽到退系統，專為減輕活動舉辦者負擔而設計，無需安裝任何應用程式，直接使用網頁瀏覽器即可操作，大幅提升簽到退的效率，適合研討會、課程、會議、社團活動等場合使用。</p>
+
+            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                <a href="https://watsonshih.github.io/QuickRecord/" target="_blank"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+                    data-lang-key="useNow">
+                    立即使用 QuickRecord
+                </a>
+                <a href="https://watsonshih.github.io/QuickRecord/user.html" target="_blank"
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+                    data-lang-key="qrGenerator">
+                    參與者 QR Code 產生頁面
+                </a>
+                <a href="https://watsonshih.github.io/QuickRecord/generator.html" target="_blank"
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+                    data-lang-key="emailGenerator">
+                    通行碼郵件寄送程式產生器
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8" id="quickStart">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-4" data-lang-key="quickStart">🚀 快速上手</h2>
+            <ol class="list-decimal list-outside space-y-4 pl-4">
+                <li data-lang-key="step1">開啟 QuickRecord 管理端網頁</li>
+                <div class="mt-4">
+                    <a href="https://watsonshih.github.io/QuickRecord" target="_blank"
+                        class="inline-flex items-center px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200">
+                        <span data-lang-key="useNow">立即使用 QuickRecord</span>
+                    </a>
+                </div>
+                <li>
+                    <span data-lang-key="step2">準備參與者名單 (非必要)：</span>
+                    <ul class="list-disc list-outside ml-6 mt-2 space-y-2">
+                        <li data-lang-key="step2a">直接開始：若不需預先匯入名單，點擊「直接開始」。</li>
+                        <li>
+                            <span data-lang-key="step2b">預先匯入參與者名單：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li>
+                                    <div class="my-4">
+                                        <a href="https://watsonshih.github.io/QuickRecord/template.csv" target="_blank"
+                                            class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                            </svg>
+                                            <span data-lang-key="downloadTemplate">下載 CSV 模板</span>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li data-lang-key="step2b2">填寫參與者資料 (至少需有 Name 和 ID 欄位，且 ID 內容不可重複)。</li>
+                                <li data-lang-key="step2b3">將 CSV 檔案拖曳至主頁上傳區域，或點擊區域選擇檔案。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <span data-lang-key="step3">設定資訊：</span>
+                    <ul class="list-disc list-outside ml-6 mt-2 space-y-2">
+                        <li data-lang-key="step3a">輸入「活動名稱」(必填)。</li>
+                        <li data-lang-key="step3b">調整顯示設定 (預設顯示報到人數、完整姓名與 ID)。</li>
+                        <li data-lang-key="step3c">是否開啟「雲端同步」(預設關閉，開啟後可與其他裝置共用或暫存當次簽到退，資料將不定時刪除)。</li>
+                        <li data-lang-key="step3d">完成設定後，點擊「開始簽到」。</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <span data-lang-key="step4">簽到階段：</span>
+                    <ul class="list-disc list-outside ml-6 mt-2 space-y-2">
+                        <li data-lang-key="step4a">將鏡頭對準參與者的 QR Code 進行掃描。</li>
+                        <li data-lang-key="step4b">畫面會顯示掃描狀態與最後簽到者資訊。</li>
+                        <li data-lang-key="step4c">下方列表可查看所有參與者及已簽到者狀態。</li>
+                        <li data-lang-key="step4d">完成後，點擊「結束簽到並進入簽退」。</li>
+                    </ul>
+                </li>
+
+                <li>
+                    <span data-lang-key="step5">簽退階段：</span>
+                    <ul class="list-disc list-outside ml-6 mt-2 space-y-2">
+                        <li data-lang-key="step5a">操作同簽到階段，掃描參與者 QR Code 進行簽退。</li>
+                        <li data-lang-key="step5b">尚未簽到者無法簽退，可點選「返回簽到頁」補簽到後再簽退。</li>
+                        <li data-lang-key="step5c">下方列表可查看所有參與者、待簽退、已簽退者狀態。</li>
+                        <li data-lang-key="step5d">完成點名後，點擊「結束簽退並下載紀錄」，系統會自動下載的完整的簽到退 CSV 紀錄檔。</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="mt-6 p-6 bg-dark-200 rounded-lg">
+                <h3 class="font-medium text-gray-100 mb-2" data-lang-key="forUserGuide">為參與者提供簽到退指引：</h3>
+                <ul class="list-disc list-outside pl-5 space-y-2">
+                    <li data-lang-key="forUserGuide1">產生個人 QR Code：提供 <a
+                            href='https://watsonshih.github.io/QuickRecord/user.html' target="_blank"
+                            class='text-blue-400 hover:text-blue-300'>參與者頁面</a> 給參與者，讓他們自行輸入姓名和 ID 產生簽到退用的 QR
+                        Code。您可以透過我們製作好的雙語海報來讓他們掃描：</li>
+                    <div class="flex flex-col my-2 sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="https://watsonshih.github.io/QuickRecord/poster/user_A4.pdf" target="_blank"
+                            class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+                            data-lang-key="forUserGuidebtn1">
+                            參與者簽到退條碼生成引導海報 (A4)
+                        </a>
+                        <a href="https://watsonshih.github.io/QuickRecord/poster/user_screen.pdf" target="_blank"
+                            class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 text-center"
+                            data-lang-key="forUserGuidebtn2">
+                            參與者簽到退條碼生成引導海報 (16:9)
+                        </a>
+                    </div>
+                    <li data-lang-key="forUserGuide2">批次寄送 QR Code 連結：使用 <a
+                            href='https://watsonshih.github.io/QuickRecord/generator.html' target="_blank"
+                            class='text-blue-400 hover:text-blue-300'>通行碼郵件寄送程式產生器</a>，搭配您的 Google Sheet 名單 (需含 Name,
+                        ID, Email)，產生 Google Apps Script，即可透過 Gmail 自動寄送個人化的 QR Code 連結給每位參與者。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-6" data-lang-key="detailedInstructions">📖 詳細說明</h2>
+
+            <div class="mb-10 section-content" id="section1">
+                <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                    <span class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </span>
+                    <span data-lang-key="section1">1. 準備參與者名單 (CSV 檔案 - 選用)</span>
+                </h3>
+                <div class="pl-12">
+                    <p class="mb-3" data-lang-key="section1Intro">雖然可以直接開始簽到，但預先匯入名單有助於管理與核對。</p>
+
+                    <div class="mt-4">
+                        <a href="https://watsonshih.github.io/QuickRecord/template.csv" target="_blank"
+                            class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            <span data-lang-key="downloadTemplate">下載 CSV 模板</span>
+                        </a>
+                    </div>
+
+                    <h4 class="font-medium text-gray-200 mt-4 mb-2" data-lang-key="formatRequirements">格式要求：</h4>
+                    <ul class="list-disc list-outside space-y-1 ml-4">
+                        <li data-lang-key="formatRequirements1">必須是 .csv 檔案 (可使用 Excel 儲存)。</li>
+                        <li data-lang-key="formatRequirements2">第一列為標頭，必須包含 Name 和 ID 兩個欄位。可視需求新增 Note 欄位，用於補充資訊。</li>
+                        <li data-lang-key="formatRequirements4">ID 是用來核對參與者的關鍵欄位，區分大小寫，且不可重複。<br>也就是說，Name 跟 Note
+                            欄位的內容都可以重複，但 ID 欄位不行，例如：「王小明」和「王小明」的 ID 可以是 A12345678 和 A12345679，但不能都是 A12345678 和
+                            A12345678。</li>
+                    </ul>
+
+                    <h4 class="font-medium text-gray-200 mt-4 mb-2" data-lang-key="fieldDescription">欄位說明 (建議但不限資料形式)：
+                    </h4>
+                    <ul class="list-disc list-outside space-y-1 ml-4">
+                        <li data-lang-key="fieldDescription1">Name: 參與者姓名，必填且可重複。</li>
+                        <li data-lang-key="fieldDescription2">ID: 參與者的唯一識別碼 (如電話、學號、員工編號、報名編號等)，必填且不可重複。</li>
+                        <li data-lang-key="fieldDescription3">Note: 備註欄位 (如組別、特殊需求等)，此資訊會顯示在簽到/簽退頁面，可選填。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-10 section-content" id="section2">
+                <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                    <span class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </span>
+                    <span data-lang-key="section2">2. 開始新的簽到流程</span>
+                </h3>
+                <div class="pl-12">
+                    <ul class="list-disc list-outside space-y-3 ml-4">
+                        <li data-lang-key="section2_1">直接開始：如果您不需要預先載入名單，或想讓系統在掃描到新人時自動建立資料，請選擇此選項。</li>
+                        <li>
+                            <span data-lang-key="section2_2">上傳 CSV：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section2_2a">將準備好的 CSV 檔案拖曳到虛線框區域，或點擊該區域選擇檔案上傳。</li>
+                                <li data-lang-key="section2_2b">上傳後，系統會自動讀取檔案名稱作為預設的「活動名稱」。</li>
+                                <li data-lang-key="section2_2c">系統會跳轉至「資訊設定」頁面，並在下方顯示「參與者名單預覽」。</li>
+                                <li data-lang-key="section2_2d">亂碼處理：如果預覽名單出現亂碼，可點擊「出現亂碼？」按鈕，系統會自動嘗試其他編碼方式 (UTF-8 /
+                                    Big5)。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-10 section-content" id="section3">
+                <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                    <span class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </span>
+                    <span data-lang-key="section3">3. 設定活動資訊</span>
+                </h3>
+                <div class="pl-12">
+                    <p class="mb-3" data-lang-key="section3Intro">在此頁面設定本次簽到活動的細節。</p>
+
+                    <ul class="list-disc list-outside space-y-3 ml-4">
+                        <li data-lang-key="section3_1">活動名稱 (必填)：輸入本次活動的名稱，此名稱將顯示在簽到/簽退頁面，並用於下載的紀錄檔檔名。</li>
+                        <li>
+                            <span data-lang-key="section3_2">顯示設定：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section3_2a">顯示報到人數：是否在簽到/簽退頁面顯示目前已簽到/簽退的人數統計；取消勾選擇不顯示。</li>
+                                <li data-lang-key="section3_2b">顯示完整姓名：簽到/簽退頁面和下方列表會顯示完整姓名，預設勾選；取消勾選則會部分隱藏 (如：王 * 明)。
+                                </li>
+                                <li data-lang-key="section3_2c">顯示完整 ID：會顯示完整的 ID，預設勾選；取消勾選則會部分隱藏 (如：A*** 9)。</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span data-lang-key="section3_3">雲端同步 (選用)：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section3_3a">功能：若啟用，簽到/簽退狀態會即時同步到雲端資料庫。這允許您：</li>
+                                <ul class="list-disc list-outside ml-8 mt-1 space-y-1">
+                                    <li data-lang-key="section3_3a1">在多個裝置上使用同一個連結，共同進行簽到/簽退作業，簽到退資訊會互相同步。</li>
+                                    <li data-lang-key="section3_3a2">不小心關閉瀏覽器或重新整理後，可透過同一個連結恢復先前的簽到狀態。</li>
+                                </ul>
+                                <li data-lang-key="section3_3b">
+                                    使用：勾選後，進入簽到/簽退頁面時，上方會出現一個包含「已啟用雲端同步，點此複製連結以共用、恢復本次點名階段。」的按鈕。點擊即可複製連結，可在其他裝置開啟或用於恢復資料。
+                                </li>
+                                <li data-lang-key="section3_3c">
+                                    注意：需在開始簽到前就啟用，開始簽到後就無法更改此設定。雲端資料僅為暫存，可能隨時被清除，請務必在活動結束後下載紀錄檔。</li>
+                            </ul>
+                        </li>
+                        <li data-lang-key="section3_4">開始簽到：確認設定無誤後，點擊此按鈕進入簽到階段。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-10 section-content" id="section4">
+                <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                    <span class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                    </span>
+                    <span data-lang-key="section4">4. 簽到階段</span>
+                </h3>
+                <div class="pl-12">
+                    <p class="mb-3" data-lang-key="section4Intro">此頁面用於掃描參與者的 QR Code 進行簽到。</p>
+
+                    <ul class="list-disc list-outside space-y-3 ml-4">
+                        <li>
+                            <span data-lang-key="section4_1">QR Code 掃描區：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section4_1a">第一次使用系統會要求授權使用相機。</li>
+                                <li data-lang-key="section4_1b">將相機鏡頭對準參與者提供的 QR Code。</li>
+                                <li data-lang-key="section4_1c">掃描成功或失敗時，上方狀態列會變色、顯示簽到訊息並播放提示音。</li>
+                            </ul>
+                        </li>
+                        <li data-lang-key="section4_2">活動資訊區：顯示您設定的活動名稱、目前時間、已簽到人數/總人數。</li>
+                        <li data-lang-key="section4_3">最後簽到資訊：顯示最近一位成功簽到者的姓名、ID、備註 (Note) 和簽到時間。</li>
+                        <li data-lang-key="section4_4">返回設定頁：若需修改活動名稱或顯示設定，可點此返回上一頁 (簽到進度會保留)。</li>
+                        <li data-lang-key="section4_5">結束簽到並進入簽退：所有參與者簽到完成後，點擊此按鈕進入簽退階段。</li>
+                        <li>
+                            <span data-lang-key="section4_6">參與者列表：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section4_6a">所有參與者：顯示名單中 (或掃描加入) 的所有參與者及其簽到狀態。</li>
+                                <li data-lang-key="section4_6b">已簽到參與者：僅顯示已完成簽到的參與者及其簽到時間。</li>
+                                <li data-lang-key="section4_6c">處理未在名單者：若掃描到的 QR Code 資訊 (ID)
+                                    不在預載名單中，系統會自動將此人加入名單並標記為已簽到。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-10 section-content" id="section5">
+                <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                    <span class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                        </svg>
+                    </span>
+                    <span data-lang-key="section5">5. 簽退階段</span>
+                </h3>
+                <div class="pl-12">
+                    <p class="mb-3" data-lang-key="section5Intro">此頁面用於掃描參與者的 QR Code 進行簽退。操作介面與簽到階段基本相同。</p>
+
+                    <ul class="list-disc list-outside space-y-3 ml-4">
+                        <li data-lang-key="section5_1">QR Code 掃描區：同簽到階段，掃描 QR Code 進行簽退。
+                            <br>注意：參與者必須先完成簽到，才能成功簽退。若掃到未簽到者的 QR Code，會提示錯誤。
+                        </li>
+                        <li data-lang-key="section5_2">活動資訊區：顯示活動名稱、目前時間、已簽退人數/已簽到總人數。</li>
+                        <li data-lang-key="section5_3">最後簽退資訊：顯示最近一位成功簽退者的姓名、ID、備註 (Note) 和簽退時間。</li>
+                        <li data-lang-key="section5_4">返回簽到頁：若需返回簽到階段 (例如有人補簽到)，可點此按鈕。</li>
+                        <li data-lang-key="section5_5">結束簽退並下載紀錄：所有簽退作業完成後，點擊此按鈕結束本次活動並下載紀錄檔。</li>
+                        <li>
+                            <span data-lang-key="section5_6">參與者列表：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section5_6a">所有參與者：顯示所有參與者的簽到/簽退狀態。</li>
+                                <li data-lang-key="section5_6b">待簽退參與者：僅顯示已簽到但尚未簽退的參與者。</li>
+                                <li data-lang-key="section5_6c">已簽退參與者：僅顯示已完成簽退的參與者及其簽退時間。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb section-content" id="section6">
+                <h3 class="text-xl font-bold text-gray-100 mb-4 flex items-center">
+                    <span class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                    </span>
+                    <span data-lang-key="section6">6. 下載簽到退紀錄</span>
+                </h3>
+                <div class="pl-12">
+                    <p class="mb-3" data-lang-key="section6Intro">點擊「結束簽退並下載紀錄」後，瀏覽器會自動下載一個 CSV 檔案。</p>
+
+                    <ul class="list-disc list-outside space-y-3 ml-4">
+                        <li data-lang-key="section6_1">檔案名稱：[活動名稱]_QuickRecord_[日期].csv
+                            (例如：新生茶會_QuickRecord_20250519.csv)。</li>
+                        <li>
+                            <span data-lang-key="section6_2">檔案內容：包含以下欄位：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section6_2a">Name: 姓名</li>
+                                <li data-lang-key="section6_2b">ID: ID</li>
+                                <li data-lang-key="section6_2c">Note: 備註</li>
+                                <li data-lang-key="section6_2d">InCSV: 是否在您初始上傳的 CSV 名單中 (Yes/No)</li>
+                                <li data-lang-key="section6_2e">CheckInTime: 簽到時間 (格式：YYYY-MM-DD HH:MM:SS)</li>
+                                <li data-lang-key="section6_2f">CheckOutTime: 簽退時間 (格式：YYYY-MM-DD HH:MM:SS)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8 section-content" id="section7">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-6" data-lang-key="section7">輔助工具</h2>
+            <div class="">
+                <div class="mb-3">
+                    <h4 class="text-xl font-bold text-gray-200 mb-2" data-lang-key="section7_1">參與者 QR Code 產生頁面</h4>
+                    <ul class="list-disc list-outside space-y-2 ml-6">
+                        <li data-lang-key="section7_1a">網址：<a href='https://watsonshih.github.io/QuickRecord/user.html'
+                                class='text-blue-400 hover:text-blue-300'>https://watsonshih.github.io/QuickRecord/user.html</a>
+                        </li>
+                        <li data-lang-key="section7_1b">用途：讓參與者自行輸入其「姓名」和「ID」，產生專屬的 QR Code，用於現場簽到退掃描。</li>
+                        <li data-lang-key="section7_1c">重要：參與者輸入的「姓名」和「ID」必須與您名單上或預期掃描到的資料完全一致 (包含大小寫)。</li>
+                        <li data-lang-key="section7_1d">連結帶入參數：您可以預先產生包含參與者資訊的連結，讓他們點開即顯示 QR
+                            Code，無需手動輸入。格式為：https://watsonshih.github.io/QuickRecord/user.html?name=姓名&id=ID (注意：姓名和
+                            ID 需要進行 URL 編碼，特別是中文或特殊字元)。</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xl font-bold text-gray-200 mb-2" data-lang-key="section7_2">通行碼郵件寄送程式產生器</h4>
+                    <ul class="list-disc list-outside space-y-2 ml-6">
+                        <li data-lang-key="section7_2a">網址：<a
+                                href='https://watsonshih.github.io/QuickRecord/generator.html'
+                                class='text-blue-400 hover:text-blue-300'>https://watsonshih.github.io/QuickRecord/generator.html</a>
+                        </li>
+                        <li data-lang-key="section7_2b">用途：產生一段 Google Apps Script
+                            程式碼，用於自動寄送個人化的活動通知信給參與者，信件中會包含他們專屬的 QR Code 產生頁面連結 (已帶入姓名和 ID 參數)。</li>
+                        <li>
+                            <span data-lang-key="section7_2c">使用流程：</span>
+                            <ol class="list-decimal list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section7_2c1">準備一個 Google Sheet，工作表需要有 Name、ID、Email、Sent
+                                    四個欄位，且順序不可更改。<br>您亦可直接下載模板，上傳到 Google Drive 中開啟：</li>
+                                <div class="my-2">
+                                    <a href="https://bit.ly/quickrecordemailsheet" target="_blank"
+                                        class="inline-flex items-center my-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-200 mr-2"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M7 8h10M7 12h10m-5 4h5" />
+                                        </svg>
+                                        <span data-lang-key="section7_2c1btn">參考 Google Sheet 模板</span>
+                                    </a>
+                                </div>
+                                <li data-lang-key="section7_2c2">前往產生器頁面，填寫活動相關資訊 (活動名稱、主辦單位、時間、地點等)。</li>
+                                <li data-lang-key="section7_2c3">點擊「生成程式碼」>「複製到剪貼板」。</li>
+                                <li data-lang-key="section7_2c4">回到 Google Sheet，確保已完善參與者資料後
+                                    (Name、ID、Email)，即可準備寄送郵件。</li>
+                                <li data-lang-key="section7_2c5">點選「擴充功能」>「Apps Script」。</li>
+                                <li data-lang-key="section7_2c6">將複製的程式碼貼到指令碼編輯器中，取代原有的內容。</li>
+                                <li data-lang-key="section7_2c7">儲存指令碼 (給予一個名稱，如 "Send Email")。</li>
+                                <li data-lang-key="section7_2c8">在編輯器上方選擇要執行的函式 sendEmails，然後點擊「執行」。</li>
+                                <li data-lang-key="section7_2c9">首次執行會要求授權 (允許指令碼存取您的試算表及代表您寄送 Gmail)，請同意授權。
+                                </li>
+                                <li data-lang-key="section7_2c10">執行後，指令碼會讀取試算表資料，逐一寄送郵件，並在 Sent 欄位標記 \'Y\'</li>
+                            </ol>
+                        </li>
+                        <li>
+                            <span data-lang-key="section7_2d">注意：</span>
+                            <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                                <li data-lang-key="section7_2d1">Gmail 有每日寄送郵件數量限制 (免費帳號通常為 100 封/天)，大量寄送請注意。</li>
+                                <li data-lang-key="section7_2d2">請確保 Google Sheet 中的 Name 和 ID 與參與者名單 CSV 資料一致。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8 section-content" id="section8">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-6" data-lang-key="section8">其他功能</h2>
+            <div class="">
+                <ul class="list-disc list-outside space-y-3 ml-6">
+                    <li data-lang-key="section8_1">語言切換：網頁右上角提供 EN / 中 按鈕，可切換介面語言。</li>
+                    <li data-lang-key="section8_2">目前時間：網頁右上角會顯示目前系統時間。</li>
+                    <li data-lang-key="section8_3">狀態指示燈：簽到/簽退頁面頂部有一條細長的指示燈，有白色呼吸效果表示正在掃描，並會根據掃描狀態變色
+                        (綠色成功、黃色警告、紅色錯誤)。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8 section-content" id="section9">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-6" data-lang-key="section9">成功秘訣</h2>
+            <div class="">
+                <ul class="list-disc list-outside space-y-3 ml-6">
+                    <li data-lang-key="section9_1">網路穩定：若使用雲端同步，請確保網路連線穩定。</li>
+                    <li data-lang-key="section9_2">光線充足：確保掃描環境光線充足，有利於 QR Code 辨識。</li>
+                    <li data-lang-key="section9_3">QR Code 清晰：提醒參與者確保其 QR Code 顯示清晰、無遮擋、需調亮螢幕亮度。</li>
+                    <li data-lang-key="section9_4">資料一致：確保名單上的 Name 和 ID 與參與者 QR Code 中的資訊完全一致。</li>
+                    <li data-lang-key="section9_5">事前測試：建議在正式活動前，使用幾個測試資料進行完整流程的測試。</li>
+                    <li data-lang-key="section9_6">及時下載：活動結束後，請務必下載紀錄檔備份。</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8 section-content" id="section10">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-6" data-lang-key="section10">服務條款與免責聲明</h2>
+            <div class="">
+                <p class="mb-3" data-lang-key="section10Intro">當您使用 QuickRecord 服務時，即表示您同意以下條款與條件：</p>
+                <ol class="list-decimal list-outside space-y-3 ml-6">
+                    <li data-lang-key="section10_1">服務性質「按現狀」提供：QuickRecord
+                        是一項免費提供的工具，按「現狀」和「現有」基礎提供，不包含任何明示或暗示的保證。我們不保證服務將完全不中斷、完全無錯誤或能滿足您的所有特定需求。</li>
+                    <li data-lang-key="section10_2">使用風險自負：您使用本服務的風險由您自行承擔。對於因使用或無法使用本服務而導致的任何直接、間接、偶然或衍生的損害
+                        (包括但不限於資料遺失、紀錄錯誤、系統無法使用、資訊不準確等)，服務建立者概不負責。</li>
+                    <li>
+                        <span data-lang-key="section10_3">資料處理與責任：</span>
+                        <ul class="list-disc list-outside ml-6 mt-1 space-y-1">
+                            <li data-lang-key="section10_3a">參與者資料主要在您的瀏覽器本機處理。</li>
+                            <li data-lang-key="section10_3b">
+                                若您選擇啟用「雲端同步」功能，資料將會暫時儲存在雲端資料庫上。如前所述，此雲端資料是不穩定的，可能隨時被清除，恕不另行通知。</li>
+                            <li data-lang-key="section10_3c">您有最終責任在活動結束後，立即下載並妥善備份您的活動紀錄檔。服務建立者不對任何雲端資料的遺失或清除負責。
+                            </li>
+                        </ul>
+                    </li>
+                    <li data-lang-key="section10_4">使用者責任：您有責任確保您輸入資料 (如 CSV 檔案內容、參與者資訊)
+                        的準確性，並根據說明文件正確使用本系統。因資料輸入錯誤或不當使用系統所產生的問題，服務建立者概不負責。</li>
+                    <li data-lang-key="section10_5">條款變更：服務建立者保留隨時修改這些條款的權利，恕不另行通知。在條款變更後繼續使用本服務，即表示您接受修改後的條款。</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="bg-dark-50 rounded-lg border border-dark-300 p-6 mb-8 section-content" id="section11">
+            <h2 class="text-2xl font-semibold text-gray-100 mb-6" data-lang-key="section11">開源授權</h2>
+            <div class="">
+                <p data-lang-key="section11Text">QuickRecord 是一個開源專案，原始碼託管於 GitHub，並採用 <strong>Apache License
+                        2.0</strong> 進行授權。</p>
+                <div class="my-2">
+                    <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank"
+                        class="inline-flex items-center my-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors duration-200">
+                        <span>Apache License 2.0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="p-6">
+            <div class="text-center">
+                <div class="flex flex-col justify-center space-y-4 sm:flex-row sm:space-x-5 sm:space-y-0">
+                    <a href="https://watsonshih.github.io/QuickRecord/" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerHome">
+                        開始簽到
+                    </a>
+                    <a href="https://watsonshih.github.io/QuickRecord/user.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerParticipant">
+                        參與者頁面
+                    </a>
+                    <a href="https://watsonshih.github.io/QuickRecord/generator.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerGenerator">
+                        通行碼郵件產生器
+                    </a>
+                </div>
+                <p class="mt-4 text-gray-400">
+                    <a href="https://watsonshih.github.io/" class="hover:text-blue-400 transition-colors"
+                        target="_blank" data-lang-key="copyright">© Watson</a>
+                </p>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        let currentLang = 'zh-TW';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const langSwitchBtn = document.getElementById('langSwitchBtn');
+            const htmlTag = document.documentElement;
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                htmlTag.lang = lang;
+                htmlTag.setAttribute('data-lang', lang);
+                localStorage.setItem('quickRecordLang', lang);
+
+                langSwitchBtn.textContent = lang === 'zh-TW' ? 'EN' : '中';
+
+                document.querySelectorAll('[data-lang-key]').forEach(el => {
+                    const key = el.getAttribute('data-lang-key');
+                    if (languages[lang] && languages[lang][key] !== undefined) {
+                        el.innerHTML = languages[lang][key];
+                    }
+                });
+            }
+
+            langSwitchBtn.addEventListener('click', () => {
+                const newLang = currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+                setLanguage(newLang);
+            });
+
+            const savedLang = localStorage.getItem('quickRecordLang');
+            setLanguage(savedLang && languages[savedLang] ? savedLang : 'zh-TW');
+
+            const sections = document.querySelectorAll('.section-content, #intro, #quickStart');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const idToNavLink = {};
+            navLinks.forEach(link => {
+                const targetId = link.getAttribute('href').substring(1);
+                idToNavLink[targetId] = link;
+            });
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '-100px 0px -80% 0px',
+                threshold: 0
+            };
+
+            function handleIntersection(entries) {
+                entries.forEach(entry => {
+                    const id = entry.target.id;
+                    const link = idToNavLink[id];
+
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(navLink => navLink.classList.remove('active'));
+                        if (link) link.classList.add('active');
+                    }
+                });
+            }
+
+            const observer = new IntersectionObserver(handleIntersection, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+    </script>
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+        data-id="watsonshih" data-description="Support me on Buy me a boba tea!" data-message="賞茶 - 不限金額多元支付"
+        data-color="#555555" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+
+</html>

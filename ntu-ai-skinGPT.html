@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>skinGPT (Demo)</title>
+    <meta name="description" content="skinGPT，您皮膚疾病的智慧助理。">
+    <link rel="icon" href="https://watsonshih.github.io/ntu-ai-skinGPT/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/ntu-ai-skinGPT/logo.png" type="image/x-icon">
+    <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/ntu-ai-skinGPT/banner.jpg">
+    <meta itemprop="image" content="https://watsonshih.github.io/ntu-ai-skinGPT/banner.jpg">
+    <meta property="og:image" content="https://watsonshih.github.io/ntu-ai-skinGPT/banner.jpg">
+    <!-- Material Web Components -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Noto+Sans+TC:wght@300;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="ntu-ai-skinGPT/style.css">
+    <script type="importmap">
+        {
+          "imports": {
+            "@material/web/": "https://esm.run/@material/web/"
+          }
+        }
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "r686l4p8t9");
+    </script>
+    <script src="https://watsonshih.github.io/js/jquery-3.7.0.js"></script>
+    <script src="https://watsonshih.github.io/js/jquery.min.js"></script>
+    <script src="https://watsonshih.github.io/js/W_DEV_function_1.js"></script>
+    <script src="https://watsonshih.github.io/js/W_DEV_function_2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script type="module">
+        import '@material/web/all.js';
+        import { styles as typescaleStyles } from '@material/web/typography/md-typescale-styles.js';
+        document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>skinGPT</h1>
+        <h6>此為 Demo 網站，不具備任何後端存儲、分析或對話功能。</h6>
+
+        <!-- 上傳區域 -->
+        <div id="uploadSection" class="card fade">
+            <div class="upload-zone" id="dropZone">
+                <md-icon class="upload-icon">upload</md-icon>
+                <h2>上傳您的患處圖片</h2>
+                <p>請<span class="mob_none">將圖片拖曳到這裡，或是</span> <span class="upload-link">選擇檔案</span> 上傳</p>
+                <p class="file-types">支援圖片檔案 (JPG、PNG)</p>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            </div>
+            <div id="loading" class="loading">
+                <md-circular-progress indeterminate></md-circular-progress>
+                <p>正在分析照片，請稍候...</p>
+            </div>
+        </div>
+
+        <!-- 聊天區域 -->
+        <div class="chatSection fade" id="chatSection" style="display: none;">
+            <div class="chat_grid fade">
+                <div class="card an_result">
+                    <h2>分析結果</h2>
+                    <img id="uploadedImage" style="width: 100%; border-radius: 8px; margin: 16px 0;">
+                    <div id="predictionResult"></div>
+                </div>
+
+                <div class="card">
+                    <div class="chat-container" id="chatContainer"></div>
+                    <form id="chatForm" style="position: relative;">
+                        <div class="input-group chat-input-container">
+                            <md-outlined-text-field id="messageInput" label="輸入訊息..." type="text"
+                                @keydown.enter="handleEnter">
+                            </md-outlined-text-field>
+                            <md-text-button class="send-button" type="submit">
+                                <md-icon>send</md-icon>
+                            </md-text-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <h6>skinGPT 提供的資訊未必正確，請諮詢專業醫師。</h6>
+        <p class="copy">&copy; 施驊宸 林育新 方亮中</p>
+    </div>
+
+    <script src="ntu-ai-skinGPT/script.js"></script>
+</body>
+
+</html>

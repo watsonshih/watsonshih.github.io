@@ -1,0 +1,735 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Login Page */
+.login-container {
+    width: 350px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+    color: #0056b3;
+}
+
+.login-container div {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.login-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"],
+.login-container select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-container button:hover {
+    background-color: #0056b3;
+}
+
+.demo-login-info {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #555;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.demo-login-info p {
+    margin: 5px 0;
+}
+
+/* App Layout */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.user-info {
+    font-size: 0.9em;
+}
+
+.user-info button {
+    margin-left: 15px;
+    padding: 5px 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.user-info button:hover {
+    background-color: #c82333;
+}
+
+.app-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    min-height: calc(100vh - 70px);
+    flex-shrink: 0;
+}
+
+
+.sidebar h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #4f5962;
+    font-size: 1.2em;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li a {
+    display: block;
+    color: #adb5bd;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f8f9fa;
+    overflow-x: auto;
+}
+
+
+.content h2 {
+    color: #0056b3;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    table-layout: auto;
+    min-width: 800px;
+}
+
+th,
+td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 0.9em;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+td.wrap-text,
+th.wrap-text {
+    white-space: normal;
+}
+
+
+thead {
+    background-color: #007bff;
+    color: white;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    background-color: #007bff;
+    z-index: 10;
+}
+
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+td input[type="text"],
+td input[type="number"],
+td select,
+td textarea {
+    width: 95%;
+    min-width: 80px;
+    padding: 6px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+td input[readonly],
+td select[disabled],
+td textarea[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    border-color: #ced4da;
+}
+
+
+/* Forms & Controls */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group input[type="file"] {
+    padding: 3px;
+}
+
+.form-group .radio-group label {
+    font-weight: normal;
+    margin-right: 15px;
+}
+
+button,
+.button {
+    padding: 8px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 5px;
+    font-size: 0.9em;
+    vertical-align: middle;
+}
+
+button:hover,
+.button:hover {
+    background-color: #218838;
+}
+
+button.secondary {
+    background-color: #6c757d;
+}
+
+button.secondary:hover {
+    background-color: #5a6268;
+}
+
+button.danger {
+    background-color: #dc3545;
+}
+
+button.danger:hover {
+    background-color: #c82333;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.filter-section {
+    background-color: #e9ecef;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 15px;
+    align-items: center;
+}
+
+
+.filter-section label {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.filter-section select,
+.filter-section input {
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-section button {
+    margin-left: auto;
+}
+
+.filter-section.program-filters input[type="search"] {
+    padding: 5px 8px;
+    width: 200px;
+    margin-left: 10px;
+}
+
+
+.highlight-important {
+    background-color: #fff3cd;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.highlight-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+    border: 1px dashed #ffeeba;
+}
+
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 25px 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 1000px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modalTitle {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+#modalBody {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+
+#modalFooter {
+    text-align: right;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+
+#modalFooter button {
+    margin-left: 10px;
+}
+
+/* Helper classes */
+.hidden {
+    display: none !important;
+}
+
+.readonly-field {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+}
+
+.required-field-label::after {
+    content: " *";
+    color: red;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.info-message {
+    color: #007bff;
+    font-size: 0.9em;
+    background-color: #e7f3ff;
+    padding: 8px 12px;
+    border: 1px solid #b8d6f3;
+    border-radius: 4px;
+}
+
+.status-pending {
+    color: #fd7e14;
+    font-weight: bold;
+}
+
+/* Orange */
+.status-approved {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Green */
+.status-rejected {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Red */
+.status-submitted {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Blue */
+.status-readonly {
+    background-color: #f0f0f0 !important;
+    color: #777;
+    border: 1px solid #ced4da !important;
+    cursor: not-allowed;
+}
+
+
+/* Specific page styling */
+.registration-table td {
+    vertical-align: top;
+}
+
+.registration-table .student-name {
+    min-width: 120px;
+    font-weight: 500;
+}
+
+.registration-table .passport-no {
+    min-width: 100px;
+}
+
+.registration-table input[type="number"] {
+    width: 90px;
+    text-align: right;
+}
+
+.registration-table select {
+    min-width: 110px;
+}
+
+.page-actions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+    text-align: right;
+}
+
+.page-actions button,
+.page-actions label,
+.page-actions input {
+    margin-left: 10px;
+}
+
+.page-actions p {
+    display: inline-block;
+    margin: 0;
+}
+
+.notes {
+    font-size: 0.85em;
+    color: #555;
+    margin-top: 3px;
+    display: block;
+    white-space: normal;
+}
+
+span.corp-non-hire-note {
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-left: 5px;
+}
+
+span.corp-non-hire-tag {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-left: 5px;
+    white-space: nowrap;
+}
+
+
+/* Styles for Admin Review Grouping */
+.review-group {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.review-group h3,
+.review-group h4 {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    margin-top: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 1.1em;
+}
+
+.review-group h3 {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    font-size: 1.2em;
+    color: #0056b3;
+}
+
+.review-group .program-group {
+    margin: 15px;
+    border: 1px dashed #aaa;
+    background-color: #fdfdfd;
+    border-radius: 4px;
+    padding-bottom: 10px;
+}
+
+.review-group .program-group h4 {
+    background-color: #f8f9fa;
+    font-size: 1.05em;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #333;
+}
+
+.program-actions {
+    padding: 10px 15px;
+    border-bottom: 1px dashed #aaa;
+    background-color: #f8f9fa;
+}
+
+.program-actions button {
+    margin-right: 8px;
+    padding: 5px 10px;
+    font-size: 0.85em;
+}
+
+.reviewStudentsTable-inner {
+    margin: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    min-width: inherit;
+    table-layout: fixed;
+}
+
+.reviewStudentsTable-inner th,
+.reviewStudentsTable-inner td {
+    font-size: 0.85em;
+    padding: 8px 10px;
+    white-space: normal;
+    word-break: break-word;
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.reviewStudentsTable-inner thead th {
+    background-color: #f1f1f1;
+    color: #333;
+    position: static;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.reviewStudentsTable-inner tbody tr:nth-child(even) {
+    background-color: #fff;
+}
+
+.reviewStudentsTable-inner tbody tr:hover {
+    background-color: #e9f5ff;
+}
+
+/* Adjust column widths for review table */
+.reviewStudentsTable-inner th:nth-child(1),
+.reviewStudentsTable-inner td:nth-child(1) {
+    width: 14%;
+}
+
+/* Name */
+.reviewStudentsTable-inner th:nth-child(2),
+.reviewStudentsTable-inner td:nth-child(2) {
+    width: 11%;
+}
+
+/* Passport */
+.reviewStudentsTable-inner th:nth-child(3),
+.reviewStudentsTable-inner td:nth-child(3) {
+    width: 9%;
+}
+
+/* DOB */
+.reviewStudentsTable-inner th:nth-child(4),
+.reviewStudentsTable-inner td:nth-child(4) {
+    width: 7%;
+    font-size: 0.75em;
+    line-height: 1.1;
+    text-align: center;
+}
+
+/* CorpNonHire */
+.reviewStudentsTable-inner th:nth-child(5),
+.reviewStudentsTable-inner td:nth-child(5) {
+    width: 16%;
+}
+
+/* Local School */
+.reviewStudentsTable-inner th:nth-child(6),
+.reviewStudentsTable-inner td:nth-child(6) {
+    width: 18%;
+}
+
+/* Notes */
+.reviewStudentsTable-inner th:nth-child(7),
+.reviewStudentsTable-inner td:nth-child(7) {
+    width: 25%;
+    text-align: center;
+}
+
+/* Actions */
+.reviewStudentsTable-inner td button {
+    padding: 4px 8px;
+    font-size: 0.8em;
+    margin: 2px;
+}
+
+/* Styles for form grid layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px 25px;
+    align-items: start;
+}
+
+.form-group input[type="radio"]+label {
+    margin-right: 15px;
+    font-weight: normal;
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+/* Style for disabled file upload label */
+label.disabled-label {
+    color: #6c757d;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+
+/* Input error highlighting */
+.input-error {
+    border: 2px solid red !important;
+    background-color: #fff0f0;
+}
+
+textarea.input-error {
+    border: 2px solid red !important;
+}

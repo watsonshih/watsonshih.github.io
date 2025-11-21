@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILO 學生就學狀態追蹤系統 (模擬 二版)</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>學生就學狀態追蹤系統<br>(模擬用 二版)</h2>
+        <form id="loginForm">
+            <div>
+                <label for="username">帳號:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">密碼: (不用輸入)</label>
+                <input type="password" id="password" name="password" value="0000" required>
+            </div>
+            <div>
+                <label for="role">角色:</label>
+                <select id="role" name="role">
+                    <option value="admin">管理員 (Admin)</option>
+                    <option value="school_admin">學校行政 (School Admin)</option>
+                </select>
+            </div>
+            <button type="submit">登入</button>
+            <p class="error-message" id="loginError" style="display:none; color:red;">帳號或密碼錯誤</p>
+        </form>
+        <div class="demo-login-info">
+            <p><strong>測試帳號:</strong></p>
+            <p>管理員: admin</p>
+            <p>臺大行政: ntu</p>
+            <p>清大行政: nthu</p>
+            <hr>
+            <p>Prototype (非實際用途)<br>部分功能可能不正確或無效</p>
+            <p>V20250513</p>
+        </div>
+    </div>
+    <script src="script.js?V=20251119"></script>
+</body>
+
+</html>

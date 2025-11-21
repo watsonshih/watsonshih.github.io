@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://wen-yuh-jywe.github.io/pic/JWY_logo.png">
+    <link rel="shortcut icon" href="https://wen-yuh-jywe.github.io/pic/JWY_logo.png" type="image/x-icon">
+    <title>NTU ISDM Server Reservation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#171717',
+                            100: '#1E1E1E',
+                            200: '#2D2D2D',
+                            300: '#404040',
+                            400: '#525252',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
+
+        * {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .page-transition {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .page-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .page-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.2em;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .calendar-cell {
+            min-height: 60px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calendar-cell:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .calendar-cell.reserved {
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .calendar-header {
+            min-width: 120px;
+        }
+
+        .time-slot {
+            height: 60px;
+        }
+
+        .reservation-badge {
+            background-color: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            margin: 2px 0;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .reservation-badge:hover {
+            background-color: rgba(59, 130, 246, 0.3);
+        }
+
+        #loginContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 0 1.5em;
+        }
+
+        #mainContent {
+            display: none;
+        }
+
+        .google-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background-color: white;
+            color: #444;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .google-login-btn:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        @keyframes blink {
+            0% {
+                background-color: rgba(59, 130, 246, 0.2);
+            }
+
+            50% {
+                background-color: rgba(59, 130, 246, 0.5);
+            }
+
+            100% {
+                background-color: rgba(59, 130, 246, 0.2);
+            }
+        }
+
+        .current-reservation {
+            animation: blink 2s infinite;
+            border: 1px solid rgba(59, 130, 246, 0.7) !important;
+        }
+
+        .past-reservation {
+            background-color: rgba(100, 100, 100, 0.2);
+            border: 1px solid rgba(100, 100, 100, 0.4);
+            color: rgba(150, 150, 150, 0.7);
+        }
+    </style>
+</head>
+
+<body class="bg-dark-100 text-gray-200">
+
+    <div id="loadingOverlay" class="backdrop-blur">
+        <span>載入中，請稍候...</span>
+    </div>
+
+    <!-- 登入畫面 -->
+    <div id="loginContainer" class="page-transition">
+        <img src="https://wen-yuh-jywe.github.io/pic/JWY_logo.png" alt="ServerReservation" class="h-20 w-20 mb-4">
+        <h1 class="text-2xl font-semibold text-gray-100 mb-6">NTU ISDM<br>Server Reservation</h1>
+        <button id="googleLoginBtn" class="google-login-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#EA4335"
+                    d="M5.26620003,9.76452941 C6.19878754,6.93863203 8.85444915,4.90909091 12,4.90909091 C13.6909091,4.90909091 15.2181818,5.50909091 16.4181818,6.49090909 L19.9090909,3 C17.7818182,1.14545455 15.0545455,0 12,0 C7.27006974,0 3.1977497,2.69829785 1.23999023,6.65002441 L5.26620003,9.76452941 Z" />
+                <path fill="#34A853"
+                    d="M16.0407269,18.0125889 C14.9509167,18.7163016 13.5660892,19.0909091 12,19.0909091 C8.86648613,19.0909091 6.21911939,17.076871 5.27698177,14.2678769 L1.23746264,17.3349879 C3.19279051,21.2970142 7.26500293,24 12,24 C14.9328362,24 17.7353462,22.9573905 19.834192,20.9995801 L16.0407269,18.0125889 Z" />
+                <path fill="#4A90E2"
+                    d="M19.834192,20.9995801 C22.0291676,18.9520994 23.4545455,15.903663 23.4545455,12 C23.4545455,11.2909091 23.3454545,10.5272727 23.1818182,9.81818182 L12,9.81818182 L12,14.4545455 L18.4363636,14.4545455 C18.1187732,16.013626 17.2662994,17.2212117 16.0407269,18.0125889 L19.834192,20.9995801 Z" />
+                <path fill="#FBBC05"
+                    d="M5.27698177,14.2678769 C5.03832634,13.556323 4.90909091,12.7937589 4.90909091,12 C4.90909091,11.2182781 5.03443647,10.4668121 5.26620003,9.76452941 L1.23999023,6.65002441 C0.43658717,8.26043162 0,10.0753848 0,12 C0,13.9195484 0.444780743,15.7301709 1.23746264,17.3349879 L5.27698177,14.2678769 Z" />
+            </svg>
+            Google 登入
+        </button>
+        <p class="text-gray-500 mt-8 max-w-md">請使用經授權的 Google 帳號登入預約系統</p>
+
+    </div>
+
+    <!-- 主內容區域 -->
+    <div id="mainContent">
+        <nav class="bg-dark-50 border-b border-dark-300">
+            <div class="mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="#" class="flex items-center">
+                            <img src="https://wen-yuh-jywe.github.io/pic/JWY_logo.png" alt="ServerReservation"
+                                class="h-8 w-8 mr-2">
+                            <h1 class="text-xl font-semibold text-gray-100">Server 預約系統</h1>
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div id="userProfile" class="user-profile">
+                        </div>
+                        <button id="logoutBtn"
+                            class="text-sm text-blue-400 hover:text-blue-300 transition duration-150 ease-in-out px-3 py-2 leading-none border border-blue-400/50 rounded">
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div id="statusIndicator" class="status-indicator"></div>
+
+        <!-- 預約表單 Modal -->
+        <div id="reservationModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-1 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 m-3 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="reservationBox">
+                <h3 class="text-lg font-semibold mb-4" id="reservationTitle">新增預約</h3>
+                <form id="reservationForm" class="space-y-4">
+                    <input type="hidden" id="reservationId" value="">
+                    <input type="hidden" id="reservationCreator" value="">
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-gray-300 mb-1">使用人姓名 <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="userName" name="userName" required
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="serverSelect" class="block text-sm font-medium text-gray-300 mb-1">選擇 Server <span
+                                class="text-red-500">*</span></label>
+                        <select id="serverSelect" name="serverSelect" required
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </select>
+                    </div>
+                    <div>
+                        <label for="reservationDate" class="block text-sm font-medium text-gray-300 mb-1">預約日期 <span
+                                class="text-red-500">*</span></label>
+                        <input type="date" id="reservationDate" name="reservationDate" required
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="startTime" class="block text-sm font-medium text-gray-300 mb-1">開始時間 <span
+                                    class="text-red-500">*</span></label>
+                            <select id="startTime" name="startTime" required
+                                class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </select>
+                        </div>
+                        <div>
+                            <label for="endTime" class="block text-sm font-medium text-gray-300 mb-1">結束時間 <span
+                                    class="text-red-500">*</span></label>
+                            <select id="endTime" name="endTime" required
+                                class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-gray-300 mb-1">備註</label>
+                        <textarea id="notes" name="notes" rows="3"
+                            class="w-full bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelReservation"
+                            class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">取消</button>
+                        <button type="submit" id="saveReservation"
+                            class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">保存</button>
+                        <button type="button" id="deleteReservation"
+                            class="px-4 py-2 bg-red-600 rounded hover:bg-red-700 hidden">刪除</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Server管理 Modal -->
+        <div id="serverModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-1 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 m-3 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="serverBox">
+                <h3 class="text-lg font-semibold mb-4">Server 管理</h3>
+                <div class="mb-4">
+                    <div class="flex">
+                        <input type="text" id="serverName"
+                            class="flex-1 bg-dark-200 border border-dark-300 rounded-l-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="請輸入 Server 名稱">
+                        <button id="addServer" class="bg-blue-600 hover:bg-blue-700 rounded-r-md px-4">
+                            新增
+                        </button>
+                    </div>
+                </div>
+                <div class="max-h-80 overflow-y-auto">
+                    <ul id="serverList" class="divide-y divide-dark-300"> </ul>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-dark-300">
+                    <button id="closeServerModal" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">完成</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 使用者管理 Modal -->
+        <div id="userModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-1 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 m-3 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="userBox">
+                <h3 class="text-lg font-semibold mb-4">使用者管理</h3>
+                <div class="mb-4">
+                    <div class="flex flex-col space-y-3">
+                        <input type="email" id="userEmail"
+                            class="bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="請輸入 Google 帳號">
+                        <div class="flex space-x-2">
+                            <select id="userRole"
+                                class="bg-dark-200 border border-dark-300 rounded-md py-2 px-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="user">一般使用者</option>
+                                <option value="admin">管理員</option>
+                            </select>
+                            <button id="addUser" class="bg-blue-600 hover:bg-blue-700 rounded-md px-4">
+                                新增
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="max-h-80 overflow-y-auto">
+                    <ul id="userList" class="divide-y divide-dark-300"> </ul>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-dark-300">
+                    <button id="closeUserModal" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">完成</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 確認框 Modal -->
+        <div id="confirmModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-100 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 m-3 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="confirmBox">
+                <div id="confirmMessage" class="text-sm mb-6"></div>
+                <div class="flex justify-end gap-3">
+                    <button id="cancelBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">取消</button>
+                    <button id="confirmBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">確認</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提示框 Modal -->
+        <div id="alertModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-100 flex items-center justify-center transition-all duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 m-3 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="alertBox">
+                <div id="alertMessage" class="text-sm mb-6"></div>
+                <div class="flex justify-end">
+                    <button id="alertOkBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">確認</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 預約詳情 Modal -->
+        <div id="detailModal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+            <div class="bg-dark-100 text-gray-200 m-3 p-6 rounded-lg shadow-lg max-w-md w-full transform scale-95 transition-all duration-300 opacity-0"
+                id="detailBox">
+                <h3 class="text-lg font-semibold mb-4">預約詳情</h3>
+                <dl class="divide-y divide-dark-300">
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">使用人</dt>
+                        <dd id="detailUserName" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">Server</dt>
+                        <dd id="detailServer" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">開始時間</dt>
+                        <dd id="detailStart" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">結束時間</dt>
+                        <dd id="detailEnd" class="font-medium text-gray-200">-</dd>
+                    </div>
+                    <div class="py-3">
+                        <dt class="text-gray-400 mb-1">備註</dt>
+                        <dd id="detailNotes" class="font-medium text-gray-200 mt-1 text-sm">-</dd>
+                    </div>
+                    <div class="py-3 flex justify-between">
+                        <dt class="text-gray-400">建立者</dt>
+                        <dd id="detailCreator" class="font-medium text-gray-200">-</dd>
+                    </div>
+                </dl>
+                <div class="flex justify-end space-x-3 pt-4 mt-2">
+                    <button id="editReservation" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">編輯</button>
+                    <button id="closeDetailModal" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">關閉</button>
+                </div>
+            </div>
+        </div>
+
+        <main class="mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="bg-dark-50 rounded-lg border border-dark-300 p-4 mb-6">
+                <div class="flex flex-wrap justify-center gap-3 sm:justify-between">
+                    <div class="flex space-x-2 items-center">
+                        <button id="prevWeekBtn" class="text-blue-400 hover:text-blue-300 p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <h2 id="currentDateRange" class="text-lg font-medium text-gray-100"></h2>
+                        <button id="nextWeekBtn" class="text-blue-400 hover:text-blue-300 p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="todayBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition">
+                            今天
+                        </button>
+                        <button id="manageServersBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition hidden">
+                            管理 Server
+                        </button>
+                        <button id="manageUsersBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1 rounded transition hidden">
+                            管理使用者
+                        </button>
+                        <button id="newReservationBtn"
+                            class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded transition">
+                            新增預約
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-50 rounded-lg border border-dark-300 p-4 overflow-x-auto">
+                <div id="calendarContainer" class="min-w-max">
+                </div>
+            </div>
+        </main>
+
+        <footer class="p-6">
+            <div class="text-center">
+                <p class="text-gray-400">National Taiwan University</p>
+                <p class="text-gray-400">Intelligent Sensing and Digital Manufacturing Lab</p>
+                <p class="mt-4 text-gray-500">
+                    <a href="mailto:shihwatson@gmail.com" class="hover:text-blue-400 transition-colors" target="_blank"
+                        data-lang-key="copyRight">Contact: Watson</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getDatabase, ref, set, get, remove, child, update, push, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0d8TOznWih96YvABibKpLmCnbkIvzJZA",
+            authDomain: "ntu-isdm-reservation01-92914.firebaseapp.com",
+            databaseURL: "https://ntu-isdm-reservation01-92914-default-rtdb.firebaseio.com",
+            projectId: "ntu-isdm-reservation01-92914",
+            storageBucket: "ntu-isdm-reservation01-92914.firebasestorage.app",
+            messagingSenderId: "336071577111",
+            appId: "1:336071577111:web:a47cca77155e18ac5f9652",
+            measurementId: "G-8JRMJR7CYZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        window.firebase = {
+            db,
+            auth,
+            provider,
+            ref,
+            set,
+            get,
+            remove,
+            child,
+            update,
+            push,
+            onValue,
+            signInWithPopup,
+            signOut,
+            onAuthStateChanged,
+            GoogleAuthProvider
+        };
+
+        document.dispatchEvent(new Event('firebaseReady'));
+    </script>
+
+    <script src="js/main.js"></script>
+</body>
+
+</html>

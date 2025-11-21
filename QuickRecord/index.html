@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark" data-lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords"
+        content="活動簽到, QR Code, 簽到系統, 簽退系統, Watson, event check-in, QR Code scanner, attendance system">
+    <meta name="description"
+        content="透過掃描 QR Code，讓您的活動簽到簽退更快速! Streamline your event check-in/out process with QR Code scanning!">
+    <link rel="icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/QuickRecord/pic/icon.png" type="image/x-icon">
+    <meta itemprop="thumbnailUrl" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <meta itemprop="image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <meta property="og:image" content="https://watsonshih.github.io/QuickRecord/pic/banner.png">
+    <title>QuickRecord - 快速簽到退 Quick Check-in/out</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "r686l4p8t9");
+    </script>
+    <script src="js/tailwindcss.3.4.16.js"></script>
+    <script src="i18n/langs.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#171717',
+                            100: '#1E1E1E',
+                            200: '#2D2D2D',
+                            300: '#404040',
+                            400: '#525252',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <script type="module">
+        import { ref, set, get, child, serverTimestamp, update, onValue } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+        import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app-check.js";
+
+        async function initializeFirebase() {
+            const firebaseConfig = {
+                apiKey: "AIzaSyDJ9gczXFRnKF4tVBDo15Q9ckdSTJhoAHQ",
+                authDomain: "quickrecord-client01.firebaseapp.com",
+                projectId: "quickrecord-client01",
+                storageBucket: "quickrecord-client01.appspot.com",
+                messagingSenderId: "424804839473",
+                appId: "1:424804839473:web:84253720e4a6547ca82510",
+                measurementId: "G-GTYM59Z2NC",
+                databaseURL: "https://quickrecord-client01-default-rtdb.firebaseio.com/"
+            };
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                const appCheck = initializeAppCheck(app, {
+                    provider: new ReCaptchaV3Provider('6Lc4BRwrAAAAAIBUTWfQ2qXUM1USKJ5UonT-99bf'),
+                    isTokenAutoRefreshEnabled: true
+                });
+
+                await getToken(appCheck);
+
+                const database = getDatabase(app);
+                return database;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        window.firebaseInitPromise = initializeFirebase();
+
+        window.fbRef = ref;
+        window.fbSet = set;
+        window.fbGet = get;
+        window.fbServerTimestamp = serverTimestamp;
+        window.fbUpdate = update;
+        window.fbChild = child;
+        window.fbOnValue = onValue;
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;600&family=Noto+Sans+TC:wght@350;600&display=swap');
+
+        * {
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+        }
+
+        html[data-lang="en"] * {
+            font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+        }
+
+        .page-transition {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .page-enter {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .page-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1E1E1E;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            height: 0.5em;
+            background-color: rgba(209, 213, 219, 0.5);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-indicator.visible {
+            opacity: 1;
+        }
+
+        .status-indicator.breathing {
+            animation: breathing 2s ease-in-out infinite;
+        }
+
+        .status-indicator.success {
+            background-color: rgb(34, 197, 94);
+            animation: none;
+        }
+
+        .status-indicator.warning {
+            background-color: rgb(234, 179, 8);
+            animation: none;
+        }
+
+        .status-indicator.error {
+            background-color: rgb(239, 68, 68);
+            animation: none;
+        }
+
+        @keyframes breathing {
+
+            0%,
+            100% {
+                background-color: rgba(209, 213, 219, 0.2);
+            }
+
+            50% {
+                background-color: rgba(209, 213, 219, 1);
+            }
+        }
+
+        .session-link-display {
+            background-color: rgba(23, 73, 136, 0.1);
+            border: 1px solid rgb(23, 73, 136);
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            word-break: break-all;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .session-link-display:hover {
+            background-color: rgba(29, 93, 174, 0.2);
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.2em;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="bg-dark-100">
+    <audio id="successAudio" src="bgm/success.mp3" preload="auto"></audio>
+    <audio id="warningAudio" src="bgm/warning.mp3" preload="auto"></audio>
+    <audio id="errorAudio" src="bgm/error.mp3" preload="auto"></audio>
+
+    <div id="loadingOverlay" class="hidden">
+        <span data-lang-key="loadingSession">正在載入，請稍候...</span>
+    </div>
+
+    <nav class="bg-dark-50 border-b border-dark-300">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="https://watsonshih.github.io/QuickRecord/" target="_blank" class="flex items-center">
+                        <img src="https://watsonshih.github.io/QuickRecord/pic/icon.png" alt="QuickRecord"
+                            class="h-8 w-8 mr-2">
+                        <h1 class="text-xl font-semibold text-gray-100">QuickRecord</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="langSwitchBtn"
+                        class="text-sm text-blue-400 hover:text-blue-300 transition duration-150 ease-in-out px-2 py-2 leading-none border border-blue-400/50 rounded">
+                        EN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div id="statusIndicator" class="status-indicator"></div>
+
+    <div id="customConfirmModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-opacity duration-500 opacity-0 backdrop-blur">
+        <div id="confirmBox"
+            class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0">
+            <div id="confirmMessage" class="text-sm mb-6"></div>
+            <div class="flex justify-end gap-3">
+                <button id="cancelConfirmBtn" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700"
+                    data-lang-key="cancel">取消</button>
+                <button id="okConfirmBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                    data-lang-key="confirm">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customAlertModal"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center transition-all duration-500 opacity-0 backdrop-blur">
+        <div class="bg-dark-100 text-gray-200 p-6 rounded-lg shadow-lg max-w-sm w-full transform scale-95 transition-all duration-300 opacity-0"
+            id="alertBox">
+            <div id="alertMessage" class="text-sm mb-6"></div>
+            <div class="flex justify-end">
+                <button id="okAlertBtn" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700"
+                    data-lang-key="confirm">確認</button>
+            </div>
+        </div>
+    </div>
+
+
+    <main class="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="mainPage" class="page-transition">
+            <div class="max-w-lg mx-auto">
+                <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-6" data-lang-key="newCheckIn">開始新的簽到</h2>
+
+                    <button id="startDirectly"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out"
+                        data-lang-key="startDirectly">
+                        直接開始
+                    </button>
+
+                    <div class="text-center text-gray-400 my-4" data-lang-key="or">OR</div>
+
+                    <div id="dropArea"
+                        class="border-2 border-dashed border-dark-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors cursor-pointer">
+                        <div class="text-gray-400">
+                            <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-4" data-lang-key="dropCSV">拖曳上傳 CSV，預先匯入參與名單</p>
+                            <p class="text-sm text-gray-500 mt-2" data-lang-key="csvRequirement">（CSV 需包含 Name、ID、Note
+                                欄位）</p>
+                        </div>
+                        <input type="file" id="fileInput" class="hidden" accept=".csv">
+                    </div>
+
+                    <button id="downloadTemplate"
+                        class="w-full bg-gray-700 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition duration-150 ease-in-out mt-4"
+                        data-lang-key="downloadTemplate">
+                        下載 CSV 模板
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="infoPage" class="hidden page-transition">
+            <div class="max-w-2xl mx-auto">
+                <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-6" data-lang-key="infoSettings">資訊設定</h2>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="eventName" class="block text-sm font-medium text-gray-300">
+                                <span data-lang-key="eventName">活動名稱</span>
+                                <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="eventName" class="mt-3 mb-6 py-2 px-4 block w-full rounded-md bg-dark-200 border-dark-300 text-gray-100
+                                focus:border-blue-500 focus:ring-blue-500" placeholder="請輸入活動名稱"
+                                data-lang-placeholder-key="enterEventName">
+                        </div>
+
+                        <div class="border-t border-dark-300 pt-4">
+                            <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="displaySettings">顯示設定</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="showCount" class="rounded bg-dark-200 border-dark-300 text-blue-600
+                                        focus:ring-blue-500 focus:ring-offset-dark-100" checked>
+                                    <span class="ml-2 text-gray-300" data-lang-key="showCount">顯示報到人數</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="showFullName" class="rounded bg-dark-200 border-dark-300 text-blue-600
+                                        focus:ring-blue-500 focus:ring-offset-dark-100" checked>
+                                    <span class="ml-2 text-gray-300" data-lang-key="showFullName">顯示完整姓名</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="showFullID" class="rounded bg-dark-200 border-dark-300 text-blue-600
+                                        focus:ring-blue-500 focus:ring-offset-dark-100" checked>
+                                    <span class="ml-2 text-gray-300" data-lang-key="showFullID">顯示完整 ID</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-dark-300 pt-4">
+                            <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="cloudSync">雲端同步</h3>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="enableFirebaseSync"
+                                    class="rounded bg-dark-200 border-dark-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-dark-100"
+                                    disabled>
+                                <span class="ml-2 text-gray-300" data-lang-key="enableCloudSync">啟用雲端同步</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-2" data-lang-key="cloudSyncNote">
+                                注意：資料僅會暫時保存，可能隨時被清除，請儘速下載。</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex space-x-4">
+                        <button id="backToMain" class="flex-1 bg-dark-300 hover:bg-dark-400 text-gray-200 font-medium
+                            py-2 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="back">
+                            返回
+                        </button>
+                        <button id="startCheckIn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium
+                            py-2 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="startCheckIn">
+                            開始簽到
+                        </button>
+                    </div>
+                </div>
+
+                <div id="participantsPreview" class="hidden mt-6">
+                    <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-100" data-lang-key="participantsList">參與者名單預覽</h3>
+                            <button id="toggleEncoding"
+                                class="text-sm text-blue-500 hover:text-blue-400 flex items-center group relative"
+                                data-lang-key="encodingIssue">
+                                出現亂碼？
+                                <div class="hidden group-hover:block absolute right-0 top-6 p-2 bg-dark-200 text-gray-300 text-xs rounded-lg shadow-lg z-10"
+                                    data-lang-key="switchEncoding">
+                                    切換編碼
+                                </div>
+                            </button>
+                        </div>
+                        <div id="previewParticipantsList" class="divide-y divide-dark-300 max-h-96 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="checkInPage" class="hidden page-transition">
+            <div id="sessionLinkContainerCheckIn" class="mb-4 mx-auto hidden">
+                <div id="sessionLinkDisplayCheckIn" class="session-link-display rounded-lg text-gray-200"
+                    data-lang-key="sessionLinkInfo">已啟用雲端同步，點此複製連結以共用、恢復本次點名階段。</div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4" data-lang-key="qrCodeScan">QR Code 掃描</h2>
+                    <div class="aspect-video bg-dark-200 rounded-lg overflow-hidden">
+                        <video id="checkInVideo" class="w-full h-full object-cover"></video>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <span id="scanStatus" class="animate-pulse-slow text-gray-100"
+                            data-lang-key="preparingScan">準備掃描 QR
+                            Code...</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                        <h3 id="checkInEventName" class="text-xl font-semibold text-gray-100">
+                            活動資訊</h3>
+                        <p class="text-gray-400 mt-4">
+                            <span id="checkInCurrentTime"></span>
+                        </p>
+                        <p class="text-gray-400 mt-4" id="checkInCountContainer">
+                            <span id="checkInCount" class="text-gray-200 mr-1">0</span><span id="checkInTotal"
+                                class="text-gray-400"></span>
+                        </p>
+                    </div>
+
+                    <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                        <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="lastCheckInInfo">最後簽到資訊</h3>
+                        <dl class="divide-y divide-dark-300">
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="name">姓名</dt>
+                                <dd id="lastCheckInName" class="font-medium text-gray-200">-</dd>
+                            </div>
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="id">ID</dt>
+                                <dd id="lastCheckInID" class="font-medium text-gray-200">-</dd>
+                            </div>
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="note">Note</dt>
+                                <dd id="lastCheckInNote" class="font-medium text-gray-200">-</dd>
+                            </div>
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="checkInTime">簽到時間</dt>
+                                <dd id="lastCheckInTime" class="font-medium text-gray-200">-</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <button id="backToInfo"
+                        class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg mt-4"
+                        data-lang-key="backToSettings">
+                        返回設定頁
+                    </button>
+
+                    <button id="endCheckIn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium
+                        py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="endCheckIn">
+                        結束簽到並進入簽退
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <div class="bg-dark-50 rounded-lg border border-dark-300">
+                    <div class="border-b border-dark-300">
+                        <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                            <button
+                                class="tab-button text-blue-500 py-4 px-1 border-b-2 border-blue-500 font-medium text-sm"
+                                data-tab="allParticipants" data-lang-key="allParticipants">
+                                所有參與者
+                            </button>
+                            <button
+                                class="tab-button text-gray-400 hover:text-gray-300 py-4 px-1 border-b-2 border-transparent font-medium text-sm"
+                                data-tab="checkedInParticipants" data-lang-key="checkedInParticipants">
+                                已簽到參與者
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="p-6">
+                        <div id="allParticipants" class="tab-content">
+                            <div id="allParticipantsList" class="divide-y divide-dark-300">
+                            </div>
+                        </div>
+                        <div id="checkedInParticipants" class="tab-content hidden">
+                            <div id="checkedInParticipantsList" class="divide-y divide-dark-300">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="checkOutPage" class="hidden page-transition">
+            <div id="sessionLinkContainerCheckOut" class="mb-4 mx-auto hidden">
+                <div id="sessionLinkDisplayCheckOut" class="session-link-display rounded-lg text-gray-200"
+                    data-lang-key="sessionLinkInfo">已啟用雲端同步，點此複製連結以共用、恢復本次點名階段。</div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                    <h2 class="text-xl font-semibold text-gray-100 mb-4" data-lang-key="qrCodeScan">QR Code 掃描</h2>
+                    <div class="aspect-video bg-dark-200 rounded-lg overflow-hidden">
+                        <video id="checkOutVideo" class="w-full h-full object-cover"></video>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <span id="checkOutScanStatus" class="animate-pulse-slow text-gray-100"
+                            data-lang-key="preparingScan">準備掃描 QR
+                            Code...</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                        <h3 id="checkOutEventName" class="text-xl font-semibold text-gray-100">活動資訊</h3>
+                        <p class="text-gray-400 mt-4">
+                            <span id="checkOutCurrentTime"></span>
+                        </p>
+                        <p class="text-gray-400 mt-4" id="checkOutCountContainer">
+                            <span id="checkOutCount" class="text-gray-200 mr-1">0</span><span id="checkOutTotal"
+                                class="text-gray-400"></span>
+                        </p>
+                    </div>
+
+                    <div class="bg-dark-50 rounded-lg border border-dark-300 p-6">
+                        <h3 class="text-lg font-medium text-gray-100 mb-4" data-lang-key="lastCheckOutInfo">最後簽退資訊</h3>
+                        <dl class="divide-y divide-dark-300">
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="name">姓名</dt>
+                                <dd id="lastCheckOutName" class="font-medium text-gray-200">-</dd>
+                            </div>
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="id">ID</dt>
+                                <dd id="lastCheckOutID" class="font-medium text-gray-200">-</dd>
+                            </div>
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="note">Note</dt>
+                                <dd id="lastCheckOutNote" class="font-medium text-gray-200">-</dd>
+                            </div>
+                            <div class="py-3 flex justify-between">
+                                <dt class="text-gray-400" data-lang-key="checkOutTime">簽退時間</dt>
+                                <dd id="lastCheckOutTime" class="font-medium text-gray-200">-</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <button id="backToCheckIn"
+                        class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-lg mt-4"
+                        data-lang-key="backToCheckIn">
+                        返回簽到頁
+                    </button>
+
+                    <button id="endCheckOut" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium
+                        py-3 px-4 rounded-lg transition duration-150 ease-in-out" data-lang-key="endCheckOut">
+                        結束簽退並下載紀錄
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <div class="bg-dark-50 rounded-lg border border-dark-300">
+                    <div class="border-b border-dark-300">
+                        <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                            <button
+                                class="tab-button text-blue-500 py-4 px-1 border-b-2 border-blue-500 font-medium text-sm"
+                                data-tab="allCheckOutParticipants" data-lang-key="allParticipants">
+                                所有參與者
+                            </button>
+                            <button
+                                class="tab-button text-gray-400 hover:text-gray-300 py-4 px-1 border-b-2 border-transparent font-medium text-sm"
+                                data-tab="needCheckOutParticipants" data-lang-key="needCheckOut">
+                                待簽退參與者
+                            </button>
+                            <button
+                                class="tab-button text-gray-400 hover:text-gray-300 py-4 px-1 border-b-2 border-transparent font-medium text-sm"
+                                data-tab="checkedOutParticipants" data-lang-key="checkedOutParticipants">
+                                已簽退參與者
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="p-6">
+                        <div id="allCheckOutParticipants" class="tab-content">
+                            <div id="allCheckOutParticipantsList" class="divide-y divide-dark-300">
+                            </div>
+                        </div>
+                        <div id="needCheckOutParticipants" class="tab-content hidden">
+                            <div id="needCheckOutParticipantsList" class="divide-y divide-dark-300">
+                            </div>
+                        </div>
+                        <div id="checkedOutParticipants" class="tab-content hidden">
+                            <div id="checkedOutParticipantsList" class="divide-y divide-dark-300">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="p-6">
+            <div class="text-center">
+                <div class="flex flex-col justify-center space-y-4 sm:flex-row sm:space-x-5 sm:space-y-0">
+                    <a href="https://watsonshih.github.io/QuickRecord/README.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerGuide">
+                        使用指南
+                    </a>
+                    <a href="https://watsonshih.github.io/QuickRecord/user.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerParticipant">
+                        參與者頁面
+                    </a>
+                    <a href="https://watsonshih.github.io/QuickRecord/generator.html" target="_blank"
+                        class="text-gray-400 hover:text-gray-300 transition-colors" data-lang-key="footerGenerator">
+                        通行碼郵件產生器
+                    </a>
+                </div>
+                <p class="mt-4 text-gray-400">
+                    <a href="https://watsonshih.github.io/" class="hover:text-blue-400 transition-colors"
+                        target="_blank" data-lang-key="copyRight">© Watson</a>
+                </p>
+            </div>
+        </footer>
+    </main>
+
+    <script src="js/jsQR.min.js"></script>
+    <script src="js/papaparse.min.js"></script>
+
+    <script>
+        let currentLang = 'zh-TW';
+        const langSwitchBtn = document.getElementById('langSwitchBtn');
+        const htmlTag = document.documentElement;
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        function setLanguage(lang) {
+            if (!languages[lang]) {
+                console.error(`Language ${lang} not found.`);
+                return;
+            }
+            currentLang = lang;
+            htmlTag.lang = lang;
+            htmlTag.setAttribute('data-lang', lang);
+            localStorage.setItem('quickRecordLang', lang);
+
+            langSwitchBtn.textContent = lang === 'zh-TW' ? 'EN' : '中';
+
+            document.title = lang === 'zh-TW' ? 'QuickRecord - 快速簽到退 Quick Check-in/out' : 'QuickRecord - Quick Check-in/out';
+
+            document.querySelectorAll('[data-lang-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-key');
+                if (languages[lang] && languages[lang][key] !== undefined) {
+                    el.textContent = languages[lang][key];
+                } else {
+                    console.warn(`Missing translation key: ${key} for lang: ${lang}`);
+                }
+            });
+
+            document.querySelectorAll('[data-lang-placeholder-key]').forEach(el => {
+                const key = el.getAttribute('data-lang-placeholder-key');
+                if (languages[lang] && languages[lang][key] !== undefined) {
+                    el.placeholder = languages[lang][key];
+                } else {
+                    console.warn(`Missing placeholder translation key: ${key} for lang: ${lang}`);
+                }
+            });
+
+            if (typeof renderParticipantsList === 'function') renderParticipantsList();
+            if (typeof renderCheckOutList === 'function') renderCheckOutList();
+            if (typeof updateCheckInDisplay === 'function') updateCheckInDisplay(lastCheckedInParticipant || { name: '-', id: '-', note: '-', checkInTime: '-' });
+            if (typeof updateCheckOutDisplay === 'function') updateCheckOutDisplay(lastCheckedOutParticipant || { name: '-', id: '-', note: '-', checkOutTime: '-' });
+            if (typeof updateTotalCountDisplay === 'function') updateTotalCountDisplay();
+            if (typeof updateScanStatusText === 'function') {
+                updateScanStatusText('preparingScan', 'checkIn');
+                updateScanStatusText('preparingScan', 'checkOut');
+            }
+            if (typeof updateDisplaySettings === 'function') updateDisplaySettings();
+
+            if (!participantsPreview.classList.contains('hidden')) {
+                renderParticipantsPreview();
+            }
+        }
+
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('quickRecordLang');
+            const initialLang = savedLang && languages[savedLang] ? savedLang : 'zh-TW';
+            setLanguage(initialLang);
+        }
+
+        langSwitchBtn.addEventListener('click', () => {
+            const newLang = currentLang === 'zh-TW' ? 'en' : 'zh-TW';
+            setLanguage(newLang);
+        });
+
+        function showLoadingOverlay(messageKey = 'loadingSession') {
+            const messageSpan = loadingOverlay.querySelector('span');
+            messageSpan.textContent = languages[currentLang][messageKey] || messageKey;
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoadingOverlay() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        // 全域變數
+        let participants = [];
+        let checkInRecords = [];
+        let checkOutRecords = [];
+        let checkInInterval;
+        let checkOutInterval;
+        let checkInVideoStream;
+        let checkOutVideoStream;
+        let isScanningEnabled = true;
+        let expectedParticipantsCount = 0;
+        let currentEncoding = 'big5';
+        let currentFileContent = null;
+        let lastCheckedInParticipant = null;
+        let lastCheckedOutParticipant = null;
+        let hasAskedToResumeData = false;
+
+        // Firebase variables
+        let db = window.firebaseDB;
+        let firebaseSyncEnabled = false;
+        let currentSessionId = null;
+        let sessionRef = null;
+
+        // DOM 元素參考
+        const mainPage = document.getElementById('mainPage');
+        const infoPage = document.getElementById('infoPage');
+        const checkInPage = document.getElementById('checkInPage');
+        const checkOutPage = document.getElementById('checkOutPage');
+        const currentTimeDisplay = document.getElementById('currentTime');
+        const participantsPreview = document.getElementById('participantsPreview');
+        const enableFirebaseSyncCheckbox = document.getElementById('enableFirebaseSync');
+        const sessionLinkContainerCheckIn = document.getElementById('sessionLinkContainerCheckIn');
+        const sessionLinkDisplayCheckIn = document.getElementById('sessionLinkDisplayCheckIn');
+        const sessionLinkContainerCheckOut = document.getElementById('sessionLinkContainerCheckOut');
+        const sessionLinkDisplayCheckOut = document.getElementById('sessionLinkDisplayCheckOut');
+
+        function showConfirmModal(messageKey) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customConfirmModal');
+                const box = document.getElementById('confirmBox');
+                const msg = document.getElementById('confirmMessage');
+                const okBtn = document.getElementById('okConfirmBtn');
+                const cancelBtn = document.getElementById('cancelConfirmBtn');
+
+                msg.textContent = languages[currentLang][messageKey] || messageKey;
+                modal.classList.remove('hidden');
+
+                requestAnimationFrame(() => {
+                    modal.classList.add('opacity-100');
+                    box.classList.add('opacity-100', 'scale-100');
+                    box.classList.remove('scale-95');
+                });
+
+                const cleanup = () => {
+                    modal.classList.remove('opacity-100');
+                    box.classList.remove('opacity-100', 'scale-100');
+                    box.classList.add('scale-95');
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+
+                    okBtn.removeEventListener('click', onOk);
+                    cancelBtn.removeEventListener('click', onCancel);
+                };
+
+                const onOk = () => { cleanup(); resolve(true); };
+                const onCancel = () => { cleanup(); resolve(false); };
+
+                okBtn.addEventListener('click', onOk);
+                cancelBtn.addEventListener('click', onCancel);
+            });
+        }
+
+        function showAlertModal(messageKey) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('customAlertModal');
+                const box = document.getElementById('alertBox');
+                const msg = document.getElementById('alertMessage');
+                const okBtn = document.getElementById('okAlertBtn');
+
+                msg.textContent = languages[currentLang][messageKey] || messageKey;
+                modal.classList.remove('hidden');
+
+                requestAnimationFrame(() => {
+                    modal.classList.add('opacity-100');
+                    box.classList.add('opacity-100', 'scale-100');
+                    box.classList.remove('scale-95');
+                });
+
+                const cleanup = () => {
+                    modal.classList.remove('opacity-100');
+                    box.classList.remove('opacity-100', 'scale-100');
+                    box.classList.add('scale-95');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+                    okBtn.removeEventListener('click', onOk);
+                };
+
+                const onOk = () => {
+                    cleanup();
+                    resolve(true);
+                };
+
+                okBtn.addEventListener('click', onOk);
+            });
+        }
+
+        window.addEventListener('beforeunload', function (e) {
+            if (!checkInPage.classList.contains('hidden') || !checkOutPage.classList.contains('hidden')) {
+                const confirmationMessage = languages[currentLang]['leaveDuringCheckPrompt'] || 'Are you sure you want to close the page? All data will be lost.';
+                e.preventDefault();
+                e.returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+        });
+
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-CA', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            }).replace(',', '');
+
+            if (currentTimeDisplay) {
+                currentTimeDisplay.textContent = timeString;
+            }
+            const checkInTime = document.getElementById('checkInCurrentTime');
+            if (checkInTime) {
+                checkInTime.textContent = timeString;
+            }
+            const checkOutTime = document.getElementById('checkOutCurrentTime');
+            if (checkOutTime) {
+                checkOutTime.textContent = timeString;
+            }
+        }
+
+        function updateScanStatusText(key, mode, extraInfo = '') {
+            const statusEl = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
+            if (statusEl) {
+                let text = languages[currentLang][key] || key;
+                if (extraInfo) {
+                    text = `${extraInfo} ${text}`;
+                }
+                statusEl.textContent = text;
+                if (key === 'checkInSuccess' || key === 'checkOutSuccess' || key === 'alreadyCheckedIn' || key === 'alreadyCheckedOut' || key === 'noCheckInCantCheckOut' || key === 'qrScanError') {
+                    statusEl.classList.remove('animate-pulse-slow');
+                } else {
+                    statusEl.classList.add('animate-pulse-slow');
+                }
+            }
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        function showPage(page) {
+            document.querySelectorAll('.page-transition').forEach(p => {
+                p.classList.add('hidden');
+            });
+            page.classList.remove('hidden');
+            page.classList.add('page-enter');
+            setTimeout(() => {
+                page.classList.add('page-enter-active');
+            }, 50);
+            setTimeout(() => {
+                page.classList.remove('page-enter', 'page-enter-active');
+            }, 300);
+        }
+
+        document.getElementById('downloadTemplate').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = 'https://watsonshih.github.io/QuickRecord/template.csv';
+            link.download = 'template.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('border-blue-500');
+        });
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('border-blue-500');
+        });
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('border-blue-500');
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+        dropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+
+        function handleFile(file) {
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                showAlertModal('uploadCsvError');
+                return;
+            }
+            const fileName = file.name.replace('.csv', '');
+            document.getElementById('eventName').value = fileName;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                currentFileContent = new Uint8Array(e.target.result);
+                parseWithCurrentEncoding();
+            };
+            reader.onerror = function (error) {
+                console.error('fileReadError:', error);
+                showAlertModal('fileReadError');
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseWithCurrentEncoding() {
+            if (!currentFileContent) return;
+            const encodings = ['big5', 'utf-8'];
+            for (const enc of encodings) {
+                try {
+                    const content = new TextDecoder(enc).decode(currentFileContent);
+                    const errors = (content.match(/�/g) || []).length;
+                    if (errors <= 5) {
+                        currentEncoding = enc;
+                        return parseCSVContent(content);
+                    }
+                    console.warn(`Encoding ${enc} yielded ${errors} replacement chars.`);
+                } catch (e) {
+                    console.warn(`Failed to decode with ${enc}:`, e);
+                }
+            }
+            showAlertModal('fileEncodingError');
+        }
+
+        document.getElementById('toggleEncoding').addEventListener('click', function () {
+            currentEncoding = currentEncoding === 'big5' ? 'utf-8' : 'big5';
+            parseWithCurrentEncoding();
+        });
+
+        function parseCSVContent(content) {
+            Papa.parse(content, {
+                header: true,
+                skipEmptyLines: true,
+                complete: async function (results) {
+                    const headers = results.meta.fields;
+                    const hasName = headers.some(h => h.trim().toLowerCase() === 'name');
+                    const hasId = headers.some(h => h.trim().toLowerCase() === 'id');
+
+                    if (!hasName || !hasId) {
+                        showAlertModal('csvFieldsError');
+                        return;
+                    }
+
+                    const nameHeader = headers.find(h => h.trim().toLowerCase() === 'name');
+                    const idHeader = headers.find(h => h.trim().toLowerCase() === 'id');
+                    const noteHeader = headers.find(h => h.trim().toLowerCase() === 'note');
+                    const checkInHeader = headers.find(h => h.trim().toLowerCase() === 'checkintime');
+                    const checkOutHeader = headers.find(h => h.trim().toLowerCase() === 'checkouttime');
+
+                    participants = results.data.map(row => ({
+                        name: row[nameHeader]?.startsWith('name:') ? row[nameHeader].substring(5).trim() : row[nameHeader],
+                        id: row[idHeader]?.startsWith('id:') ? row[idHeader].substring(3).trim() : row[idHeader],
+                        note: noteHeader ? (row[noteHeader] || '') : '',
+                        inCSV: true,
+                        checkInTime: checkInHeader ? (row[checkInHeader] || '') : '',
+                        checkOutTime: checkOutHeader ? (row[checkOutHeader] || '') : ''
+                    }));
+
+                    expectedParticipantsCount = participants.length;
+
+                    if (!hasAskedToResumeData) {
+                        const hasPreviousData = participants.some(p => p.checkInTime || p.checkOutTime);
+                        if (hasPreviousData) {
+                            hasAskedToResumeData = true;
+                            const resume = await showConfirmModal('confirmResumeData');
+                            if (!resume) {
+                                participants.forEach(p => {
+                                    p.checkInTime = '';
+                                    p.checkOutTime = '';
+                                });
+                            } else {
+                                checkInRecords = participants.filter(p => p.checkInTime).map(p => ({
+                                    name: p.name,
+                                    id: p.id,
+                                    note: p.note,
+                                    time: p.checkInTime
+                                }));
+                                checkOutRecords = participants.filter(p => p.checkOutTime).map(p => ({
+                                    name: p.name,
+                                    id: p.id,
+                                    note: p.note,
+                                    time: p.checkOutTime
+                                }));
+                            }
+                        }
+                    }
+
+                    renderParticipantsPreview();
+                    showPage(infoPage);
+                },
+                error: function (error) {
+                    console.error('CSV 解析錯誤:', error);
+                    showAlertModal('csvParseError');
+                }
+            });
+        }
+
+        function renderParticipantsPreview() {
+            const previewList = document.getElementById('previewParticipantsList');
+            const participantsPreviewDiv = document.getElementById('participantsPreview');
+
+            previewList.innerHTML = participants.map(participant => `
+                <div class="py-3 flex justify-between items-center">
+                    <div class="space-y-1">
+                        <div class="font-medium text-gray-200">${participant.name}</div>
+                        <div class="text-sm text-gray-400">${participant.id}</div>
+                        ${participant.note ? `<div class="text-sm text-gray-500">${participant.note}</div>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            participantsPreviewDiv.classList.remove('hidden');
+        }
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+                const tabContainer = button.closest('nav').parentElement;
+                tabContainer.querySelectorAll('.tab-button').forEach(tab => {
+                    tab.classList.remove('text-blue-500', 'border-blue-500');
+                    tab.classList.add('text-gray-400', 'border-transparent');
+                });
+                button.classList.remove('text-gray-400', 'border-transparent');
+                button.classList.add('text-blue-500', 'border-blue-500');
+                const contentContainer = tabContainer.nextElementSibling;
+                contentContainer.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(tabName).classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('startDirectly').addEventListener('click', () => {
+            participants = [];
+            expectedParticipantsCount = 0;
+            document.getElementById('participantsPreview').classList.add('hidden');
+            showPage(infoPage);
+        });
+        document.getElementById('backToMain').addEventListener('click', () => {
+            showPage(mainPage);
+            document.getElementById('participantsPreview').classList.add('hidden');
+            participants = [];
+            expectedParticipantsCount = 0;
+            document.getElementById('eventName').value = '';
+            resetSystem();
+        });
+
+        document.getElementById('startCheckIn').addEventListener('click', () => {
+            const eventName = document.getElementById('eventName').value;
+            if (!eventName.trim()) {
+                showAlertModal('enterEventName');
+                return;
+            }
+            enableFirebaseSyncCheckbox.disabled = true;
+            firebaseSyncEnabled = enableFirebaseSyncCheckbox.checked;
+
+            updateDisplaySettings();
+            initializeCheckInPage(eventName);
+            showPage(checkInPage);
+            startCheckInCamera();
+            requestFullscreen();
+            showStatusIndicator('normal');
+        });
+
+        document.getElementById('backToInfo').addEventListener('click', () => {
+            stopCheckInCamera();
+            hideStatusIndicator();
+            showPage(infoPage);
+        });
+
+        document.getElementById('backToCheckIn').addEventListener('click', () => {
+            stopCheckOutCamera();
+            hideStatusIndicator();
+            showPage(checkInPage);
+            startCheckInCamera();
+            showStatusIndicator('normal');
+        });
+
+        document.getElementById('endCheckIn').addEventListener('click', async () => {
+            const confirmed = await showConfirmModal('confirmEndCheckIn');
+            if (confirmed) {
+                stopCheckInCamera();
+                hideStatusIndicator();
+                initializeCheckOutPage();
+                showPage(checkOutPage);
+                startCheckOutCamera();
+                showStatusIndicator('normal');
+            }
+        });
+
+        document.getElementById('endCheckOut').addEventListener('click', async () => {
+            const confirmed = await showConfirmModal('confirmEndCheckOut');
+            if (confirmed) {
+                stopCheckOutCamera();
+                hideStatusIndicator();
+                downloadCSV();
+                showPage(mainPage);
+                resetSystem();
+            }
+        });
+
+        function updateDisplaySettings() {
+            const showCount = document.getElementById('showCount').checked;
+            const checkInCountContainer = document.getElementById('checkInCountContainer');
+            const checkOutCountContainer = document.getElementById('checkOutCountContainer');
+
+            if (checkInCountContainer) {
+                checkInCountContainer.style.display = showCount ? 'block' : 'none';
+            }
+            if (checkOutCountContainer) {
+                checkOutCountContainer.style.display = showCount ? 'block' : 'none';
+            }
+            renderParticipantsList();
+            renderCheckOutList();
+            updateCheckInDisplay(lastCheckedInParticipant || { name: '-', id: '-', note: '-', checkInTime: '-' });
+            updateCheckOutDisplay(lastCheckedOutParticipant || { name: '-', id: '-', note: '-', checkOutTime: '-' });
+        }
+
+        function requestFullscreen() {
+            const element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+
+        function startCheckInCamera() {
+            const video = document.getElementById('checkInVideo');
+            updateScanStatusText('cameraInitializing', 'checkIn');
+
+            if (!navigator.mediaDevices?.getUserMedia) {
+                updateScanStatusText('browserNotSupported', 'checkIn');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            })
+                .then(stream => {
+                    console.log("Check-in camera started");
+                    checkInVideoStream = stream;
+                    video.srcObject = stream;
+                    video.play()
+                        .then(() => {
+                            console.log("Check-in video playing");
+                            updateScanStatusText('cameraReady', 'checkIn');
+                            startQRScanning('checkIn');
+                        })
+                        .catch(error => {
+                            console.error("Check-in video playback error:", error);
+                            updateScanStatusText('videoPlaybackError', 'checkIn');
+                        });
+                })
+                .catch(error => {
+                    console.error("Check-in camera error:", error);
+                    updateScanStatusText('cameraError', 'checkIn', error.message);
+                });
+        }
+
+        function startCheckOutCamera() {
+            const video = document.getElementById('checkOutVideo');
+            updateScanStatusText('cameraInitializing', 'checkOut');
+
+            if (!navigator.mediaDevices?.getUserMedia) {
+                updateScanStatusText('browserNotSupported', 'checkOut');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            })
+                .then(stream => {
+                    console.log("Check-out camera started");
+                    checkOutVideoStream = stream;
+                    video.srcObject = stream;
+                    video.play()
+                        .then(() => {
+                            console.log("Check-out video playing");
+                            updateScanStatusText('cameraReady', 'checkOut');
+                            startQRScanning('checkOut');
+                        })
+                        .catch(error => {
+                            console.error("Check-out video playback error:", error);
+                            updateScanStatusText('videoPlaybackError', 'checkOut');
+                        });
+                })
+                .catch(error => {
+                    console.error('Check-out camera error:', error);
+                    updateScanStatusText('cameraError', 'checkOut', error.message);
+                });
+        }
+
+        function stopCheckInCamera() {
+            if (checkInVideoStream) {
+                checkInVideoStream.getTracks().forEach(track => track.stop());
+                checkInVideoStream = null;
+            }
+        }
+
+        function stopCheckOutCamera() {
+            if (checkOutVideoStream) {
+                checkOutVideoStream.getTracks().forEach(track => track.stop());
+                checkOutVideoStream = null;
+            }
+        }
+
+        function startQRScanning(mode) {
+            const video = document.getElementById(`${mode}Video`);
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d', { willReadFrequently: true });
+            let animationFrameId = null;
+
+            updateScanStatusText('scanQrCode', mode);
+
+            function scan() {
+                const currentStream = (mode === 'checkIn') ? checkInVideoStream : checkOutVideoStream;
+                if (!currentStream || !currentStream.active) {
+                    console.log(`Scan loop stopped for ${mode} as stream is inactive.`);
+                    cancelAnimationFrame(animationFrameId);
+                    return;
+                }
+
+                if (video.readyState === video.HAVE_ENOUGH_DATA && isScanningEnabled) {
+                    if (canvas.width !== video.videoWidth) canvas.width = video.videoWidth;
+                    if (canvas.height !== video.videoHeight) canvas.height = video.videoHeight;
+
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    try {
+                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                            inversionAttempts: "dontInvert"
+                        });
+
+                        if (code) {
+                            console.log(`Found QR code (${mode}):`, code.data);
+                            handleQRCode(code.data, mode);
+                        }
+                    } catch (error) {
+                        console.error(`QR scanning error (${mode}):`, error);
+                    }
+                }
+                if (currentStream && currentStream.active) {
+                    animationFrameId = requestAnimationFrame(scan);
+                }
+            }
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(scan);
+
+            if (mode === 'checkIn') {
+                stopCheckInCamera = (originalStop => () => {
+                    originalStop();
+                    cancelAnimationFrame(animationFrameId);
+                })(stopCheckInCamera);
+            } else {
+                stopCheckOutCamera = (originalStop => () => {
+                    originalStop();
+                    cancelAnimationFrame(animationFrameId);
+                })(stopCheckOutCamera);
+            }
+        }
+
+
+        function handleQRCode(data, mode) {
+            console.log(`Processing QR code (${mode}):`, data);
+            if (!isScanningEnabled) return;
+
+            isScanningEnabled = false;
+            console.log("Scanning disabled.");
+
+            try {
+                let name, id;
+                try {
+                    data = decodeURIComponent(data);
+                    console.log("Decoded data:", data);
+                } catch (decodeError) {
+                    console.warn("Failed to decode URL encoded data, using raw:", data);
+                }
+
+                if (data.toLowerCase().includes('name:') && data.toLowerCase().includes('id:')) {
+                    const parts = data.split(',');
+                    parts.forEach(part => {
+                        const separatorIndex = part.indexOf(':');
+                        if (separatorIndex > 0) {
+                            const key = part.substring(0, separatorIndex).trim().toLowerCase();
+                            const value = part.substring(separatorIndex + 1).trim();
+                            if (key === 'name') name = value;
+                            if (key === 'id') id = value;
+                        }
+                    });
+                } else {
+                    console.log("QR data not in 'name:...,id:...' format. Cannot parse reliably.");
+                    throw new Error('無法從 QR Code 中解析出 Name 和 ID / Cannot parse Name and ID from QR Code');
+                }
+
+                console.log("Parsed name:", name, "id:", id);
+
+                if (name && id) {
+                    if (mode === 'checkIn') {
+                        processCheckIn(name, id);
+                    } else {
+                        processCheckOut(name, id);
+                    }
+                } else {
+                    throw new Error('無法從 QR Code 中解析出 Name 和 ID / Cannot parse Name and ID from QR Code');
+                }
+            } catch (error) {
+                console.error(`QR Code processing error (${mode}):`, error);
+                updateScanStatusText('qrScanError', mode);
+                showStatusIndicator('error');
+            } finally {
+                setTimeout(() => {
+                    isScanningEnabled = true;
+                    console.log("Scanning re-enabled.");
+                    const statusEl = document.getElementById(`${mode}ScanStatus`) || document.getElementById('scanStatus');
+                    if (statusEl && !statusEl.textContent.includes(languages[currentLang]['checkInSuccess']) && !statusEl.textContent.includes(languages[currentLang]['checkOutSuccess']) && !statusEl.textContent.includes(languages[currentLang]['qrScanError'])) {
+                        updateScanStatusText('scanQrCode', mode);
+                    }
+                }, 2000);
+            }
+        }
+
+
+        function processCheckIn(name, id) {
+            const now = new Date();
+            const checkInTime = formatDate(now);
+
+            if (checkInRecords.some(r => r.id === id)) {
+                updateScanStatusText('alreadyCheckedIn', 'checkIn', name);
+                showStatusIndicator('warning');
+                return;
+            }
+
+            let participant = participants.find(p => p.id === id);
+            if (!participant) {
+                participant = { name, id, note: '', inCSV: false, checkInTime: '', checkOutTime: '' };
+                participants.push(participant);
+                expectedParticipantsCount = participants.length;
+            }
+
+            participant.checkInTime = checkInTime;
+            checkInRecords.push({ name, id, note: participant.note, time: checkInTime });
+            lastCheckedInParticipant = { ...participant };
+
+            updateCheckInDisplay(participant);
+            renderParticipantsList();
+            updateTotalCountDisplay();
+            updateScanStatusText('checkInSuccess', 'checkIn', name);
+            showStatusIndicator('success');
+            saveSingleParticipantToFirebase(participant);
+        }
+
+        function processCheckOut(name, id) {
+            const now = new Date();
+            const checkOutTime = formatDate(now);
+
+            if (!checkInRecords.some(r => r.id === id)) {
+                updateScanStatusText('noCheckInCantCheckOut', 'checkOut', name);
+                showStatusIndicator('error');
+                return;
+            }
+            if (checkOutRecords.some(r => r.id === id)) {
+                updateScanStatusText('alreadyCheckedOut', 'checkOut', name);
+                showStatusIndicator('warning');
+                return;
+            }
+
+            const participant = participants.find(p => p.id === id);
+            if (participant) {
+                participant.checkOutTime = checkOutTime;
+            } else {
+                console.warn("Checked-out participant not found in main list:", name, id);
+            }
+
+            checkOutRecords.push({ name, id, note: participant?.note || '', time: checkOutTime });
+            lastCheckedOutParticipant = participant ? { ...participant } : { name, id, note: '', checkOutTime };
+
+            updateCheckOutDisplay(participant || { name, id, note: '', checkOutTime });
+            renderCheckOutList();
+            updateTotalCountDisplay();
+            updateScanStatusText('checkOutSuccess', 'checkOut', name);
+            showStatusIndicator('success');
+            saveSingleParticipantToFirebase(participant);
+        }
+
+        function updateCheckInDisplay(participant) {
+            if (!participant) return;
+            document.getElementById('lastCheckInName').textContent = getDisplayName(participant.name);
+            document.getElementById('lastCheckInID').textContent = getDisplayID(participant.id);
+            document.getElementById('lastCheckInNote').textContent = participant.note || '-';
+            document.getElementById('lastCheckInTime').textContent = participant.checkInTime || '-';
+            document.getElementById('checkInCount').textContent = checkInRecords.length;
+        }
+
+        function updateCheckOutDisplay(participant) {
+            if (!participant) return;
+            document.getElementById('lastCheckOutName').textContent = getDisplayName(participant.name);
+            document.getElementById('lastCheckOutID').textContent = getDisplayID(participant.id);
+            document.getElementById('lastCheckOutNote').textContent = participant.note || '-';
+            document.getElementById('lastCheckOutTime').textContent = participant.checkOutTime || '-';
+            document.getElementById('checkOutCount').textContent = checkOutRecords.length;
+        }
+
+        function getDisplayName(name) {
+            if (!name) return '-';
+            return document.getElementById('showFullName').checked ?
+                name :
+                name.length <= 1 ? name : `${name.charAt(0)}*${name.charAt(name.length - 1)}`;
+        }
+        function getDisplayID(id) {
+            if (!id) return '-';
+            return document.getElementById('showFullID').checked ?
+                id :
+                id.length <= 4 ? id : `${id.substring(0, 2)}***${id.substring(id.length - 2)}`;
+        }
+
+        function formatDate(date) {
+            return date.toLocaleString('en-CA', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+            }).replace(',', ''); // YYYY-MM-DD HH:MM:SS
+        }
+
+        function downloadCSV() {
+            const finalRecordsMap = new Map();
+            participants.forEach(p => {
+                finalRecordsMap.set(p.id, {
+                    Name: p.name,
+                    ID: p.id,
+                    Note: p.note || '',
+                    InCSV: p.inCSV ? 'Yes' : 'No',
+                    CheckInTime: p.checkInTime || '',
+                    CheckOutTime: p.checkOutTime || ''
+                });
+            });
+
+            checkInRecords.forEach(record => {
+                if (!finalRecordsMap.has(record.id)) {
+                    const checkOutRecord = checkOutRecords.find(co => co.id === record.id);
+                    finalRecordsMap.set(record.id, {
+                        Name: record.name,
+                        ID: record.id,
+                        Note: record.note || '',
+                        InCSV: 'No',
+                        CheckInTime: record.time || '',
+                        CheckOutTime: checkOutRecord ? checkOutRecord.time : ''
+                    });
+                } else {
+                    const existing = finalRecordsMap.get(record.id);
+                    if (!existing.CheckInTime && record.time) {
+                        existing.CheckInTime = record.time;
+                    }
+                }
+            });
+
+            checkOutRecords.forEach(record => {
+                if (finalRecordsMap.has(record.id)) {
+                    const existing = finalRecordsMap.get(record.id);
+                    if (!existing.CheckOutTime && record.time) {
+                        existing.CheckOutTime = record.time;
+                    }
+                }
+            });
+
+            const recordsArray = Array.from(finalRecordsMap.values());
+            const csv = Papa.unparse(recordsArray, {
+                header: true,
+                newline: '\r\n'
+            });
+
+            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8' });
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            const eventNameInput = document.getElementById('eventName');
+            const eventName = eventNameInput?.value.trim() || document.getElementById('checkOutEventName')?.textContent || 'Event';
+            const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+            const filename = `${eventName}_QuickRecord_${dateStr}.csv`;
+
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function resetSystem() {
+            participants = [];
+            checkInRecords = [];
+            checkOutRecords = [];
+            expectedParticipantsCount = 0;
+            lastCheckedInParticipant = null;
+            lastCheckedOutParticipant = null;
+            currentFileContent = null;
+            currentEncoding = 'big5';
+            hasAskedToResumeData = false;
+            firebaseSyncEnabled = false;
+            currentSessionId = null;
+            sessionRef = null;
+
+            document.getElementById('eventName').value = '';
+            document.getElementById('participantsPreview').classList.add('hidden');
+            document.getElementById('fileInput').value = '';
+            enableFirebaseSyncCheckbox.checked = false;
+            enableFirebaseSyncCheckbox.disabled = !db;
+            updateSessionLinkDisplay();
+
+            if (window.location.search.includes('session=')) {
+                history.pushState(null, '', window.location.pathname);
+            }
+
+            updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
+            updateCheckOutDisplay({ name: '-', id: '-', note: '-', checkOutTime: '-' });
+
+            renderParticipantsList();
+            renderCheckOutList();
+            updateTotalCountDisplay();
+
+            document.querySelectorAll('.tab-button').forEach(button => {
+                const tabName = button.getAttribute('data-tab');
+                if (tabName === 'allParticipants' || tabName === 'allCheckOutParticipants') {
+                    button.click();
+                }
+            });
+        }
+
+
+        function renderParticipantsList() {
+            const allList = document.getElementById('allParticipantsList');
+            const checkedInList = document.getElementById('checkedInParticipantsList');
+
+            if (!allList || !checkedInList) return;
+
+            const sortedParticipants = [...participants].sort((a, b) => a.name.localeCompare(b.name, currentLang === 'zh-TW' ? 'zh-Hant' : 'en'));
+
+            allList.innerHTML = sortedParticipants.map(participant => `
+                <div class="py-3 flex justify-between items-center">
+                    <div>
+                        <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                        <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                        ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                    </div>
+                    <div class="flex items-center flex-shrink-0 ml-2">
+                        <span class="px-2 py-1 text-xs rounded ${participant.checkInTime ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}">
+                            ${participant.checkInTime ? languages[currentLang]['statusCheckedIn'] : languages[currentLang]['statusNotCheckedIn']}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+
+            const checkedInParticipants = sortedParticipants.filter(p => p.checkInTime);
+            if (checkedInParticipants.length === 0) {
+                checkedInList.innerHTML = `<div class="py-3 text-gray-400 text-center" data-lang-key="noParticipants">${languages[currentLang]['noParticipants']}</div>`;
+            } else {
+                checkedInList.innerHTML = checkedInParticipants.map(participant => `
+                    <div class="py-3 flex justify-between items-center">
+                        <div>
+                           <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                           <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                           ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                        </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                            ${participant.checkInTime}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+
+        function renderCheckOutList() {
+            const allList = document.getElementById('allCheckOutParticipantsList');
+            const needCheckOutList = document.getElementById('needCheckOutParticipantsList');
+            const checkedOutList = document.getElementById('checkedOutParticipantsList');
+
+            if (!allList || !needCheckOutList || !checkedOutList) return;
+
+            const sortedParticipants = [...participants].sort((a, b) => a.name.localeCompare(b.name, currentLang === 'zh-TW' ? 'zh-Hant' : 'en'));
+
+            allList.innerHTML = sortedParticipants.map(participant => `
+                <div class="py-3 flex justify-between items-center">
+                    <div>
+                         <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                         <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                         ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                    </div>
+                    <div class="flex items-center flex-shrink-0 ml-2">
+                        <span class="px-2 py-1 text-xs rounded ${getStatusClass(participant)}">
+                            ${getStatusText(participant)}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+
+            const needCheckOut = sortedParticipants.filter(p => p.checkInTime && !p.checkOutTime);
+            if (needCheckOut.length === 0) {
+                needCheckOutList.innerHTML = `<div class="py-3 text-gray-400 text-center" data-lang-key="noNeedCheckOut">${languages[currentLang]['noNeedCheckOut']}</div>`;
+            } else {
+                needCheckOutList.innerHTML = needCheckOut.map(participant => `
+                    <div class="py-3 flex justify-between items-center">
+                         <div>
+                             <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                             <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                             ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                        </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                             ${languages[currentLang]['checkInTime']}: ${participant.checkInTime}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const checkedOut = sortedParticipants.filter(p => p.checkOutTime);
+            if (checkedOut.length === 0) {
+                checkedOutList.innerHTML = `<div class="py-3 text-gray-400 text-center" data-lang-key="noCheckOut">${languages[currentLang]['noCheckOut']}</div>`;
+            } else {
+                checkedOutList.innerHTML = checkedOut.map(participant => `
+                    <div class="py-3 flex justify-between items-center">
+                         <div>
+                             <span class="font-medium text-gray-200">${getDisplayName(participant.name)}</span>
+                              <span class="text-sm text-gray-400 ml-1">(${getDisplayID(participant.id)})</span>
+                             ${participant.note ? `<span class="text-xs text-gray-500 ml-2 block sm:inline">Note: ${participant.note}</span>` : ''}
+                        </div>
+                        <div class="text-xs text-gray-400 flex-shrink-0 ml-2">
+                            ${languages[currentLang]['checkOutTime']}: ${participant.checkOutTime}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getStatusClass(participant) {
+            if (!participant.checkInTime) return 'bg-gray-500/20 text-gray-400';
+            if (participant.checkOutTime) return 'bg-green-500/20 text-green-400';
+            return 'bg-yellow-500/20 text-yellow-400';
+        }
+
+        function getStatusText(participant) {
+            if (!participant.checkInTime) return languages[currentLang]['statusNotCheckedIn'];
+            if (participant.checkOutTime) return languages[currentLang]['statusCheckedOut'];
+            return languages[currentLang]['statusNeedCheckOut'];
+        }
+
+        function initializeCheckInPage(eventName) {
+            document.getElementById('checkInEventName').textContent = eventName;
+            document.getElementById('checkOutEventName').textContent = eventName;
+
+            updateTotalCountDisplay();
+            renderParticipantsList();
+            updateDisplaySettings();
+            updateCheckInDisplay({ name: '-', id: '-', note: '-', checkInTime: '-' });
+
+            if (firebaseSyncEnabled && !currentSessionId && db) {
+                currentSessionId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+                sessionRef = window.fbRef(db, `sessions/${currentSessionId}`);
+                const newUrl = `${window.location.pathname}?session=${currentSessionId}`;
+                history.pushState({ sessionId: currentSessionId }, '', newUrl);
+                updateSessionLinkDisplay();
+                saveSessionToFirebase();
+            }
+        }
+
+        function initializeCheckOutPage() {
+            updateTotalCountDisplay();
+            renderCheckOutList();
+            updateDisplaySettings();
+            updateCheckOutDisplay({ name: '-', id: '-', note: '-', checkOutTime: '-' });
+        }
+
+        function updateTotalCountDisplay() {
+            const checkInTotalToShow = expectedParticipantsCount > 0 ? expectedParticipantsCount : participants.length;
+            document.getElementById('checkInTotal').textContent = `/ ${checkInTotalToShow}`;
+            document.getElementById('checkOutTotal').textContent = `/ ${checkInRecords.length}`;
+            document.getElementById('checkInCount').textContent = checkInRecords.length;
+            document.getElementById('checkOutCount').textContent = checkOutRecords.length;
+        }
+
+        function showStatusIndicator(type = 'normal') {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.classList.remove('success', 'warning', 'error', 'breathing');
+            indicator.classList.add('visible');
+
+            if (type === 'normal') {
+                indicator.classList.add('breathing');
+            } else {
+                indicator.classList.add(type);
+
+                const audio = document.getElementById(`${type}Audio`);
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(err => console.warn('Audio error:', err));
+                }
+
+                setTimeout(() => {
+                    indicator.classList.remove(type);
+                    indicator.classList.add('breathing');
+                }, 2000);
+            }
+        }
+
+        function hideStatusIndicator() {
+            const indicator = document.getElementById('statusIndicator');
+            indicator.classList.remove('visible', 'success', 'warning', 'error', 'breathing');
+        }
+
+        function getSessionUrl() {
+            return `${window.location.origin}${window.location.pathname}?session=${currentSessionId}`;
+        }
+
+        function updateSessionLinkDisplay() {
+            if (firebaseSyncEnabled && currentSessionId) {
+                sessionLinkContainerCheckIn.classList.remove('hidden');
+                sessionLinkContainerCheckOut.classList.remove('hidden');
+            } else {
+                sessionLinkContainerCheckIn.classList.add('hidden');
+                sessionLinkContainerCheckOut.classList.add('hidden');
+            }
+        }
+
+        [sessionLinkDisplayCheckIn, sessionLinkDisplayCheckOut].forEach(el => {
+            if (el) {
+                el.addEventListener('click', () => {
+                    if (el.textContent) {
+                        navigator.clipboard
+                            .writeText(getSessionUrl())
+                            .then(() => showAlertModal('linkCopied'))
+                            .catch(err => console.error('Failed to copy link:', err));
+                    }
+                });
+            }
+        });
+
+        function sanitizeFirebaseKey(key) {
+            if (!key) return key;
+            return key
+                .replace(/\./g, '_DOT_')
+                .replace(/#/g, '_HASH_')
+                .replace(/\$/g, '_DOLLAR_')
+                .replace(/\//g, '_SLASH_')
+                .replace(/\[/g, '_LBRACKET_')
+                .replace(/\]/g, '_RBRACKET_')
+                .replace(/@/g, '_AT_');
+        }
+
+        function unsanitizeFirebaseKey(key) {
+            if (!key) return key;
+            return key
+                .replace(/_DOT_/g, '.')
+                .replace(/_HASH_/g, '#')
+                .replace(/_DOLLAR_/g, '$')
+                .replace(/_SLASH_/g, '/')
+                .replace(/_LBRACKET_/g, '[')
+                .replace(/_RBRACKET_/g, ']')
+                .replace(/_AT_/g, '@');
+        }
+
+        async function saveSessionToFirebase() {
+            if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
+            const participantsData = {};
+            participants.forEach(p => {
+                const safeKey = sanitizeFirebaseKey(p.id);
+                participantsData[safeKey] = { ...p };
+            });
+            const sessionData = {
+                eventName: document.getElementById('eventName').value.trim(),
+                settings: {
+                    showCount: document.getElementById('showCount').checked,
+                    showFullName: document.getElementById('showFullName').checked,
+                    showFullID: document.getElementById('showFullID').checked,
+                },
+                participants: participantsData,
+                createdAt: window.fbServerTimestamp(),
+                lastUpdated: window.fbServerTimestamp(),
+                currentLang: currentLang
+            };
+            try {
+                await window.fbSet(sessionRef, sessionData);
+                console.log("Session saved successfully.");
+            } catch (error) {
+                console.error("Error saving session to Firebase:", error);
+            }
+        }
+
+        async function saveSingleParticipantToFirebase(participant) {
+            if (!firebaseSyncEnabled || !currentSessionId || !db || !sessionRef) return;
+            const safeKey = sanitizeFirebaseKey(participant.id);
+            const pRef = window.fbChild(sessionRef, `participants/${safeKey}`);
+            const data = {
+                name: participant.name,
+                id: participant.id, // 保留原始 ID 用於顯示
+                note: participant.note || '',
+                checkInTime: participant.checkInTime || '',
+                checkOutTime: participant.checkOutTime || '',
+                inCSV: participant.inCSV !== undefined ? participant.inCSV : false
+            };
+            try {
+                await window.fbUpdate(pRef, data);
+                await window.fbUpdate(sessionRef, { lastUpdated: window.fbServerTimestamp() });
+            } catch (error) {
+                console.error("Error saving participant to Firebase:", error);
+            }
+        }
+
+        async function loadSessionFromFirebase(sessionId) {
+            if (!db) return false;
+            showLoadingOverlay();
+            currentSessionId = sessionId;
+            sessionRef = window.fbRef(db, `sessions/${currentSessionId}`);
+            try {
+                const snapshot = await window.fbGet(sessionRef);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('eventName').value = data.eventName || '';
+                    document.getElementById('showCount').checked = data.settings?.showCount ?? true;
+                    document.getElementById('showFullName').checked = data.settings?.showFullName ?? true;
+                    document.getElementById('showFullID').checked = data.settings?.showFullID ?? true;
+                    
+                    // 從 Firebase 載入參與者資料並還原原始 ID
+                    participants = Object.values(data.participants || {}).map(p => ({
+                        ...p,
+                        id: p.id || unsanitizeFirebaseKey(Object.keys(data.participants || {}).find(key => 
+                            (data.participants[key].id === p.id) || 
+                            (unsanitizeFirebaseKey(key) === p.id)
+                        )) // 確保 ID 正確還原
+                    }));
+                    expectedParticipantsCount = participants.length;
+
+                    checkInRecords = participants
+                        .filter(p => p.checkInTime)
+                        .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkInTime }))
+                        .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+                    checkOutRecords = participants
+                        .filter(p => p.checkOutTime)
+                        .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkOutTime }))
+                        .sort((a, b) => new Date(a.time) - new Date(b.time));
+
+                    lastCheckedInParticipant = checkInRecords.length > 0 ? participants.find(p => p.id === checkInRecords[checkInRecords.length - 1].id) : null;
+                    lastCheckedOutParticipant = checkOutRecords.length > 0 ? participants.find(p => p.id === checkOutRecords[checkOutRecords.length - 1].id) : null;
+
+                    firebaseSyncEnabled = true;
+                    enableFirebaseSyncCheckbox.checked = true;
+                    enableFirebaseSyncCheckbox.disabled = true;
+                    if (data.currentLang) {
+                        setLanguage(data.currentLang);
+                    }
+
+                    updateSessionLinkDisplay();
+                    updateDisplaySettings();
+                    updateTotalCountDisplay();
+
+                    renderParticipantsPreview();
+                    showPage(infoPage);
+
+                    hideLoadingOverlay();
+
+                    window.fbOnValue(sessionRef, snapshot => {
+                        if (!snapshot.exists()) return;
+                        const data = snapshot.val();
+                        participants = Object.values(data.participants || {}).map(p => ({
+                            ...p,
+                            id: p.id || unsanitizeFirebaseKey(Object.keys(data.participants || {}).find(key => 
+                                (data.participants[key].id === p.id) || 
+                                (unsanitizeFirebaseKey(key) === p.id)
+                            ))
+                        }));
+                        expectedParticipantsCount = participants.length;
+                        checkInRecords = participants
+                            .filter(p => p.checkInTime)
+                            .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkInTime }))
+                            .sort((a, b) => new Date(a.time) - new Date(b.time));
+                        checkOutRecords = participants
+                            .filter(p => p.checkOutTime)
+                            .map(p => ({ name: p.name, id: p.id, note: p.note, time: p.checkOutTime }))
+                            .sort((a, b) => new Date(a.time) - new Date(b.time));
+                        renderParticipantsList();
+                        renderCheckOutList();
+                        updateTotalCountDisplay();
+                    });
+
+                    return true;
+                } else {
+                    showAlertModal('sessionNotFound');
+                    history.replaceState(null, '', window.location.pathname);
+                    hideLoadingOverlay();
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error loading session from Firebase:", error);
+                showAlertModal('firebaseLoadError');
+                history.replaceState(null, '', window.location.pathname);
+                hideLoadingOverlay();
+                return false;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            initializeLanguage();
+            try {
+                db = await window.firebaseInitPromise;
+                enableFirebaseSyncCheckbox.disabled = !db;
+            } catch (error) {
+                if (error.code && error.code.includes('appCheck')) {
+                    showAlertModal('reCAPTCHAfailed');
+                } else {
+                    showAlertModal('firebaseConnectError');
+                }
+                enableFirebaseSyncCheckbox.disabled = true;
+            }
+
+            if (typeof jsQR !== 'function') {
+                alert('QR Code scanning library failed to load. Please check your internet connection and refresh.');
+            }
+            if (typeof Papa !== 'object' || typeof Papa.parse !== 'function') {
+                alert('CSV parsing library failed to load. Please check your internet connection and refresh.');
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionIdFromUrl = urlParams.get('session');
+
+            if (sessionIdFromUrl && db) {
+                const loaded = await loadSessionFromFirebase(sessionIdFromUrl);
+                if (!loaded) {
+                    showPage(mainPage);
+                }
+            } else {
+                if (sessionIdFromUrl && !db) {
+                    showAlertModal('firebaseNotReady');
+                    history.replaceState(null, '', window.location.pathname);
+                }
+                showPage(mainPage);
+            }
+
+            hideLoadingOverlay();
+        });
+    </script>
+
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+        data-id="watsonshih" data-description="Support me on Buy me a boba tea!" data-message="賞茶 - 不限金額多元支付"
+        data-color="#555555" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+</body>
+
+</html>
