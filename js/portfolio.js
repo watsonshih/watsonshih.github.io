@@ -51,6 +51,97 @@
 
     let isPhotoZoomed = false;
 
+    // Initialize Comparison Slider
+    function initComparisons() {
+        var x, i;
+        x = document.getElementsByClassName("img-comp-overlay");
+        for (i = 0; i < x.length; i++) {
+            compareImages(x[i]);
+        }
+
+        function compareImages(img) {
+            var slider, clicked = 0, w, h;
+
+            // Wait for image to load to get correct dimensions
+            const imageElement = img.querySelector('img');
+            if (imageElement && !imageElement.complete) {
+                imageElement.onload = function () {
+                    setupSlider(img);
+                };
+            } else {
+                setupSlider(img);
+            }
+
+            function setupSlider(img) {
+                w = img.offsetWidth;
+                h = img.offsetHeight;
+
+                // If width is 0, retry after a short delay (fallback)
+                if (w === 0) {
+                    setTimeout(() => setupSlider(img), 100);
+                    return;
+                }
+
+                img.style.width = (w / 2) + "px";
+
+                // Check if slider already exists
+                if (img.parentElement.querySelector('.img-comp-slider')) return;
+
+                slider = document.createElement("DIV");
+                slider.setAttribute("class", "img-comp-slider");
+                slider.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="10 18 4 12 10 6"></polyline><polyline points="14 18 20 12 14 6"></polyline></svg>';
+                img.parentElement.insertBefore(slider, img);
+
+                // Center vertically
+                slider.style.top = "50%";
+                slider.style.transform = "translate(-50%, -50%)";
+                // Initial horizontal position
+                slider.style.left = (w / 2) + "px"; // No offset needed because of transform
+
+                slider.addEventListener("mousedown", slideReady);
+                window.addEventListener("mouseup", slideFinish);
+                slider.addEventListener("touchstart", slideReady);
+                window.addEventListener("touchend", slideFinish);
+            }
+
+            function slideReady(e) {
+                e.preventDefault();
+                clicked = 1;
+                window.addEventListener("mousemove", slideMove);
+                window.addEventListener("touchmove", slideMove);
+            }
+
+            function slideFinish() {
+                clicked = 0;
+                window.removeEventListener("mousemove", slideMove);
+                window.removeEventListener("touchmove", slideMove);
+            }
+
+            function slideMove(e) {
+                var pos;
+                if (clicked == 0) return;
+                pos = getCursorPos(e);
+                if (pos < 0) pos = 0;
+                if (pos > w) pos = w;
+                slide(pos);
+            }
+
+            function getCursorPos(e) {
+                var a, x = 0;
+                e = (e.changedTouches) ? e.changedTouches[0] : e;
+                a = img.getBoundingClientRect();
+                x = e.pageX - a.left;
+                x = x - window.pageXOffset;
+                return x;
+            }
+
+            function slide(x) {
+                img.style.width = x + "px";
+                slider.style.left = img.offsetWidth + "px";
+            }
+        }
+    }
+
     // Initialize Photo Gallery
     function initPhotoGallery() {
         const photoItems = document.querySelectorAll('.photo-item');
@@ -328,10 +419,12 @@
         document.addEventListener('DOMContentLoaded', function () {
             initPhotoGallery();
             initFilmGallery();
+            initComparisons();
         });
     } else {
         initPhotoGallery();
         initFilmGallery();
+        initComparisons();
     }
 
     // Prevent right-click on images (optional, for protection)
