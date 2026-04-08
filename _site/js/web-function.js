@@ -140,13 +140,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (featureSection && 'IntersectionObserver' in window) {
         var observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                if (entry.isIntersecting) {
+                if (entry.intersectionRatio >= 0.3) {
                     if (!isPlaying && !manualPaused) startAutoplay();
                 } else {
                     if (isPlaying) stopAutoplay();
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: [0, 0.3] });
         observer.observe(featureSection);
     } else {
         startAutoplay();
