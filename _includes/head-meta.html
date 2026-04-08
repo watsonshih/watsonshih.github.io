@@ -1,0 +1,36 @@
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% if page.meta_keywords %}
+<meta name="keywords" content="{{ page.meta_keywords }}">
+{% endif %}
+{% if page.meta_description %}
+<meta name="description" content="{{ page.meta_description }}">
+{% endif %}
+{% if page.meta_author %}
+<meta name="author" content="{{ page.meta_author }}">
+{% endif %}
+<link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
+<link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
+{% if page.og_image %}
+<meta itemprop="thumbnailUrl" content="{{ page.og_image }}">
+<meta itemprop="image" content="{{ page.og_image }}">
+<meta property="og:image" content="{{ page.og_image }}">
+{% endif %}
+<title>{{ page.title }}</title>
+<link rel="canonical" href="{{ page.canonical | default: page.url | absolute_url }}">
+<meta property="og:title" content="{{ page.title }}">
+{% if page.meta_description %}
+<meta property="og:description" content="{{ page.meta_description }}">
+{% endif %}
+<meta property="og:url" content="{{ page.canonical | default: page.url | absolute_url }}">
+<meta property="og:type" content="{{ page.og_type | default: 'website' }}">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page.title }}">
+{% if page.meta_description %}
+<meta name="twitter:description" content="{{ page.meta_description }}">
+{% endif %}
+{% if page.og_image %}
+<meta name="twitter:image" content="{{ page.og_image }}">
+{% endif %}

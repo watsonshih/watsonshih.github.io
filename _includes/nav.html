@@ -1,0 +1,31 @@
+<nav class="navigation">
+    <div class="nav-wrapper fade">
+        <div class="nav-logo">
+            <a href="/">
+                <img src="https://watsonshih.github.io/pic/watson-logo.png" alt="Watson Shih's Logo">
+            </a>
+            <p>Watson Shih</p>
+        </div>
+        <div class="nav-menu nav-content mob_none">
+            {% for link in page.nav_links %}
+            <a href="{{ link.url }}" class="nav-link">{{ link.text }}</a>
+            {% endfor %}
+        </div>
+        <div class="nav-content">
+            {% if page.nav_cta %}
+            <a {% if page.nav_cta.download %}download{% endif %}
+               class="nav-button lb desk_show"
+               data-analytics="Web CTA Tapped"
+               data-property-action="{{ page.nav_cta.action }}"
+               href="{{ page.nav_cta.url }}"
+               data-property-type="button"
+               {% if page.nav_cta.target %}target="{{ page.nav_cta.target }}"{% endif %}
+               data-property-cta="{{ page.nav_cta.cta }}"
+               data-property-position="navbar">{{ page.nav_cta.text }}</a>
+            {% endif %}
+            <button class="menu-toggle mob_show">
+                <span class="menu-icon"></span>
+            </button>
+        </div>
+    </div>
+</nav>

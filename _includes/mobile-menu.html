@@ -1,0 +1,15 @@
+<div class="mobile-menu mob_show">
+    <div class="mobile-menu-content">
+        {% for link in page.mobile_links %}
+        <a {% if link.download %}download{% endif %}
+           href="{{ link.url }}"
+           class="nav-link"
+           {% if link.target %}target="{{ link.target }}"{% endif %}
+           {% if link.analytics %}data-analytics="{{ link.analytics }}"{% endif %}
+           {% if link.action %}data-property-action="{{ link.action }}"{% endif %}
+           {% if link.type %}data-property-type="{{ link.type }}"{% endif %}
+           {% if link.cta %}data-property-cta="{{ link.cta }}"{% endif %}
+           {% if link.position %}data-property-position="{{ link.position }}"{% endif %}>{{ link.text }}</a>
+        {% endfor %}
+    </div>
+</div>

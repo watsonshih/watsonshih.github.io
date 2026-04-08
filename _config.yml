@@ -1,0 +1,7 @@
+title: "Watson Shih"
+url: "https://watsonshih.github.io"
+baseurl: ""
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock

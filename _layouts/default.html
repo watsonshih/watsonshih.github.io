@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: 'zh-tw' }}">
+
+<head>
+    {% if page.gtm %}{% include gtm-head.html %}{% endif %}
+    {% include head-meta.html %}
+    {% include head-fonts.html %}
+    {% for css_file in page.css %}
+    <link rel="stylesheet" type="text/css" href="{{ css_file }}">
+    {% endfor %}
+    {% include head-analytics.html %}
+    {% include structured-data.html %}
+    {% for script in page.head_scripts %}
+    <script src="{{ script }}"></script>
+    {% endfor %}
+</head>
+
+<body>
+    {% if page.gtm %}{% include gtm-noscript.html %}{% endif %}
+    {{ content }}
+    {% if page.gotop %}{% include gotop.html %}{% endif %}
+</body>
+
+</html>

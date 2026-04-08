@@ -1,0 +1,110 @@
+{% if page.schema_type == "ProfilePage" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Hua-Chen Shih (Watson)",
+    "alternateName": "施驊宸",
+    "url": "https://watsonshih.github.io",
+    "image": "https://watsonshih.github.io/pic/Shih_Hua_Chen.jpg",
+    "jobTitle": "Graduate Student",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "National Taiwan University of Science and Technology"
+    },
+    "alumniOf": [
+      { "@type": "Organization", "name": "National Taiwan University of Science and Technology" },
+      { "@type": "Organization", "name": "National Sun Yat-Sen University" }
+    ],
+    "affiliation": [
+      {
+        "@type": "ResearchOrganization",
+        "name": "Intelligent Sensing and Digital Manufacturing Lab",
+        "department": "National Taiwan University",
+        "description": "Research Student, directed by Wen-Yuh Jywe"
+      },
+      {
+        "@type": "Organization",
+        "name": "National Taiwan University Artificial Intelligence Club",
+        "alternateName": "NTUAI",
+        "description": "Manager, Public Relations and Marketing Department"
+      },
+      {
+        "@type": "Corporation",
+        "name": "Taiwan Semiconductor Manufacturing Company",
+        "alternateName": "TSMC",
+        "department": "Manufacturing Technology R&D (MTRD)",
+        "description": "Intern, AI Agent · AI mechatronics · Full Stack Development"
+      },
+      {
+        "@type": "ResearchOrganization",
+        "name": "Industrial Technology Research Institute",
+        "alternateName": "ITRI",
+        "department": "Digital Innovation and Operations",
+        "description": "Intern, Machine Learning · LLM"
+      }
+    ],
+    "knowsAbout": ["Intelligent Manufacturing", "Web Development", "AI", "AI Agent", "UI/UX", "Photography", "Videography", "Machine Learning", "LLM", "Full Stack Development"],
+    "sameAs": [
+      "https://www.linkedin.com/in/hua-chen-shih"
+    ],
+    "email": "shihwatson@gmail.com"
+  }
+}
+</script>
+{% elsif page.schema_type == "Service" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Website Design & Development",
+  "provider": {
+    "@type": "Person",
+    "name": "Watson Shih",
+    "url": "https://watsonshih.github.io"
+  },
+  "description": "{{ page.meta_description }}",
+  "url": "{{ page.canonical | default: page.url | absolute_url }}"
+}
+</script>
+{% elsif page.schema_type == "CollectionPage" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "{{ page.title }}",
+  "description": "{{ page.meta_description }}",
+  "url": "{{ page.canonical | default: page.url | absolute_url }}",
+  "about": {
+    "@type": "Person",
+    "name": "Watson Shih",
+    "url": "https://watsonshih.github.io"
+  }
+}
+</script>
+{% elsif page.schema_type == "Event" %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ page.event_name | default: page.title }}",
+  "description": "{{ page.meta_description }}",
+  "url": "{{ page.canonical | default: page.url | absolute_url }}",
+  {% if page.event_start %}"startDate": "{{ page.event_start }}",{% endif %}
+  {% if page.event_end %}"endDate": "{{ page.event_end }}",{% endif %}
+  {% if page.event_location %}
+  "location": {
+    "@type": "Place",
+    "name": "{{ page.event_location }}"
+  },
+  {% endif %}
+  "organizer": {
+    "@type": "Person",
+    "name": "Watson Shih",
+    "url": "https://watsonshih.github.io"
+  }
+}
+</script>
+{% endif %}
