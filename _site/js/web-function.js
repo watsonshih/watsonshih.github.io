@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var count = slides.length;
     var currentIndex = 0;
     var autoplayTimer = null;
-    var isPlaying = true;
+    var isPlaying = false;
+    var manualPaused = false;
     var INTERVAL = 10000;
 
     // Disable manual scroll
@@ -124,10 +125,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (playPauseBtn) {
         playPauseBtn.addEventListener('click', function () {
-            if (isPlaying) stopAutoplay();
-            else startAutoplay();
+            if (isPlaying) {
+                manualPaused = true;
+                stopAutoplay();
+            } else {
+                manualPaused = false;
+                startAutoplay();
+            }
         });
     }
 
-    startAutoplay();
+    // Start autoplay only when carousel is visible
+    var featureSection = document.querySelector('.web-feature-section');
+    if (featureSection && 'IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    if (!isPlaying && !manualPaused) startAutoplay();
+                } else {
+                    if (isPlaying) stopAutoplay();
+                }
+            });
+        }, { threshold: 0.3 });
+        observer.observe(featureSection);
+    } else {
+        startAutoplay();
+    }
 });
