@@ -33,16 +33,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var autoplayTimer = null;
     var isPlaying = false;
     var manualPaused = false;
+    var sectionVisible = false;
     var INTERVAL = 10000;
 
     // Disable manual scroll
     track.style.overflowX = 'hidden';
 
-    // Build dots
+    // Build dots (first dot starts paused since autoplay hasn't begun)
     for (var i = 0; i < count; i++) {
         var dot = document.createElement('button');
         dot.type = 'button';
-        dot.className = 'web-feature-dot' + (i === 0 ? ' active' : '');
+        dot.className = 'web-feature-dot' + (i === 0 ? ' active paused' : '');
         dot.setAttribute('aria-label', '第 ' + (i + 1) + ' 張');
         dot.dataset.index = i;
         var bar = document.createElement('span');
@@ -105,6 +106,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (playPauseBtn) playPauseBtn.querySelector('.playpause-icon').textContent = '❚❚';
         updateDots();
         autoplayTimer = setInterval(function () {
+            if (!sectionVisible) {
+                stopAutoplay();
+                return;
+            }
             scrollToSlide(currentIndex + 1);
             resetAutoplay();
         }, INTERVAL);
@@ -120,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetAutoplay() {
-        if (isPlaying) startAutoplay();
+        if (isPlaying && sectionVisible) startAutoplay();
     }
 
     if (playPauseBtn) {
@@ -140,7 +145,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (featureSection && 'IntersectionObserver' in window) {
         var observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
-                if (entry.intersectionRatio >= 0.3) {
+                sectionVisible = entry.intersectionRatio >= 0.3;
+                if (sectionVisible) {
                     if (!isPlaying && !manualPaused) startAutoplay();
                 } else {
                     if (isPlaying) stopAutoplay();
@@ -149,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, { threshold: [0, 0.3] });
         observer.observe(featureSection);
     } else {
+        sectionVisible = true;
         startAutoplay();
     }
 });
