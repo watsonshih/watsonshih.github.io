@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-KSLLQ7HD');</script>
+    <!-- End Google Tag Manager -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://watsonshih.github.io/pic/watson-logo.png">
+    <link rel="shortcut icon" href="https://watsonshih.github.io/pic/watson-logo.png" type="image/x-icon">
+    <title>課程頁面 - 打造你的職場數位分身</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@200;600&family=Noto+Sans+TC:wght@300;600&display=swap"
+        rel="stylesheet">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VJZ2K72PMZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-VJZ2K72PMZ');
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'DM Sans', 'Noto Sans TC';
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at -20% -90%, #000000 70%, #25724c 90%, #98ef5f 100%);
+            background-size: cover;
+            background-attachment: fixed;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* ── Password Gate ── */
+        .password-gate {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 20px;
+        }
+
+        .password-gate h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .password-gate p {
+            color: #ccc;
+            font-size: 1rem;
+        }
+
+        .password-input-wrap {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .password-input-wrap input {
+            padding: 12px 18px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            color: #fff;
+            outline: none;
+            font-family: 'DM Sans', 'Noto Sans TC';
+            width: 220px;
+        }
+
+        .password-input-wrap input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .password-input-wrap button {
+            padding: 12px 24px;
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', 'Noto Sans TC';
+        }
+
+        .password-input-wrap button:hover {
+            background: rgba(76, 175, 80, 0.5);
+        }
+
+        .password-error {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            min-height: 1.2em;
+        }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .title-section {
+            max-width: 700px;
+        }
+
+        .main-title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ddd;
+            line-height: 1.5;
+        }
+
+        /* ── Links ── */
+        .links-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            border-image: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.05) 100%) 1;
+            color: #fff;
+            text-decoration: none;
+            text-align: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-image: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%) 1;
+            transform: translateY(-2px);
+        }
+
+        /* ── Section ── */
+        .section-block {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-title-bar {
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* ── Prompt Card ── */
+        .prompt-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            border-image: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.02) 100%) 1;
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .prompt-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+
+        .prompt-card p {
+            font-size: 0.95rem;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .prompt-card .api-key-wrap {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .prompt-card .api-key-wrap label {
+            font-size: 0.95rem;
+            color: #ccc;
+            line-height: 1;
+        }
+
+        .prompt-card .api-key-wrap input {
+            padding: 8px 14px;
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            color: #fff;
+            outline: none;
+            font-family: 'DM Sans', monospace;
+            width: 250px;
+        }
+
+        .prompt-card .api-key-wrap input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(76, 175, 80, 0.4);
+            color: #98ef5f;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', 'Noto Sans TC';
+            align-self: flex-end;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 0, 0, 0.95);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: rgba(76, 175, 80, 0.4);
+            color: #fff;
+        }
+
+        /* ── AI Tool Navigation Map ── */
+        .map {
+            width: 100%;
+        }
+
+        .map-section {
+            margin-bottom: 12px;
+        }
+
+        .map-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        .map-section-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .map-section-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .map-section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            flex: 1;
+        }
+
+        .map-section-subtitle {
+            font-size: 0.9rem;
+            color: #CCC;
+        }
+
+        .map-chevron {
+            font-size: 12px;
+            color: #aaa;
+            transition: transform 0.2s;
+        }
+
+        .map-section.open .map-chevron {
+            transform: rotate(90deg);
+        }
+
+        .map-section-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 4px;
+        }
+
+        .map-section.open .map-section-body {
+            max-height: 800px;
+        }
+
+        .map-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 0 4px;
+        }
+
+        .map-card {
+            flex: 1 1 200px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            min-width: 160px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .map-card-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .map-card-desc {
+            font-size: 0.9rem;
+            color: #CCC;
+            line-height: 1.5;
+        }
+
+        .map-card-tag {
+            display: inline-block;
+            font-size: 0.9rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .map-note {
+            font-size: 0.9rem;
+            color: #CCC;
+            padding: 6px 12px;
+            border-left: 2px solid rgba(255, 255, 255, 0.15);
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        /* Map color tokens */
+        .ms1 .map-section-num {
+            background: #3C3489;
+            color: #CECBF6;
+        }
+
+        .ms2 .map-section-num {
+            background: #0C447C;
+            color: #B5D4F4;
+        }
+
+        .ms3 .map-section-num {
+            background: #085041;
+            color: #9FE1CB;
+        }
+
+        .ms4 .map-section-num {
+            background: #633806;
+            color: #FAC775;
+        }
+
+        .ms5 .map-section-num {
+            background: #712B13;
+            color: #F5C4B3;
+        }
+
+        .ms6 .map-section-num {
+            background: #72243E;
+            color: #F4C0D1;
+        }
+
+        .ms7 .map-section-num {
+            background: #444441;
+            color: #D3D1C7;
+        }
+
+        .ms8 .map-section-num {
+            background: #27500A;
+            color: #C0DD97;
+        }
+
+        .ms9 .map-section-num {
+            background: #0C447C;
+            color: #B5D4F4;
+        }
+
+        .ms1 .map-card {
+            border-color: #7F77DD;
+        }
+
+        .ms2 .map-card {
+            border-color: #378ADD;
+        }
+
+        .ms3 .map-card {
+            border-color: #1D9E75;
+        }
+
+        .ms4 .map-card {
+            border-color: #BA7517;
+        }
+
+        .ms5 .map-card {
+            border-color: #D85A30;
+        }
+
+        .ms6 .map-card {
+            border-color: #D4537E;
+        }
+
+        .ms7 .map-card {
+            border-color: #888780;
+        }
+
+        .ms8 .map-card {
+            border-color: #639922;
+        }
+
+        .ms9 .map-card {
+            border-color: #378ADD;
+        }
+
+        .tag-first {
+            background: #3C3489;
+            color: #CECBF6;
+        }
+
+        .tag-alt {
+            background: #444441;
+            color: #D3D1C7;
+        }
+
+        .tag-free {
+            background: #085041;
+            color: #9FE1CB;
+        }
+
+        .tag-paid {
+            background: #712B13;
+            color: #F5C4B3;
+        }
+
+        .tag-freemium {
+            background: #633806;
+            color: #FAC775;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            body {
+                padding: 30px 18px;
+                align-items: flex-start;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .links-section {
+                width: 100%;
+            }
+
+            .btn-link {
+                flex: 1;
+                min-width: 140px;
+            }
+
+            .prompt-card {
+                padding: 18px 20px;
+            }
+
+            .password-gate h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Password Gate -->
+    <div class="password-gate" id="passwordGate">
+        <h1>課程頁面</h1>
+        <p>請輸入通關密碼以查看課程內容</p>
+        <div class="password-input-wrap">
+            <input type="password" id="passwordInput" placeholder="輸入密碼" autocomplete="off">
+            <button onclick="checkPassword()">進入</button>
+        </div>
+        <div class="password-error" id="passwordError"></div>
+    </div>
+
+    <!-- Course Content (hidden until password verified) -->
+    <div class="container" id="courseContent" style="display: none;">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="title-section">
+                <h1 class="main-title">打造你的職場數位分身</h1>
+                <h2 class="sub-title">課程頁面</h2>
+            </div>
+        </header>
+
+        <!-- Links -->
+        <div class="section-block">
+            <div class="section-title-bar">課程連結</div>
+            <div class="links-section">
+                <a href="ntuai-bwai-slides.pdf" target="_blank" rel="noopener noreferrer" class="btn-link">簡報</a>
+                <a href="https://app.sli.do/event/96A8z3KpkTs4vhUfsK9Xag" target="_blank" rel="noopener noreferrer"
+                    class="btn-link">提問 (抽空回覆)</a>
+                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer"
+                    class="btn-link">Gemini</a>
+                <a href="https://script.google.com" target="_blank" rel="noopener noreferrer" class="btn-link">Apps
+                    Script</a>
+            </div>
+        </div>
+
+        <!-- Prompt Copy Section -->
+        <div class="section-block">
+            <div class="section-title-bar">Prompt 複製區</div>
+
+            <!-- 1. Gem -->
+            <div class="prompt-card">
+                <h3>[1] Gem：Job Pilot 使用說明</h3>
+                <p>請點擊按鈕複製 Prompt，貼上至 Gem 的使用說明欄位</p>
+                <button class="copy-btn" onclick="copyPrompt('gemPrompt', this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt
+                </button>
+            </div>
+
+            <!-- 2. Apps Script -->
+            <div class="prompt-card">
+                <h3>[2.1] Build with AI Dashboard：Gemini Prompt</h3>
+                <p>請點擊按鈕複製 Prompt，貼給 Gemini，並且附上 Google Sheet 的截圖</p>
+                <button class="copy-btn" onclick="copyPrompt('dashboardPrompt', this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt
+                </button>
+            </div>
+
+            <div class="prompt-card">
+                <h3>[2.2] Gmail API：Gemini Prompt</h3>
+                <p>請先輸入您自訂的 API Key，再點擊按鈕複製包含 API Key 的 Prompt，貼給 Gemini</p>
+                <div class="api-key-wrap">
+                    <label>您的自訂 API Key：</label>
+                    <input type="text" id="apiKeyInput" placeholder="例如：my-secret-key-123">
+                </div>
+                <button class="copy-btn" onclick="copyGmailPrompt(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt（含 API Key）
+                </button>
+            </div>
+            <!-- 3. AntiGravity -->
+            <div class="prompt-card">
+                <h3>[3.1] AntiGravity：Customization 的 Global Prompt</h3>
+                <p>請先輸入您的電腦系統與配置，再點擊按鈕複製 Prompt</p>
+                <div class="api-key-wrap">
+                    <label>電腦系統與配置：</label>
+                    <input type="text" id="deviceInput" placeholder="例如：Macbook Pro M4 Pro, 24GB RAM, 512GB SSD">
+                </div>
+                <button class="copy-btn" onclick="copyAntiGravityPrompt(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt
+                </button>
+            </div>
+
+            <div class="prompt-card">
+                <h3>[3.2] AntiGravity 證書自動化生成：自動化 Prompt</h3>
+                <p>請點擊按鈕複製 Prompt，貼在輸入框後，將相關檔案拖入相對應的文字內，讓 AI 知道檔案在哪</p>
+                <button class="copy-btn" onclick="copyPrompt('certWithPython', this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt (已安裝 Python)
+                </button>
+                <button class="copy-btn" onclick="copyPrompt('certWithoutPython', this)" style="margin-top:8px">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt (不確定是否有 Python)
+                </button>
+            </div>
+
+            <div class="prompt-card">
+                <h3>[3.3] AntiGravity 證書生成：Gmail API Prompt</h3>
+                <p>請先輸入 Apps Script 部署完成後的 API 網址與 Gemini 提供的 API 請求方法，再點擊按鈕複製 Prompt</p>
+                <div class="api-key-wrap">
+                    <label>API（網頁應用程式）網址：</label>
+                    <input type="text" id="certApiUrlInput" placeholder="貼上 Apps Script 部署完成後獲得的網址">
+                </div>
+                <div class="api-key-wrap">
+                    <label>API 請求（使用）方法：</label>
+                    <input type="text" id="certApiMethodInput" placeholder="貼上 Gemini 提供的 API 請求方法">
+                </div>
+                <button class="copy-btn" onclick="copyCertEmailPrompt(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    複製 Prompt
+                </button>
+            </div>
+        </div>
+
+        <!-- AI Tool Navigation Map -->
+        <div class="section-block">
+            <div class="section-title-bar">AI 工具導航地圖</div>
+            <div class="map">
+
+                <div class="map-section ms1" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">1</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">模型選擇</div>
+                            <div class="map-section-subtitle">依任務性質挑選最適合的大腦</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Claude Opus 4.6 / Sonnet 4.6</div>
+                                <div class="map-card-desc">程式開發首選，邏輯嚴謹、指令遵從度高、理解力強</div>
+                                <span class="map-card-tag tag-first">程式首選</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">GPT-5.4 Thinking</div>
+                                <div class="map-card-desc">深度推理與知識工作，是近期許多開發人員的第二選擇</div>
+                                <span class="map-card-tag tag-alt">替代</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">Gemini 3.1 Pro</div>
+                                <div class="map-card-desc">UI/UX 生成與視覺化首選，原生 SVG / 3D 程式碼渲染，多模態理解強</div>
+                                <span class="map-card-tag tag-first">UI/UX 首選</span>
+                            </div>
+                        </div>
+                        <div class="map-note">搭配策略：用 Claude 寫邏輯、用 Gemini 出 UI</div>
+                    </div>
+                </div>
+
+                <div class="map-section ms2" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">2</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">程式編輯</div>
+                            <div class="map-section-subtitle">寫程式的地方</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">VS Code</div>
+                                <div class="map-card-desc">最泛用的程式編輯器，豐富擴充套件生態系，可搭配 Copilot 等 AI 外掛</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">Google AntiGravity</div>
+                                <div class="map-card-desc">Agent-first IDE，有免費模型額度</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                        </div>
+                        <div class="map-note">選擇邏輯：有 Google AI Pro 或 Ultra 帳號 → AntiGravity</div>
+                    </div>
+                </div>
+
+                <div class="map-section ms3" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">3</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">版本管理</div>
+                            <div class="map-section-subtitle">程式碼的時光機與保險箱</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Git</div>
+                                <div class="map-card-desc">本地版本控制，追蹤每一次修改，隨時可回退到任何歷史版本</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">GitHub</div>
+                                <div class="map-card-desc">雲端程式碼託管與協作平台，備份、共享、團隊協作、觸發自動部署</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                        </div>
+                        <div class="map-note">搭配策略：Git 在本地記錄每次變更 → push 到 GitHub 雲端備份，若有部署網頁可觸發自動部署流程</div>
+                    </div>
+                </div>
+
+                <div class="map-section ms4" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">4</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">免費 LLM API</div>
+                            <div class="map-section-subtitle">讓你的應用程式擁有 AI 能力</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Google AI Studio</div>
+                                <div class="map-card-desc">免費使用 Gemini API，附帶 prompt playground，適合快速原型</div>
+                                <span class="map-card-tag tag-free">免費額度</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">HuggingFace Inference API</div>
+                                <div class="map-card-desc">開源模型大本營，免費 Inference API，可跑各種開源 LLM</div>
+                                <span class="map-card-tag tag-free">免費額度</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">NVIDIA NIM</div>
+                                <div class="map-card-desc">高效能推論微服務，企業級 GPU 加速，可本地或雲端部署</div>
+                                <span class="map-card-tag tag-free">免費試用</span>
+                            </div>
+                        </div>
+                        <div class="map-note">搭配策略：開發期用 Google AI Studio 免費測試 → 上線後可切 HuggingFace 開源模型降低成本</div>
+                    </div>
+                </div>
+
+                <div class="map-section ms5" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">5</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">輕自動化・Google 生態服務</div>
+                            <div class="map-section-subtitle">讓重複工作自動跑起來</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Google Apps Script</div>
+                                <div class="map-card-desc">輕量自動化引擎，深度整合 Sheets / Gmail / Drive / Calendar 等 Google
+                                    服務，亦可排程執行任務</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-section ms6" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">6</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">輕數據存儲・帳戶登入</div>
+                            <div class="map-section-subtitle">免架伺服器的後端服務</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Firebase</div>
+                                <div class="map-card-desc">後端即服務：即時資料庫、用戶登入認證（包含 Google 登入等），免伺服器管理</div>
+                                <span class="map-card-tag tag-free">免費額度</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-section ms7" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">7</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">網頁部署</div>
+                            <div class="map-section-subtitle">讓你的作品上線</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">GitHub Pages</div>
+                                <div class="map-card-desc">靜態網頁託管，適合作品集、文件網站、landing page</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">Vercel</div>
+                                <div class="map-card-desc">動態網頁部署，支援 Next.js / React、自動 CI/CD、serverless functions</div>
+                                <span class="map-card-tag tag-free">免費額度</span>
+                            </div>
+                            <div class="map-card">
+                                <div class="map-card-name">Hugging Face Spaces</div>
+                                <div class="map-card-desc">ML / AI 應用部署，支援 Gradio / Docker，需要 GPU 加速時才需付費</div>
+                                <span class="map-card-tag tag-freemium">免費 CPU / GPU 付費</span>
+                            </div>
+                        </div>
+                        <div class="map-note">選擇邏輯：純前端 → GitHub Pages，需要後端 → Vercel，需要 GPU 跑模型 → HF Spaces</div>
+                    </div>
+                </div>
+
+                <div class="map-section ms8" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">8</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">角色扮演・SOP 任務</div>
+                            <div class="map-section-subtitle">把常用 Prompt 封裝成隨叫隨到的專家</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Gemini Gem</div>
+                                <div class="map-card-desc">自訂 AI 助手，可設定角色 / SOP 指令，深度整合 Gmail、Docs、Drive 等服務</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="map-section ms9" onclick="this.classList.toggle('open')">
+                    <div class="map-section-header">
+                        <div class="map-section-num">9</div>
+                        <div style="flex:1">
+                            <div class="map-section-title">環境隔離・不間斷運作</div>
+                            <div class="map-section-subtitle">確保「我的電腦跑得動 = 任何電腦都跑得動」，且長時間運作</div>
+                        </div>
+                        <div class="map-chevron">&#9654;</div>
+                    </div>
+                    <div class="map-section-body">
+                        <div class="map-cards">
+                            <div class="map-card">
+                                <div class="map-card-name">Docker</div>
+                                <div class="map-card-desc">容器化技術，將應用及環境打包成可移植映像，消除環境不一致的問題</div>
+                                <span class="map-card-tag tag-free">免費</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ── Prompt Content ──
+        const prompts = {
+            gemPrompt: `角色：
+擔任專業的「求職導航員（Job Pilot）」。你的核心任務是根據使用者提供的職缺描述（JD）與個人專業經歷，協助他們針對特定職缺優化履歷。
+
+
+
+核心理念：
+
+履歷是企業對候選人過往經歷與影響力的第一印象。你必須為每一份職缺量身打造履歷，避免使用通用模板，追求精準客製化。
+
+
+
+目標與使命：
+
+協助使用者打造高度針對性、職缺專屬的履歷。
+
+確保使用者的技能與經歷，明確對應目標職缺的資格要求與條件。
+
+幫助使用者以數據和可量化的成果來描述個人成就。
+
+針對候選人目前與該職位的適配程度，提供務實的評估。
+
+行為準則與規則：
+
+1）初步諮詢與資料收集：
+
+招呼與邀請：親切地問候使用者，明確邀請他們上傳現有的履歷（PDF、Word、圖片皆可），或直接在對話中輸入／貼上個人專業背景。同時，請使用者提供目標職缺的 JD 或職缺連結。
+
+等待輸入：在取得目標 JD 與使用者經歷資料之前，不要進行任何分析或建議。
+
+2）優化前分析與現實檢核（關鍵步驟）：
+
+落差分析（資格檢查）：在修改履歷之前，先分析使用者是否符合該職缺的最低資格要求（MQs）。
+
+評估視角（重要原則）：整個分析過程必須完全站在「用人主管」的角度思考，而非 HR 的角度。即使履歷通過了 ATS 篩選、即使 HR 已經將履歷轉交給用人單位，也不代表主管會滿意。主管看的是「這個人能不能解決我團隊現在的問題」，所以評估時請用主管審閱履歷的嚴格標準來判斷，不要因為「HR 可能會放行」就給出過於樂觀的評分。
+
+ATS 與人資現實檢核：
+
+收到資料後，你必須立即提供一個獨立的分析區塊，包含以下內容：
+
+A. 履歷匹配度（5 級量表）：
+
+嚴格依據關鍵字匹配與技能對齊程度評分。
+
+⭐ (1) 幾乎無關：技能與經歷和 JD 重疊極低
+
+⭐⭐ (2) 略有相關：有部分關鍵字吻合，但核心技能缺口明顯
+
+⭐⭐⭐ (3) 中度匹配：多數關鍵字命中，但仍有 1 至 2 項核心要求未覆蓋
+
+⭐⭐⭐⭐ (4) 高度匹配：關鍵字與技能高度對齊，僅有微小落差
+
+⭐⭐⭐⭐⭐ (5) 完美匹配：幾乎所有要求都能從履歷中找到對應
+
+B. 進入下一輪可能性（5 級量表）：
+
+預估通過 ATS 篩選、HR 轉交、並且獲得用人主管青睞而進入面試的綜合可能性。此指標與匹配度不同；例如，使用者可能關鍵字命中率很高（高匹配度），但缺乏所需的工作年資（低可能性）。
+
+⭐ (1) 極低：幾乎不可能進入面試
+
+⭐⭐ (2) 偏低：有機會通過 ATS，但主管大概率不會約面試
+
+⭐⭐⭐ (3) 五五開：有一定機會，取決於競爭者強度與主管偏好
+
+⭐⭐⭐⭐ (4) 偏高：大概率會收到面試邀請
+
+⭐⭐⭐⭐⭐ (5) 極高：幾乎篤定會進入面試流程
+
+企業 Tier 級別加權：評估時必須綜合考量目標企業的層級與崗位競爭度。若候選人投遞的是 Tier 1 企業（如 FAANG、頂尖外商、產業龍頭）或高競爭度崗位，則篩選標準應相應提高。同樣的學經歷背景，在 Tier 1 企業可能只拿到 ⭐⭐，但在中型企業或新創可能拿到 ⭐⭐⭐⭐。評分時需明確說明企業層級對評分的影響。
+
+C. 結論（直白評語）：
+
+提供直接、坦率但具建設性的一句話評語。請從以下類型中選擇：
+
+「高度潛力」：很有機會被撈到。
+
+「尚可挽救」：目前會被刷掉，但還有救，主要是格式或用字問題，高度可修正。
+
+「嚴重不匹配」：會直接被刷掉，建議重新評估投遞策略，因為硬性條件（經驗／技能）的落差無法透過改寫彌補。
+
+D. 關鍵障礙：
+
+簡要列出導致該結論的前 1 至 2 項主要原因。
+
+E. 可遷移能力評估（潛力延伸）：
+
+學經歷不代表一切，但必須正視職場現實。在評估時，除了硬性條件外，也需檢視候選人是否具備可遷移的相關經驗，並判斷這些經驗是否有合理延伸的空間。例如：候選人過去曾因新業務需求，在一個月內自學並上手 ROS，而目標崗位涉及 Omniverse，這種「快速學習 + 領域相近」的模式，可作為面試時的加分論述（注意：此類延伸論述僅作為面試策略建議，不應直接寫入履歷中）。若候選人具備此類潛力，應在分析中明確指出，並建議如何在面試中有效呈現。
+
+若輸入資訊模糊或不完整：先暫停，向使用者要求具體細節，再進行評分。
+
+2.5）投遞決策閘門（Go / No-Go 判定）：
+
+此步驟為進入履歷優化前的關鍵閘門：
+
+
+
+若「進入下一輪可能性」為 ⭐ 或 ⭐⭐ 且結論為「嚴重不匹配」：不進入履歷優化階段。直接向使用者坦誠說明現況，並提供以下兩條路徑：
+
+路徑 A（補充經歷，重新評估）：引導使用者思考是否有遺漏的相關經歷、側專案、自學成果或可遷移技能尚未提供。若使用者確實非常想投遞該崗位，主動追問：「你是否有其他相關經驗還沒提到？例如 side project、線上課程、自學技術、跨部門協作等？」收集補充資料後重新評估。
+
+路徑 B（策略轉向）：建議使用者尋找更適配的相關崗位。可根據其現有技能與經歷，主動推薦更合適的職位方向或關鍵字，幫助使用者拓展求職視野。
+
+若「進入下一輪可能性」為 ⭐⭐⭐ 且結論為「尚可挽救」：進入履歷優化階段，但須在分析中明確標註風險點與需要重點強化的區塊。
+
+若「進入下一輪可能性」為 ⭐⭐⭐⭐ 或 ⭐⭐⭐⭐⭐：正常進入履歷優化流程。
+
+3）履歷優化與建議：
+
+對齊：針對每段經歷，將技能與成就對齊職缺描述，將工作內容直接連結到職位的資格要求。
+
+數據要求：要求使用者為每項成就附上數據。具體追問：「成果是什麼？」以及「你怎麼衡量成功的？」
+
+成就公式：描述成就時，重度使用以下公式：「透過做了 [Z]，達成了 [X]，以 [Y] 作為衡量指標。」
+
+領導力細節：若使用者提及曾擔任管理職，進一步追問：「團隊有多大？」以及「你的工作範圍涵蓋什麼？」
+
+初入職場者：針對應屆畢業生或經驗有限的使用者，建議納入與目標職缺相關的校內專案或課程作品。
+
+精簡原則：保持簡潔明瞭。強調履歷的精簡至關重要。
+
+4）互動風格：
+
+工具：使用「Canvas」進行編輯，方便使用者建立文件。
+
+結構：逐區塊提供建議與分析（例如：「摘要」、「工作經歷」、「技能」）。
+
+格式：呈現修改建議或重點改善項目時，使用條列式。
+
+語氣：保持專業、具建設性且鼓勵的語氣。但在「現實檢核」區塊中，必須直言不諱，以幫助使用者管理期望。`,
+
+            dashboardPrompt: `我想即時追蹤 Build with AI 活動報名狀況，分析報名者受眾。
+請幫我用 Google Apps Script 撰寫一個即時報名儀表板，資料來源是 Google Sheets。
+
+## 視覺風格
+
+- 深色主題，背景接近純黑，卡片用半透明玻璃質感（glassmorphism）
+- 配色以青綠為主色、cyan 為輔助色，避免用紅綠對比
+- 所有 icon 用內嵌 SVG，不要用 emoji
+- KPI 大數字載入時要有從 0 往上跳的 countUp 動畫
+- 卡片載入時依序淡入，hover 時微微浮起
+- 圖表標籤如果太長就截斷，滑鼠移上去再顯示完整名稱
+- 手機也要能看（RWD）
+
+## 儀表板內容（由上到下）
+
+1. 頂部標題列：左邊放活動名稱，右邊放最後更新時間和重新整理按鈕
+
+2. KPI 摘要（一排 4 張卡片）：
+   - 總報名人數（含每日新增數）
+   - VIP 沙龍報名率
+   - 最熱門講座名稱 + 人數
+   - 最大資訊來源管道 + 占比
+
+3. 趨勢與結構（一排 2 張圖表）：
+   - 左：每日報名趨勢折線圖（累計 + 當日雙軸）
+   - 右：教育程度 x 就業狀態的堆疊長條圖
+
+4. 受眾分析（一排 3 張圖表）：
+   - 工作產業分佈（橫向長條圖，由多到少排序）
+   - 科系領域分佈（甜甜圈圖，中間顯示總人數）
+   - 年資分佈（直向長條圖）
+
+5. 講座分析（全寬）：
+   - 4 個時段的講座選擇人數，用分組長條圖呈現
+   - 「不參與」用灰色顯示
+
+6. 來源分析（一排 2 張）：
+   - 資訊來源圓餅圖
+   - 報名時段分佈（按小時統計的長條圖，看大家都幾點報名）
+
+## 資料處理注意
+
+- 「報名講座名稱」是逗號分隔的多選，要拆開計算
+- 時間戳記要轉成台灣時間（UTC+8）
+- 科系領域和年資在某些就業狀態下會是空值，圖表中忽略空值即可
+
+## 資料 Schema
+
+| 欄位名稱 | 資料類型 | 必填 | 說明 | 所有選項 |
+
+|---|---|---|---|---|
+
+| Time Stamp | datetime (ISO 8601) | 是 | 報名時間，含時區資訊 | — |
+
+| 姓名 | string | 是 | 報名者姓名，中文或英文自由輸入 | — |
+
+| Email | string | 是 | 電子郵件地址，自由輸入 | — |
+
+| 手機號碼 | string | 是 | 台灣手機號碼，09 開頭共 10 碼，自由輸入 | — |
+
+| 教育程度 | enum | 是 | 最高學歷，單選 | \\\`高中職\\\` / \\\`Bachelor\\\` / \\\`Master\\\` / \\\`PhD\\\` |
+
+| 科系領域 | enum | 條件必填 | 學生／應屆畢業生才顯示，單選 | \\\`商管／財金相關\\\` / \\\`電機／電子工程\\\` / \\\`資工／資訊相關\\\` / \\\`機械／工業工程\\\` / \\\`化工／材料工程\\\` / \\\`半導體／光電／物理／應用科學\\\` / \\\`設計／人文社會科學\\\` / \\\`其他\\\` |
+
+| 就業狀態 | enum | 是 | 目前職涯狀態，單選 | \\\`Employed\\\` / \\\`待業中\\\` / \\\`學生\\\` / \\\`應屆畢業生\\\` |
+
+| 年資 | enum | 條件必填 | 在職中／待業中才顯示，單選 | \\\`<1\\\` / \\\`1-3\\\` / \\\`3-5\\\` / \\\`5-10\\\` / \\\`10年以上\\\` |
+
+| 工作產業 | enum | 是 | 最近一份工作產業，單選；學生填 \\\`無工作經驗 / 學生\\\` | \\\`資通訊與電子\\\` / \\\`軟體與電信服務\\\` / \\\`傳統製造業\\\` / \\\`能源與基礎建設\\\` / \\\`運輸與物流\\\` / \\\`批發零售與民生\\\` / \\\`金融與專業服務\\\` / \\\`醫療與生技\\\` / \\\`公共行政與教育\\\` / \\\`農林漁礦\\\` / \\\`無工作經驗 / 學生\\\` / \\\`其他\\\` |
+
+| 職稱 | string | 條件必填 | 工作產業非「無工作經驗／學生」才顯示，自由輸入；學生為空值 | — |
+
+| 是否參加 VIP 人才沙龍 | enum | 是 | 單選 | \\\`yes\\\` / \\\`no\\\` |
+
+| 報名講座名稱 | string (多選，逗號分隔) | 是 | 四個時段各選一，共最多 4 個講座組合。時間衝突限制：同時段只能擇一 | 9:50 時段（擇一）： \\\`9:50-11:00 [Keynote] 林上哲 nuva / 找出痛點，跟著上哲設計你的高效 AI 工作流\\\` / \\\`9:50-11:00 [Keynote] 高見龍 五倍學院 / Vibe Coding 補完計畫：SDD 規格驅動開發\\\` / \\\`我不想參與上午議程\\\` 11:20 時段（擇一）： \\\`11:20-12:30 [Workshop] Watson Shih 台大人工智慧應用社 / 打造你的職場數位分身：非工程師也能上手的 Google AI 辦公自動化實戰\\\` / \\\`11:20-12:30 [Workshop] 林鼎淵 工程師下班有約 / 市場不會為爛產品買單！Vibe Coding 讓你快速啟動，但「品質、維護、擴充」才決定產品能走多遠\\\` / \\\`我不想參與上午議程\\\` 13:20 時段（擇一）： \\\`13:20-14:20 半導體產業\\\` / \\\`13:20-14:20 AI Solutions 產業\\\` / \\\`我不想參與下午議程\\\` 15:00 時段（擇一）： \\\`15:00-16:00 軟體產業\\\` / \\\`15:00-16:00 金融產業\\\` / \\\`我不想參與下午議程\\\` |
+
+| 資訊來源 | enum | 是 | 得知活動的管道，單選 | \\\`Social Media\\\` / \\\`Cake EDM 邀請\\\` / \\\`Cake 講者邀請\\\` / \\\`Cake 社團合作夥伴邀請（如：台大人工智慧社）\\\` |
+
+
+
+以下是部分真實資料提供參考：
+
+Time Stamp\t姓名\tEmail\t手機號碼\t教育程度\t科系領域\t就業狀態\t年資\t工作產業\t職稱\t是否參加 VIP 人才沙龍\t報名講座名稱\t資訊來源
+2026-02-06T08:11:22.123456+00:00\t王志豪\tchihaowang@gmail.com\t912345678\tBachelor\t資工／資訊相關\tEmployed\t2-4\t軟體與電信服務\t後端工程師\tyes\t9:50-11:00 [Keynote] 高見龍 五倍學院 / Vibe Coding 補完計畫：SDD 規格驅動開發, 11:20-12:30 [Workshop] 林鼎淵 工程師下班有約 / 市場不會為爛產品買單！Vibe Coding 讓你快速啟動，但「品質、維護、擴充」才決定產品能走多遠, 13:20-14:20 AI Solutions 產業, 15:00-16:00 軟體產業\tSocial Media
+2026-02-06T08:23:44.234567+00:00\t林雅婷\tyatinglin@gmail.com\t923456789\tMaster\t商管／財金相關\tEmployed\t4-6\t金融與專業服務\t財務分析師\tyes\t9:50-11:00 [Keynote] 林上哲 nuva / 找出痛點，跟著上哲設計你的高效 AI 工作流, 11:20-12:30 [Workshop] Watson Shih 台大人工智慧應用社 / 打造你的職場數位分身：非工程師也能上手的 Google AI 辦公自動化實戰, 13:20-14:20 AI Solutions 產業, 15:00-16:00 金融產業\tCake EDM 邀請`,
+
+            antiGravityPromptTemplate: `# 開發
+1. 我的裝置：{{DEVICE}}
+2. 建議使用 .venv 環境
+3. 建議撰寫一個可一次啟動、自動 kill 佔用指定 port 的進程的自動化啟動 Shell Script，讓使用者僅需下 bash 指令
+4. 如果功能已開發完畢，但尚未實際設定、接入、沒有實作邏輯等，請務必提示使用者
+5. 完成大幅度的修改階段後，提醒使用者上 git
+6. 盡量請使用者提供真實數據或檔案，減少生成暫時檔案、測試檔案，如有生成也要在完成測試後刪除
+7. 如果目前實作是使用假資料做測試，請務必提示使用者，並說明實際資料可能與測試之資料有所不同，建議他提供真實的數據、資料結構或樣貌
+8. 修改一個既有的程式功能時，連帶搜尋與其關聯之 Function 與檔案、避免漏改，並刪除無用的程式碼與註解
+9. 不要自己開網頁測試
+10. 不要自己生成圖片，請先詢問使用者是否需要
+11. 需在母資料夾撰寫 README.md，撰寫詳細的架構、功能說明、使用方法，若功能有變動都需要更新相關開發文檔
+
+# 安全性
+1. 建立 .env 統一控管重要參數，尤其是 API Key
+2. 如果使用服務需要 API Key，請特別提醒使用者注意保管
+3. 若有上 git，設定 gitignore
+
+# 網頁前端
+1. 建議制定、使用通用組件，可以查看 Components 有沒有通用組件；如果沒有，可建立通用組件`,
+
+            certWithPython: `請幫我建立證書自動化生成工具
+請以 [base.jpeg] 為基底
+根據 [list.xlsx] 資料生成證書
+文字請使用 [HONORSansTC-Regular.ttf]
+中文字要放入 () 中，並放在英文後面
+
+你可以參考 [example.jpeg]`,
+
+            certWithoutPython: `請幫我檢查有沒有安裝 Python
+如果沒有請幫我安裝
+
+請幫我建立證書自動化生成工具
+請以 [base.jpeg] 為基底
+根據 [list.xlsx] 資料生成證書
+文字請使用 [HONORSansTC-Regular.ttf]
+中文字要放入 () 中，並放在英文後面
+
+你可以參考 [example.jpeg]`,
+
+            certEmailPromptTemplate: `我要增加 Email 寄送功能
+證書生成後自動寄送含有證書的 EDM 信件給他
+如果 [list.xlsx] 中沒有 Email 就不寄送
+
+API: {{CERT_API_URL}}
+
+API請求方法: {{CERT_API_METHOD}}`,
+
+            gmailPromptTemplate: `請你幫我用 Apps Script 做一個可以自動寄 Email 的 API，讓外部系統呼叫就可以寄信出去。
+
+我希望呼叫這個網址的時候，可以指定這些東西：
+- 自訂寄件人顯示的名字（例如「王小明 - 客服部」）
+- Email 的標題
+- Email 的內容（HTML，讓我可以自訂信件版型）
+- 收件者（可以同時寄給很多人）
+- 副本 CC（可以同時寄給很多人，可以不填）
+- 密件副本 BCC（可以同時寄給很多人，可以不填）
+- 可以夾帶附件（例如 PDF、圖片等檔案，可以不填）
+
+另外我需要一組密碼保護，不能讓隨便的人都可以用這個網址寄信。
+API KEY 請設成 : {{API_KEY}}
+
+請給我
+1. 可以直接貼上去用的完整程式碼，每一段都幫我加中文註解
+2. 從頭到尾的部署教學
+3. 部署好之後，給我使用方法`
+        };
+
+        // ── Password ──
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === 'ntuai') {
+                document.getElementById('passwordGate').style.display = 'none';
+                document.getElementById('courseContent').style.display = 'flex';
+            } else {
+                document.getElementById('passwordError').textContent = '密碼錯誤，請重試';
+            }
+        }
+
+        document.getElementById('passwordInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // ── Copy Functions ──
+        function copyPrompt(key, btn) {
+            const text = prompts[key];
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            });
+        }
+
+        function copyAntiGravityPrompt(btn) {
+            const device = document.getElementById('deviceInput').value.trim();
+            if (!device) {
+                document.getElementById('deviceInput').style.borderColor = '#ff6b6b';
+                document.getElementById('deviceInput').focus();
+                setTimeout(() => {
+                    document.getElementById('deviceInput').style.borderColor = 'rgba(255,255,255,0.25)';
+                }, 1500);
+                return;
+            }
+            const text = prompts.antiGravityPromptTemplate.replace('{{DEVICE}}', device);
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            });
+        }
+
+        function copyGmailPrompt(btn) {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (!apiKey) {
+                document.getElementById('apiKeyInput').style.borderColor = '#ff6b6b';
+                document.getElementById('apiKeyInput').focus();
+                setTimeout(() => {
+                    document.getElementById('apiKeyInput').style.borderColor = 'rgba(255,255,255,0.25)';
+                }, 1500);
+                return;
+            }
+            const text = prompts.gmailPromptTemplate.replace('{{API_KEY}}', apiKey);
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            });
+        }
+
+        function copyCertEmailPrompt(btn) {
+            const apiUrl = document.getElementById('certApiUrlInput').value.trim();
+            const apiMethod = document.getElementById('certApiMethodInput').value.trim();
+            if (!apiUrl) {
+                document.getElementById('certApiUrlInput').style.borderColor = '#ff6b6b';
+                document.getElementById('certApiUrlInput').focus();
+                setTimeout(() => {
+                    document.getElementById('certApiUrlInput').style.borderColor = 'rgba(255,255,255,0.25)';
+                }, 1500);
+                return;
+            }
+            if (!apiMethod) {
+                document.getElementById('certApiMethodInput').style.borderColor = '#ff6b6b';
+                document.getElementById('certApiMethodInput').focus();
+                setTimeout(() => {
+                    document.getElementById('certApiMethodInput').style.borderColor = 'rgba(255,255,255,0.25)';
+                }, 1500);
+                return;
+            }
+            const text = prompts.certEmailPromptTemplate
+                .replace('{{CERT_API_URL}}', apiUrl)
+                .replace('{{CERT_API_METHOD}}', apiMethod);
+            navigator.clipboard.writeText(text).then(() => {
+                showCopied(btn);
+            });
+        }
+
+        function showCopied(btn) {
+            const original = btn.innerHTML;
+            btn.classList.add('copied');
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> 已複製！';
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove('copied');
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
