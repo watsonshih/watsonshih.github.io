@@ -221,16 +221,13 @@
             <h1 class="web-hero-title">為使用者<br class="mob_br">打造最佳網站</h1>
             <p class="web-hero-subtitle">讓 Watson 創造前所未有的體驗</p>
         </div>
-        <div class="web-hero-scroll">
-            <span>Scroll</span>
-            <div class="scroll-indicator"></div>
-        </div>
     </div>
 
 <!-- Features Carousel -->
 <div id="feature" class="web-feature-section">
-    <h2 class="web-feature-heading fade text-out">Watson 能做什麼</h2>
-    <div class="web-feature-track fade">
+    <h2 id="web-feature-title" class="web-feature-heading fade text-out">Watson 能做什麼</h2>
+    <div class="web-feature-track fade" role="region" aria-roledescription="carousel"
+        aria-labelledby="web-feature-title">
         <div class="web-feature-slide">
             <img src="pic/web-feature-1.jpg" alt="使用者導向設計">
             <p class="fade">深入了解使用者，<br class="mob_br">以需求為核心進行設計，<br>確保每個互動都直覺、流暢，<br class="mob_br">精準傳遞資訊。</p>
@@ -258,9 +255,15 @@
         </div>
     </div>
     <div class="web-feature-controls">
-        <div class="web-feature-dots"></div>
-        <button type="button" class="web-feature-playpause" aria-label="播放/暫停">
-            <span class="playpause-icon">❚❚</span>
+        <div class="web-feature-dots" role="group" aria-label="輪播頁面"></div>
+        <button type="button" class="web-feature-playpause" data-state="paused" aria-label="開始自動播放">
+            <svg class="playpause-icon icon-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path fill="currentColor" d="M4.75 2.6a.75.75 0 0 1 1.14-.64l6.7 4.72a1.62 1.62 0 0 1 0 2.64l-6.7 4.72a.75.75 0 0 1-1.14-.64V2.6Z" />
+            </svg>
+            <svg class="playpause-icon icon-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <rect x="3.25" y="2.5" width="3.5" height="11" rx="1" fill="currentColor" />
+                <rect x="9.25" y="2.5" width="3.5" height="11" rx="1" fill="currentColor" />
+            </svg>
         </button>
     </div>
 </div>

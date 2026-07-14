@@ -90,43 +90,10 @@
     backdrop-filter: blur(10px);
 }
 
-.web-hero-scroll {
-    position: absolute;
-    bottom: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    color: rgba(255, 255, 255, 0.35);
-    font-size: 0.75em;
-    text-transform: uppercase;
-    z-index: 1;
-}
-
-.scroll-indicator {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-
-    0%,
-    100% {
-        opacity: 0.3;
-        transform: scaleY(0.7);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scaleY(1);
-    }
-}
-
-
 /* ===== Feature Carousel ===== */
 .web-feature-section {
+    --feature-interval: 8000ms;
+    --feature-ease: cubic-bezier(0.32, 0.72, 0, 1);
     padding: 100px 0 80px;
 }
 
@@ -143,10 +110,12 @@
 .web-feature-track {
     display: flex;
     gap: 1.2em;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    overflow-x: hidden;
     padding: 0 calc((100vw - 55vw) / 2);
     scrollbar-width: none;
+    touch-action: pan-y pinch-zoom;
+    overscroll-behavior-x: contain;
+    cursor: grab;
 }
 
 .web-feature-track::-webkit-scrollbar {
@@ -155,14 +124,24 @@
 
 .web-feature-slide {
     flex: 0 0 55vw;
-    scroll-snap-align: center;
-    border-radius: 20px;
+    border-radius: 16px;
     overflow: hidden;
     position: relative;
     aspect-ratio: 16/9;
     -webkit-user-select: none;
     user-select: none;
     cursor: pointer;
+    transform-origin: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.web-feature-track.is-dragging .web-feature-slide {
+    cursor: grabbing;
+}
+
+.web-feature-track.is-dragging .web-feature-slide,
+.web-feature-track.is-animating .web-feature-slide {
+    will-change: transform, opacity;
 }
 
 .web-feature-slide img {
@@ -172,6 +151,12 @@
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+    transform: scale(1.025);
+    transition: transform 760ms var(--feature-ease);
+}
+
+.web-feature-slide.is-current img {
+    transform: scale(1);
 }
 
 .web-feature-slide::after {
@@ -223,7 +208,7 @@
     border: none;
     padding: 0;
     cursor: pointer;
-    transition: width 0.3s ease, background 0.3s ease;
+    transition: width 320ms var(--feature-ease), background-color 240ms ease;
     position: relative;
     overflow: hidden;
 }
@@ -246,7 +231,7 @@
 }
 
 .web-feature-dot.active .dot-progress {
-    animation: dotFill 10s linear forwards;
+    animation: dotFill var(--feature-interval) linear forwards;
 }
 
 .web-feature-dot.active.paused .dot-progress {
@@ -264,8 +249,8 @@
 }
 
 .web-feature-playpause {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: none;
     background: rgba(255, 255, 255, 0.12);
@@ -274,22 +259,49 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.3s ease;
+    transition: background-color 240ms ease, color 240ms ease, transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
     padding: 0;
     line-height: 1;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .playpause-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    font-size: 12px;
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    transform: scale(0.88);
+    transition: opacity 160ms ease, transform 220ms var(--feature-ease);
 }
 
-.web-feature-playpause:hover {
-    background: rgba(255, 255, 255, 0.2);
+.web-feature-playpause[data-state="playing"] .icon-pause,
+.web-feature-playpause[data-state="paused"] .icon-play {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.web-feature-playpause:active {
+    transform: scale(0.94);
+}
+
+.web-feature-playpause:focus-visible,
+.web-feature-dot:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .web-feature-playpause:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+@media (pointer: coarse) {
+    .web-feature-playpause {
+        width: 44px;
+        height: 44px;
+    }
 }
 
 
@@ -715,7 +727,13 @@
     }
 
     .web-stats-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
         gap: 2em;
+    }
+
+    .web-stat-card {
+        width: 100%;
     }
 
     .web-case-stats {
@@ -739,6 +757,20 @@
 
     .web-hero-title {
         font-size: clamp(2.2em, 8vw, 3em);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .web-feature-slide img,
+    .web-feature-dot,
+    .playpause-icon,
+    .web-feature-playpause {
+        transition-duration: 0.01ms;
+    }
+
+    .web-feature-dot.active .dot-progress {
+        animation: none;
+        transform: scaleX(1);
     }
 }
 
