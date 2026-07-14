@@ -328,15 +328,19 @@
                 <div class="web-stat-label">完成專案</div>
             </div>
             <div class="web-stat-card fade pop-up">
-                <div class="web-stat-number"><span class="counter">454</span>K+</div>
+                <div class="web-stat-number"><span class="counter" data-ga-metric="totalUsers">454</span><span data-ga-suffix>K+</span></div>
                 <div class="web-stat-label">網站使用者</div>
             </div>
             <div class="web-stat-card fade pop-up">
-                <div class="web-stat-number"><span class="counter">2</span>M+</div>
+                <div class="web-stat-number"><span class="counter" data-ga-metric="screenPageViews">2</span><span data-ga-suffix>M+</span></div>
                 <div class="web-stat-label">頁面瀏覽量</div>
             </div>
+            <div class="web-stat-card fade pop-up">
+                <div class="web-stat-number"><span class="counter" data-ga-metric="screenPageViewsLast30Minutes">15</span><span data-ga-suffix></span></div>
+                <div class="web-stat-label">近 30 分鐘瀏覽</div>
+            </div>
         </div>
-        <p class="small_word fade text-center">* 網站數據來源：Google Analytics</p>
+        <p class="small_word fade text-center">* Google Analytics；歷史累計每日更新，近 30 分鐘瀏覽每 30 分鐘更新</p>
     </div>
 </div>
 
@@ -481,6 +485,7 @@
     <button class="toTop" title="gotoTop" style="display: inline-block;">
     <span>Top</span>
 </button>
+<script src="dist/js/ga-stats.min.js"></script>
 <script src="dist/js/page-init.min.js"></script>
 
 </body>
